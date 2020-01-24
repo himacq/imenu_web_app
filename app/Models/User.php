@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Zizaco\Entrust\Traits\EntrustUserTrait;
+
+
+class User extends Authenticatable
+{
+    use Notifiable;
+    use EntrustUserTrait;
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    
+    protected $fillable = [
+        'name', 'email', 'password', 'isActive','username','phone','mobile','restaurant_id','api_token',
+        'language_id'
+    ];
+    
+    protected $nullable = ['latitude','longitude'];
+    
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+
+     
+     public function roles()
+    {
+        return $this->belongsToMany('App\Models\Role');
+    }
+
+    public function permissions() {
+        return $this->belongsToMany('App\Models\Permission');
+    }
+
+
+    public function getAddresses(){
+        return $this->hasMany('App\Models\UserAddress','user_id','id');
+    }
+
+    public function generateToken()
+    {
+        $this->api_token = str_random(60);
+        $this->save();
+
+        return $this->api_token;
+    }
+    public function deleteToken() {
+        $this->api_token = null;
+        $this->save();
+    }
+}
