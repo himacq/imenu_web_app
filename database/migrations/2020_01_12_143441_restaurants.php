@@ -19,6 +19,7 @@ class Restaurants extends Migration
             $table->string('logo');
             $table->string('banner');
             $table->integer('status')->unsigned();
+            $table->string('verification_code', 4)->unique();
             $table->integer('manager_id')->unsigned();
             $table->integer('branch_of')->unsigned();
             $table->text('latitude');
@@ -40,11 +41,13 @@ class Restaurants extends Migration
         });
         
         Schema::table('restaurants', function($table) {
-            $table->foreign('status')->references('id')->on('lookup');
+            $table->foreign('status')->references('id')->on('lookup')
+                    ->onUpdate('cascade')->onDelete('cascade');
             });
             
             Schema::table('restaurants', function($table) {
-             $table->foreign('manager_id')->references('id')->on('users');
+             $table->foreign('manager_id')->references('id')->on('users')
+                     ->onUpdate('cascade')->onDelete('cascade');
             });
             
             

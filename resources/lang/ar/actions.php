@@ -13,10 +13,12 @@ return [
     |
     */
 
-    'failed' => 'These credentials do not match our records.',
-    'notActive' => 'الحساب غير مفعل يرجى التواصل مع ادارة النظام',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-    'password'=>'Password Error',
-    'login' =>'User Login'
+    'addButton' => 'اضافة',
+    'saveButton' => 'حفظ',
+    'resetPasswordButton' => 'اعادة تعيين كلمة المرور',
+    'updateButton' => 'تعديل',
+    'isActiveLabel' => 'مفعل',
+    'isNotActiveLabel' => 'غير مفعل',
+    'success' => 'تمت عملية :var بنجاح'
 
 ];

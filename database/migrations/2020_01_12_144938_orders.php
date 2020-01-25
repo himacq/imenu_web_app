@@ -18,7 +18,9 @@ class Orders extends Migration
             $table->integer('user_id')->unsigned();;
             $table->string('street');
             $table->string('city');
-            $table->integer('house_no');
+            $table->integer('house_no')->nullable();
+            $table->integer('floor_no')->nullable();
+            $table->integer('appartment_no')->nullable;
             $table->string('governorate');
             $table->string('zip_code');
             $table->boolean('isDefault');

@@ -41,6 +41,9 @@ class CoreApiController extends Controller
      */
       public function register(Request $request){
 
+          if($request->language_id)
+              App::setLocale($request->language_id);
+          
         $rules = [
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
@@ -79,6 +82,10 @@ class CoreApiController extends Controller
      */
     public function login(Request $request)
     {
+        
+        if($request->language_id)
+              App::setLocale($request->language_id);
+        
         $this->validateLogin($request);
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle

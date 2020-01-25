@@ -19,13 +19,14 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('username')->unique();
             $table->string('password');
-            $table->boolean('isActive');
+            $table->boolean('isActive')->default(1);
             $table->string('phone')->nullable();
             $table->string('mobile')->nullable();
             $table->string('language_id')->default('en');
-            $table->integer('restaurant_id')->nullable();
+            $table->integer('restaurant_id')->unsigned()->nullable();
             $table->text('latitude')->nullable();
             $table->text('longitude')->nullable();
+            $table->boolean('news_letter')->default(0);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
