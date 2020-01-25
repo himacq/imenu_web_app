@@ -1,7 +1,7 @@
 <?php
 
 return [
-'success' => "تم جلب البيانات بشكل صحيح" ,
+'success' => "تمت العملية بنجاح" ,
 'error' => "The operation is not done successfully" ,
 'not_found' => "The :var not found",
 'no_auth' => "You can't update this :var",

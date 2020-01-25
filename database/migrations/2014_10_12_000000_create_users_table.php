@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->boolean('isActive')->default(1);
             $table->string('phone')->nullable();
             $table->string('mobile')->nullable();
-            $table->string('language_id')->default('en');
+            $table->string('language_id')->nullable()->default('en');
             $table->integer('restaurant_id')->unsigned()->nullable();
             $table->text('latitude')->nullable();
             $table->text('longitude')->nullable();

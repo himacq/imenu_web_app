@@ -11,6 +11,7 @@
 |
 */
 
+
 Route::post('/user/register' , 'Api\CoreApiController@register');
 Route::post('/user/login' , 'Api\CoreApiController@login');
 
@@ -22,7 +23,7 @@ Route::group(['middleware' => 'auth:api'], function () {
      * users services
      */
     Route::post('/user/logout' , 'Api\CoreApiController@logout');
-    Route::post('/user/profile' , 'Api\CoreApiController@userProfile');
+    Route::get('/user/profile' , 'Api\CoreApiController@userProfile');
     Route::post('/user/update' , 'Api\CoreApiController@updateUserProfile');
     Route::post('/user/password' , 'Api\CoreApiController@updatePassword');
     Route::post('/user/address' , 'Api\CoreApiController@createAddress');

@@ -20,9 +20,9 @@ class Orders extends Migration
             $table->string('city');
             $table->integer('house_no')->nullable();
             $table->integer('floor_no')->nullable();
-            $table->integer('appartment_no')->nullable;
-            $table->string('governorate');
-            $table->string('zip_code');
+            $table->integer('apartment_no')->nullable()->default(0);
+            $table->string('governorate')->nullable();
+            $table->string('zip_code')->nullable();
             $table->boolean('isDefault');
             
             $table->timestamps();

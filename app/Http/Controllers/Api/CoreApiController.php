@@ -62,14 +62,12 @@ class CoreApiController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'username' => $request->username,
-            'isActive' => 0,
+            'isActive' => 1,
             'phone' => $request->phone,
             'mobile' => $request->mobile,
         ]);
 
        $user->attachRole(Role::where('name', 'user')->first());
-
-        $user->generateToken();
 
         return $this->response($user->toArray(), true,__('api.success'));
     }
@@ -96,16 +94,19 @@ class CoreApiController extends Controller
 
             return $this->sendLockoutResponse($request);
         }
-        
         if ($this->attemptLogin($request)) {
-            $user = $this->guard()->user();
-            $user->generateToken();
+            $this->user = $this->guard()->user();
+            $this->user->generateToken();
 
-            if (!$user->isActive){
+            if (!$this->user->isActive){
                 return $this->response(null,false,__('auth.notActive'));
             }
         
-            return $this->response($user->toArray(), true,__('api.success'));
+            if($request->language_id){
+            $this->user->update(['language_id' => $request->language_id]);
+            }
+            
+            return $this->response($this->user->toArray(), true,__('api.success'));
         }
 
         // If the login attempt was unsuccessful we will increment the number of attempts
@@ -157,15 +158,8 @@ class CoreApiController extends Controller
             return $this->response(null, false,$validate->errors()->first());
 
         }
-        $input = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'mobile' => $request->mobile,
-            'language_id' => $request->language_id,
-        ];
-        
-        $this->user->update($input);
+       
+        $this->user->update($request->all());
         
         App::setLocale($request->language_id);
         
@@ -242,9 +236,7 @@ class CoreApiController extends Controller
 
         $rules = [
             'street' => 'required|max:255',
-            'city' => 'required|max:255',
-            'governorate' => 'required|min:6',
-            'zip_code' => 'required|min:4',
+            'city' => 'required|max:255'
         ];
         
           $validate = Validator::make($request->all(), $rules);
@@ -277,8 +269,6 @@ class CoreApiController extends Controller
         $rules = [
             'street' => 'required|max:255',
             'city' => 'required|max:255',
-            'governorate' => 'required|min:6',
-            'zip_code' => 'required|min:4',
             'id' => 'required|integer',
         ];
         
@@ -322,7 +312,7 @@ class CoreApiController extends Controller
         
         $address->delete();
       
-        return $this->response($address->toArray(), true,__('api.success'));
+        return $this->response(null, true,__('api.success'));
         
     }
     

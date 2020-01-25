@@ -20,7 +20,7 @@ class User extends Authenticatable
     
     protected $fillable = [
         'name', 'email', 'password', 'isActive','username','phone','mobile','restaurant_id','api_token',
-        'language_id'
+        'language_id','latitude','longitude','news_letter'
     ];
     
     protected $nullable = ['latitude','longitude'];
@@ -52,7 +52,7 @@ class User extends Authenticatable
 
     public function generateToken()
     {
-        $this->api_token = str_random(60);
+        $this->api_token = str_random(32);
         $this->save();
 
         return $this->api_token;
