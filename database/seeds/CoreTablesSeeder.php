@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
 
-class coreTablesSeeder extends Seeder
+class CoreTablesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,33 +14,28 @@ class coreTablesSeeder extends Seeder
     public function run()
     {
         //
+        /*
+        $faker = Faker::create();
         DB::table('users')->insert([
             'name' => "administrator",
             'email' => 'himacq@gmail.com',
             'username' =>'admin',
             'password' => bcrypt('a123456'),
             'isActive' => 1,
-            'phone' => rand(123456,999999),
-            'mobile' => rand(123456,999999),
+            'language_id' => 'en',
+            'phone' => $faker->phoneNumber,
+            'mobile' => $faker->phoneNumber,
             'restaurant_id' => Null,
             'created_at' => \Carbon\Carbon::now(),
             'updated_at' => \Carbon\Carbon::now(),
             
-        ]);
+        ]);*/
+        
+        //factory(App\Models\User::class, 10)->create();
+        
+        factory(App\Models\Lookup::class, 5)->create();
         
         
-        $faker = Faker::create();
-    	foreach (range(1,10) as $index) {
-	        DB::table('users')->insert([
-	            'name' => $faker->name,
-	            'email' => $faker->email,
-                    'username'=>Str::random(10),
-	            'password' => bcrypt('secret'),
-                    'created_at' => \Carbon\Carbon::now(),
-                    'updated_at' => \Carbon\Carbon::now()
-	        ]);
-        }
-        
-        
+
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
 use App\Models\UserAddress;
 
-class coreApiTest extends TestCase
+class CoreApiTest extends TestCase
 {
     use RefreshDatabase;
     /**

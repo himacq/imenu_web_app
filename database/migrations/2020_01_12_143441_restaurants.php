@@ -16,21 +16,21 @@ class Restaurants extends Migration
         schema::create('restaurants',function(Blueprint $table){
             $table->increments('id');
             $table->string('name');
-            $table->string('logo');
-            $table->string('banner');
+            $table->string('logo')->nullable();
+            $table->string('banner')->nullable();
             $table->integer('status')->unsigned();
             $table->string('verification_code', 4)->unique();
             $table->integer('manager_id')->unsigned();
-            $table->integer('branch_of')->unsigned();
-            $table->text('latitude');
-            $table->text('longitude');
-            $table->text('working_details');
-            $table->text('extra_info');
-            $table->string('phone1');
-            $table->string('phone2');
-            $table->string('phone3');
-            $table->string('mobile1');
-            $table->string('mobile2');
+            $table->integer('branch_of')->nullable()->unsigned();
+            $table->text('latitude')->nullable();
+            $table->text('longitude')->nullable();
+            $table->text('working_details')->nullable();
+            $table->text('extra_info')->nullable();
+            $table->string('phone1')->nullable();
+            $table->string('phone2')->nullable();
+            $table->string('phone3')->nullable();
+            $table->string('mobile1')->nullable();
+            $table->string('mobile2')->nullable();
             $table->string('email');
             
             $table->timestamps();

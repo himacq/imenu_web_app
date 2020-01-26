@@ -11,16 +11,22 @@
 |
 */
 
+    /**
+     * CoreApi public services
+     */
+    Route::post('/user/register' , 'Api\CoreApiController@register');
+    Route::post('/user/login' , 'Api\CoreApiController@login');
 
-Route::post('/user/register' , 'Api\CoreApiController@register');
-Route::post('/user/login' , 'Api\CoreApiController@login');
-
-
+    /**
+     * shoppingApi public Services
+     */
+    
+    Route::get('/shopping/restaurants/{language_id?}','Api\ShoppingApiController@listRestaurants');
 
 Route::group(['middleware' => 'auth:api'], function () {
     
     /**
-     * users services
+     * CoreApi services
      */
     Route::post('/user/logout' , 'Api\CoreApiController@logout');
     Route::get('/user/profile' , 'Api\CoreApiController@userProfile');
@@ -31,6 +37,12 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::delete('/user/address/{id}', 'Api\CoreApiController@deleteAddress');
     Route::get('user/addresses', 'Api\CoreApiController@listAddresses');
     Route::post('user/location', 'Api\CoreApiController@updateLocation');
+    
+    /**
+     * shoppingApi Services
+     */
+    
+    
 
 });
 /*
