@@ -56,7 +56,7 @@ class Restaurants extends Migration
                      ->onUpdate('cascade')->onDelete('cascade');
             });
         
-         schema::create('restaurant_review',function(Blueprint $table){
+         schema::create('restaurant_reviews',function(Blueprint $table){
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('restaurant_id')->unsigned();

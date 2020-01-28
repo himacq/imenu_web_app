@@ -19,10 +19,10 @@ class Categories extends Migration
             $table->string('name');
             $table->string('image');
             $table->boolean('isActive');
-            $table->integer('resturant_id')->unsigned();
+            $table->integer('restaurant_id')->unsigned();
             $table->timestamps();
             
-             $table->foreign('resturant_id')->references('id')->on('restaurants')
+             $table->foreign('restaurant_id')->references('id')->on('restaurants')
                      ->onUpdate('cascade')->onDelete('cascade');
         });
     }

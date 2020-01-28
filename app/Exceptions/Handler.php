@@ -5,6 +5,8 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Auth\AuthenticationException ;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class Handler extends ExceptionHandler
 {
@@ -48,6 +50,14 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         //return "do nothing";
+        if ($exception instanceof ModelNotFoundException)
+            {
+                 return response()->json(['status'=>false,'message' =>__('api.not_found')], 404);
+            }
+            
+            
+        
+        
         return parent::render($request, $exception);
     }
     

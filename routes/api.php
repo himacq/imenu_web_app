@@ -14,34 +14,44 @@
     /**
      * CoreApi public services
      */
-    Route::post('/user/register' , 'Api\CoreApiController@register');
-    Route::post('/user/login' , 'Api\CoreApiController@login');
+    Route::post('/user/register' , 'Api\UserController@register');
+    Route::post('/user/login' , 'Api\UserController@login');
 
     /**
      * shoppingApi public Services
      */
     
-    Route::get('/shopping/restaurants/{language_id?}','Api\ShoppingApiController@listRestaurants');
+    Route::get('/restaurants/{language_id?}','Api\RestaurantController@listRestaurants');
+    Route::get('/restaurant/{id}/{language_id?}','Api\RestaurantController@Restaurant');
 
+    
+    Route::get('/categories/{restaurant_id?}/{language_id?}','Api\CategoryController@listCategories');
+    Route::get('/category/{id}/{language_id?}','Api\CategoryController@Category');
+    
+    Route::get('/products/{category_id?}/{language_id?}','Api\ProductController@listProducts');
+    Route::get('/product/{id}/{language_id?}','Api\ProductController@Product');
+    
 Route::group(['middleware' => 'auth:api'], function () {
     
     /**
      * CoreApi services
      */
-    Route::post('/user/logout' , 'Api\CoreApiController@logout');
-    Route::get('/user/profile' , 'Api\CoreApiController@userProfile');
-    Route::post('/user/update' , 'Api\CoreApiController@updateUserProfile');
-    Route::post('/user/password' , 'Api\CoreApiController@updatePassword');
-    Route::post('/user/address' , 'Api\CoreApiController@createAddress');
-    Route::post('/user/updateAddress' , 'Api\CoreApiController@updateAddress');
-    Route::delete('/user/address/{id}', 'Api\CoreApiController@deleteAddress');
-    Route::get('user/addresses', 'Api\CoreApiController@listAddresses');
-    Route::post('user/location', 'Api\CoreApiController@updateLocation');
+    Route::post('/user/logout' , 'Api\UserController@logout');
+    Route::get('/user/profile' , 'Api\UserController@userProfile');
+    Route::post('/user/update' , 'Api\UserController@updateUserProfile');
+    Route::post('/user/password' , 'Api\UserController@updatePassword');
+    Route::post('/user/address' , 'Api\UserController@createAddress');
+    Route::post('/user/updateAddress' , 'Api\UserController@updateAddress');
+    Route::delete('/user/address/{id}', 'Api\UserController@deleteAddress');
+    Route::get('/user/addresses', 'Api\UserController@listAddresses');
+    Route::post('/user/location', 'Api\UserController@updateLocation');
     
     /**
      * shoppingApi Services
      */
-    
+    Route::post('/favourite', 'Api\FavouriteController@createFavourite');
+    Route::delete('/favourite/{id}', 'Api\FavouriteController@deleteFavourite');
+    Route::get('/favourites', 'Api\FavouriteController@listFavourites');
     
 
 });

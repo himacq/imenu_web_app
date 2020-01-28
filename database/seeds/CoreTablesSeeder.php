@@ -14,7 +14,7 @@ class CoreTablesSeeder extends Seeder
     public function run()
     {
         //
-        /*
+        
         $faker = Faker::create();
         DB::table('users')->insert([
             'name' => "administrator",
@@ -29,12 +29,45 @@ class CoreTablesSeeder extends Seeder
             'created_at' => \Carbon\Carbon::now(),
             'updated_at' => \Carbon\Carbon::now(),
             
-        ]);*/
+        ]);
         
-        //factory(App\Models\User::class, 10)->create();
+        factory(App\Models\User::class, 10)->create();
         
-        factory(App\Models\Lookup::class, 5)->create();
+        DB::table('lookup')->insert([
+            'display_text' => "status",
+            'description' => 'to define the record status',
+            'parent_id' =>0,
+            'created_at' => \Carbon\Carbon::now(),
+            'updated_at' => \Carbon\Carbon::now(),
+            
+        ]);
         
+        DB::table('lookup')->insert([
+            'display_text' => "Accepted",
+            'description' => 'accepted record',
+            'parent_id' =>1,
+            'created_at' => \Carbon\Carbon::now(),
+            'updated_at' => \Carbon\Carbon::now(),
+            
+        ]);
+        
+        DB::table('lookup')->insert([
+            'display_text' => "Rejected",
+            'description' => 'rejected record',
+            'parent_id' =>1,
+            'created_at' => \Carbon\Carbon::now(),
+            'updated_at' => \Carbon\Carbon::now(),
+            
+        ]);
+        
+        DB::table('lookup')->insert([
+            'display_text' => "in Review",
+            'description' => 'in review',
+            'parent_id' =>1,
+            'created_at' => \Carbon\Carbon::now(),
+            'updated_at' => \Carbon\Carbon::now(),
+            
+        ]);
         
 
     }

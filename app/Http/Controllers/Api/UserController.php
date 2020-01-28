@@ -16,7 +16,7 @@ use App\Models\UserAddress;
 
 
 
-class CoreApiController extends Controller
+class UserController extends Controller
 {
     use AuthenticatesUsers;
     
@@ -302,11 +302,11 @@ class CoreApiController extends Controller
      */
     public function deleteAddress($id){
         if (!$id) {
-            return $this->response(null, false,__('api.not_found',['var'=>'address']));
+            return $this->response(null, false,__('api.not_found'));
         }
         $address = UserAddress::where(['user_id'=>$this->user->id,'id'=>$id])->first();
         if (!$address) {
-            return $this->response(null, false,__('api.not_found',['var'=>'address']));
+            return $this->response(null, false,__('api.not_found'));
         }
         
         $address->delete();
@@ -317,8 +317,8 @@ class CoreApiController extends Controller
     
     public function listAddresses(){
       return $this->response($this->user->getAddresses, true,__('api.success'));
-
-    }
+     
+      }
     
     
 }

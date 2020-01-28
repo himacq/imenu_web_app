@@ -34,14 +34,3 @@ $factory->define(User::class, function (Faker $faker) {
 	        ];
 });
 
-/**
- * Fake Lookup
- */
-$factory->define(Lookup::class, function (Faker $faker) use ($factory) {
-     return [
-        'display_text' => $faker->century,
-        'description' => $faker->text,
-        'parent_id' => random_int(\DB::table('lookup')->min('id'), \DB::table('lookup')->max('id')),
-        'notes' => $faker->text
-             ];
-});

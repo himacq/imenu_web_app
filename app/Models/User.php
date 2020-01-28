@@ -49,6 +49,10 @@ class User extends Authenticatable
     public function getAddresses(){
         return $this->hasMany('App\Models\UserAddress','user_id','id');
     }
+    
+    public function getFavourites(){
+        return $this->hasMany('App\Models\Favourite','user_id','id');
+    }
 
     public function generateToken()
     {

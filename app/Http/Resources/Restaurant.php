@@ -15,18 +15,17 @@ class Restaurant extends JsonResource
      */
     public function toArray($request)
     {
-        
+        /*$ranks = ($this->reviews->sum('review_rank')/$this->reviews->count());
+        dd($ranks);*/
         return [
             'id' => $this->id,
             'name' => $this->translate('name'),
-            'logo' => $this->logo,
-            'banner' => $this->banner,
+            'logo' => url('/uploads/restaurants/logos/'.($this->logo?$this->logo:'default.png')),
+            'banner' => url('/uploads/restaurants/banners/'.($this->banner?$this->banner:'default.jpg')),
             'status' => $this->status,
-            'status_text' => $this->status_text->translate('display_text'),
+            'status_text' => ($this->status_text?$this->status_text->translate('display_text'):null),
             'manager_id' => $this->manager_id,
-            'manager' => $this->manager->name,
-            'branch_of' =>new Restaurant($this->main_branch),
-            'branch_of_name' => ($this->main_branch?$this->main_branch->translate('name'):null),
+            'manager' => $this->manager,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
             'working_details' => $this->translate('working_details'),
@@ -37,8 +36,12 @@ class Restaurant extends JsonResource
             'mobile1' => $this->mobile1,
             'mobile2' => $this->mobile2,
             'email' => $this->email,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'branch_of_name' => ($this->main_branch?$this->main_branch->translate('name'):null),
+            'ranks_sum'=>$this->reviews->sum('review_rank'),
+            'reviews_count'=>$this->reviews->count(),
+            'branch_of' =>new Restaurant($this->main_branch),
+            'reviews'=>$this->reviews->where('isActive',1),
+            'categories'=>$this->categories->where('isActive',1)
         ];
          
          

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 
 class Restaurant extends BaseModel
 {
@@ -26,6 +25,31 @@ class Restaurant extends BaseModel
     public function status_text(){
         return $this->belongsTo('App\Models\Lookup','status','id');
     }
+    
+    public function reviews(){
+       return $this->hasMany('App\Models\RestaurantReview','restaurant_id','id');
+    }
+    
+    public function categories(){
+        return $this->hasMany('App\Models\Category','restaurant_id','id');
+    }
+    
+   /* public function ranks(){
+        
+        $total = DB::table('restaurant_reviews')
+                ->where(['restaurant_id'=>$this->id])
+                ->sum('review_rank');
+        $count = DB::table('restaurant_reviews')
+                ->where(['restaurant_id'=>$this->id])->count();
+        
+        $x = $total/$count;
+        
+       return $x;
+    }
+    * */
+    
+    
+   
     
     
     

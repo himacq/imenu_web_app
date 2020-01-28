@@ -13,7 +13,7 @@ class Carts extends Migration
      */
     public function up()
     {
-        schema::create('favorits',function(Blueprint $table){
+        schema::create('favourites',function(Blueprint $table){
             $table->increments('id');
             $table->integer('user_id')->unsigned();;
             $table->integer('product_id')->unsigned();;
@@ -61,7 +61,7 @@ class Carts extends Migration
      */
     public function down()
     {
-        schema::Drop('favorits');
+        schema::Drop('favourites');
         schema::Drop('carts');
         schema::Drop('cart_details');
     }
