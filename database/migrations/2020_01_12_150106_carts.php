@@ -42,7 +42,6 @@ class Carts extends Migration
             $table->integer('cart_id')->unsigned();;
             $table->integer('product_id')->unsigned();;
             $table->integer('qty');
-            $table->json('options');
             $table->double('price');
             $table->timestamps();
             
@@ -50,6 +49,21 @@ class Carts extends Migration
                      ->onUpdate('cascade')->onDelete('cascade');
              
              $table->foreign('product_id')->references('id')->on('products')
+                     ->onUpdate('cascade')->onDelete('cascade');
+        });
+        
+        schema::create('cart_detail_options',function(Blueprint $table){
+            $table->increments('id');
+            $table->integer('cart_details_id')->unsigned();
+            $table->integer('product_option_id')->unsigned();
+            $table->double('price');
+            $table->integer('qty');
+            $table->timestamps();
+            
+            $table->foreign('cart_details_id')->references('id')->on('cart_details')
+                     ->onUpdate('cascade')->onDelete('cascade');
+            
+            $table->foreign('product_option_id')->references('id')->on('product_options')
                      ->onUpdate('cascade')->onDelete('cascade');
         });
     }
@@ -64,5 +78,6 @@ class Carts extends Migration
         schema::Drop('favourites');
         schema::Drop('carts');
         schema::Drop('cart_details');
+        schema::Drop('cart_detail_options');
     }
 }

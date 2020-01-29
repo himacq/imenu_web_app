@@ -44,7 +44,7 @@ class Products extends Migration
             $table->boolean('isActive');
             $table->integer('product_id')->unsigned();
             $table->integer('minutes_required');
-            $table->double('extra_price');
+            $table->double('price');
             $table->timestamps();
             
              $table->foreign('product_id')->references('id')->on('products')

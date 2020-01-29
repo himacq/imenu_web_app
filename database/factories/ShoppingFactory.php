@@ -51,7 +51,7 @@
     $factory->define(Product::class,function (Faker $faker){
         return [
             'name' => $faker->name,
-            'isActive'=>$faker->boolean,
+            'isActive'=>1,
             'image'=>$faker->colorName.".jpg",
             'price'=>$faker->numberBetween(10, 50),
             'minutes_required'=>$faker->numberBetween(10, 50),
@@ -67,8 +67,8 @@
     $factory->define(App\Models\ProductOptions::class,function (Faker $faker){
         return [
             'name' => $faker->name,
-            'isActive'=>$faker->boolean,
-            'extra_price'=>$faker->numberBetween(1, 10),
+            'isActive'=>1,
+            'price'=>$faker->numberBetween(1, 10),
             'minutes_required'=>$faker->numberBetween(10, 50),
             'product_id'=>random_int(\DB::table('products')->min('id'), \DB::table('products')->max('id'))
         ];
@@ -97,6 +97,31 @@
         return [
             'user_id' => random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
             'product_id'=>random_int(\DB::table('products')->min('id'), \DB::table('products')->max('id'))
+        ];
+        
+    });
+    
+    /**
+     * Fake Cart
+     */
+    
+    $factory->define(App\Models\Cart::class,function (Faker $faker){
+        return [
+            'user_id' => random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
+        ];
+        
+    });
+    
+    /**
+     * Fake Cart Details
+     */
+    
+    $factory->define(App\Models\CartDetail::class,function (Faker $faker){
+        return [
+            'cart_id' => random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
+            'product_id'=>random_int(\DB::table('products')->min('id'), \DB::table('products')->max('id')),
+            'qty'=>$faker->numberBetween(1, 10),
+            'price'=>$faker->numberBetween(1, 10)
         ];
         
     });

@@ -53,6 +53,12 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::delete('/favourite/{id}', 'Api\FavouriteController@deleteFavourite');
     Route::get('/favourites', 'Api\FavouriteController@listFavourites');
     
+    Route::post('/cart', 'Api\CartController@addToCart');
+    Route::post('/cartOption', 'Api\CartController@addOptionToCartDetails');
+    Route::get('/cart', 'Api\CartController@getCart');
+    Route::delete('/cart/{id}', 'Api\CartController@removeItemCart');
+    Route::get('/cart/empty', 'Api\CartController@emptyCart');
+    
 
 });
 /*

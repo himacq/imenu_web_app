@@ -54,6 +54,9 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\Favourite','user_id','id');
     }
 
+    public function getCart(){
+        return $this->hasOne('App\Models\Cart','user_id','id');
+    }
     public function generateToken()
     {
         $this->api_token = str_random(32);

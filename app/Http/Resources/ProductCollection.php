@@ -17,6 +17,7 @@ class ProductCollection extends ResourceCollection
         return [
             'data'=> $this->collection->transform(function ($data) {
                 return [
+                        'id'=>$data->id,
                         'name'=>$data->translate('name'),
                         'image'=> url('/uploads/products/'.($data->image?$data->image:'default.jpg')),
                         'isActive'=>$data->isActive,

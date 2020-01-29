@@ -3,32 +3,14 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-use App\Models\User;
 
 class FavouriteApiTest extends TestCase
 {
      use RefreshDatabase;
-    /**
-     * @test
-     */
-    
-    protected $user = null;
-    
-    
-    private function _user_authenticated()
-    {
 
-        $this->user = User::create(['name'=>'hima','username'=>'admin','email'=>'dd@gg.com',
-            'password'=>bcrypt('a123456'),'language_id'=>'en']);
-  
-        $this->user->generateToken();
-        
-        $this->actingAs($this->user,'api');
-
-    }
+    
     /***********************************************************************************/
     
      /**
@@ -37,7 +19,7 @@ class FavouriteApiTest extends TestCase
      public function favourite_add(){
          $this->withoutExceptionHandling();
          
-         $this->_user_authenticated();
+         $this->user_authenticated();
          
          $restaurant = factory('App\Models\Restaurant',10)->create();
          $category = factory('App\Models\Category',10)->create();
@@ -59,7 +41,7 @@ class FavouriteApiTest extends TestCase
      public function favourite_delete(){
          $this->withoutExceptionHandling();
          
-         $this->_user_authenticated();
+         $this->user_authenticated();
          
          $restaurant = factory('App\Models\Restaurant',5)->create();
          $category = factory('App\Models\Category',5)->create();
@@ -79,7 +61,7 @@ class FavouriteApiTest extends TestCase
      public function favourite_list(){
          $this->withoutExceptionHandling();
          
-         $this->_user_authenticated();
+         $this->user_authenticated();
          
          $restaurant = factory('App\Models\Restaurant',5)->create();
          $category = factory('App\Models\Category',5)->create();

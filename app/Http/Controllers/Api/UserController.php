@@ -9,10 +9,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+
+use App\Http\Resources\User as UserResource;
+
 use App;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\UserAddress;
+use App\Models\Cart;
 
 
 
@@ -105,7 +109,10 @@ class UserController extends Controller
             $this->user->update(['language_id' => $request->language_id]);
             }
             
-            return $this->response($this->user->toArray(), true,__('api.success'));
+            Cart::firstOrCreate(['user_id' => $this->user->id]);
+            
+            $restaurant = new UserResource($this->user);
+            return $restaurant->additional(['status'=>true,'message'=>__('api.success')]);
         }
 
         // If the login attempt was unsuccessful we will increment the number of attempts

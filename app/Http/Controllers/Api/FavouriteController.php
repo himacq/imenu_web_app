@@ -66,9 +66,7 @@ class FavouriteController extends Controller
     }
     
     public function listFavourites(){
-          $favourites = FavouriteResource::Collection(
-                $this->user->getFavourites
-                );
+          $favourites = FavouriteResource::Collection($this->user->getFavourites);
         
         return $favourites->additional(['status'=>true,'message'=>__('api.success')]);
     }
