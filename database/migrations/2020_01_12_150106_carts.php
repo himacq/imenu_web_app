@@ -15,7 +15,7 @@ class Carts extends Migration
     {
         schema::create('favourites',function(Blueprint $table){
             $table->increments('id');
-            $table->integer('user_id')->unsigned();;
+            $table->integer('user_id')->unsigned();
             $table->integer('product_id')->unsigned();;
             
             $table->timestamps();
@@ -29,6 +29,7 @@ class Carts extends Migration
         
         schema::create('carts',function(Blueprint $table){
             $table->increments('id');
+            $table->integer('grand_total')->double()->default(0);
             $table->integer('user_id')->unsigned();;                       
             $table->timestamps();
             

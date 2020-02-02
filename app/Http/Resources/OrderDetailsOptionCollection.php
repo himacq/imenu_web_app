@@ -3,10 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use App\Http\Resources\ProductFavourite as ProductFavouriteResource;
-use App\Http\Resources\CartDetailsOptionCollection;
 
-class CartDetailsCollection extends ResourceCollection
+class OrderDetailsOptionCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -16,15 +14,13 @@ class CartDetailsCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-       
         return  $this->collection->transform(function ($data) {
-             $options = new CartDetailsOptionCollection($data->options);
                 return [
                         'id'=>$data->id,
                         'price'=>$data->price,
                         'qty'=>$data->qty,
-                        'product'=> new ProductFavouriteResource($data->product),
-                        'options'=>$options
+                        'product_option_id'=>$data->product_option_id,
+                        'product_option_name'=>$data->option->translate('name'),
                     ] ;
                         
             });

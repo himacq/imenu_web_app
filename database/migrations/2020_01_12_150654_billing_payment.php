@@ -13,15 +13,7 @@ class BillingPayment extends Migration
      */
     public function up()
     {
-        schema::create('payment_methods',function(Blueprint $table){
-            $table->increments('id');
-            $table->string('name');
-            $table->text('api_url');
-            $table->boolean('isActive');
-            
-            $table->timestamps();
-            
-        });
+        
         
         schema::create('billing',function(Blueprint $table){
             $table->increments('id');

@@ -7,5 +7,6 @@
  */
 return [
     'per_page'=>10,
+    'new_order_status'=>6
     
 ];

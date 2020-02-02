@@ -21,8 +21,8 @@ class FavouriteApiTest extends TestCase
          
          $this->user_authenticated();
          
-         $restaurant = factory('App\Models\Restaurant',10)->create();
-         $category = factory('App\Models\Category',10)->create();
+          factory('App\Models\Restaurant',10)->create();
+          factory('App\Models\Category',10)->create();
          $product = factory('App\Models\Product')->create();
          
          $response = $this->post('api/favourite',

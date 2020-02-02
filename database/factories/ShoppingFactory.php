@@ -118,8 +118,80 @@
     
     $factory->define(App\Models\CartDetail::class,function (Faker $faker){
         return [
-            'cart_id' => random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
+            'cart_id' => random_int(\DB::table('carts')->min('id'), \DB::table('users')->max('id')),
             'product_id'=>random_int(\DB::table('products')->min('id'), \DB::table('products')->max('id')),
+            'qty'=>$faker->numberBetween(1, 10),
+            'price'=>$faker->numberBetween(1, 10)
+        ];
+        
+    });
+    
+    /**
+     * Fake Payment Methods
+     */
+    
+    $factory->define(App\Models\PaymentMethod::class,function (Faker $faker){
+        return [
+            'name' => $faker->company,
+            'isActive'=>1,
+            'api_url'=>$faker->url,
+        ];
+        
+    });
+    
+    /**
+     * Fake User address
+     */
+    
+    $factory->define(App\Models\UserAddress::class,function (Faker $faker){
+        return [
+            'user_id' => random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
+            'street'=>$faker->streetName,
+            'city'=>$faker->city,
+            'house_no'=>$faker->numberBetween(1, 10),
+            'isDefault'=>$faker->boolean
+        ];
+        
+    });
+    
+    /**
+     * Fake Orders
+     */
+    
+    $factory->define(App\Models\Order::class,function (Faker $faker){
+        return [
+            'user_id' => random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
+            'order_status'=>6,
+            'address_id'=>random_int(\DB::table('user_addresses')->min('id'), \DB::table('user_addresses')->max('id')),
+            'payment_id'=>random_int(\DB::table('payment_methods')->min('id'), \DB::table('payment_methods')->max('id'))
+        ];
+        
+    });
+    
+    
+    
+    /**
+     * Fake Order Details
+     */
+    
+    $factory->define(App\Models\OrderDetail::class,function (Faker $faker){
+        return [
+            'order_id' => random_int(\DB::table('orders')->min('id'), \DB::table('orders')->max('id')),
+            'product_id'=>random_int(\DB::table('products')->min('id'), \DB::table('products')->max('id')),
+            'qty'=>$faker->numberBetween(1, 10),
+            'price'=>$faker->numberBetween(1, 10)
+        ];
+        
+    });
+    
+    /**
+     * Fake Order product options
+     */
+    
+    $factory->define(App\Models\OrderDetailOption::class,function (Faker $faker){
+        return [
+            'order_details_id' => random_int(\DB::table('order_details')->min('id'), \DB::table('order_details')->max('id')),
+            'product_option_id'=>random_int(\DB::table('product_options')->min('id'), \DB::table('product_options')->max('id')),
             'qty'=>$faker->numberBetween(1, 10),
             'price'=>$faker->numberBetween(1, 10)
         ];

@@ -25,5 +25,6 @@ class ShoppingTablesSeeder extends Seeder
         factory(App\Models\Product::class, 10)->create();
         factory(App\Models\ProductIngredients::class, 10)->create();
         factory(App\Models\ProductOptions::class, 10)->create();
+        factory(App\Models\PaymentMethod::class, 3)->create();
     }
 }

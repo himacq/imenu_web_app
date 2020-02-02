@@ -30,6 +30,7 @@
     
     Route::get('/products/{category_id?}/{language_id?}','Api\ProductController@listProducts');
     Route::get('/product/{id}/{language_id?}','Api\ProductController@Product');
+    Route::get('/paymentMethods','Api\PaymentController@paymentMethods');
     
 Route::group(['middleware' => 'auth:api'], function () {
     
@@ -58,6 +59,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/cart', 'Api\CartController@getCart');
     Route::delete('/cart/{id}', 'Api\CartController@removeItemCart');
     Route::get('/cart/empty', 'Api\CartController@emptyCart');
+    
+    Route::post('/order', 'Api\OrderController@createOrder');
+    Route::get('/order/{id}', 'Api\OrderController@order');
+    Route::get('/orders', 'Api\OrderController@listOrders');
     
 
 });

@@ -15,9 +15,13 @@ class Cart extends JsonResource
      */
     public function toArray($request)
     {
+        $products = new CartDetailsCollection($this->details);
+        if(count($products)==0)
+            $products = null;
         return [
             'id' =>$this->id,
-            'products'=> new CartDetailsCollection($this->details)
+            'grand_total' =>$this->grand_total,
+            'products'=> $products
             ];
     }
 }

@@ -30,6 +30,7 @@ class CartController extends Controller
      * get user's cart
      */
     public function getCart(){
+        Cart::firstOrCreate(['user_id' => $this->user->id]);
         $cart = new CartResource($this->user->getCart);
 
         return $cart->additional(['status'=>true,'message'=>__('api.success')]);
@@ -62,6 +63,10 @@ class CartController extends Controller
             'price' => $product->price
         ]);
         
+        if($cartDetail){
+            $grand_total = $this->user->getCart->grand_total;
+            $this->user->getCart->update(['grand_total'=>$grand_total+($request->qty*$product->price)]);
+        }
         
         return $this->response($cartDetail->toArray(), true,__('api.success'));
     }
@@ -94,6 +99,12 @@ class CartController extends Controller
             'price' => $product_option->price
         ]);
         
+        if($cartDetailOption){
+            $grand_total = $this->user->getCart->grand_total;
+            $this->user->getCart->update([
+                'grand_total'=>$grand_total+($request->qty*$product_option->price)
+                    ]);
+        }
         
         return $this->response($cartDetailOption->toArray(), true,__('api.success'));
     }
@@ -111,8 +122,12 @@ class CartController extends Controller
             return $this->response(null, false,__('api.not_found'));
         }
         
-        $cartItem->delete();
-      
+        if($cartItem->delete()){
+            $grand_total = $this->user->getCart->grand_total;
+            $this->user->getCart->update([
+                'grand_total'=>$grand_total-($cartItem->qty*$cartItem->price)
+                    ]);
+        }
         return $this->response(null, true,__('api.success'));
         
     }

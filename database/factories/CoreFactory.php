@@ -34,3 +34,15 @@ $factory->define(User::class, function (Faker $faker) {
 	        ];
 });
 
+
+$factory->define(Lookup::class, function (Faker $faker) {
+     return [
+
+        'display_text' => $faker->name,
+        'description' => $faker->text,
+        'parent_id' => 'factory:App\Models\Lookup',
+        'notes' => $faker->text
+         
+             ];
+});
+

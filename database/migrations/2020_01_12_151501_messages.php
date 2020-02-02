@@ -47,7 +47,7 @@ class Messages extends Migration
 
         });
         
-        schema::create('message_attachements',function(Blueprint $table){
+        /*schema::create('message_attachements',function(Blueprint $table){
             $table->increments('id');
             $table->integer('message_id')->unsigned();;
             $table->string('file');
@@ -57,7 +57,7 @@ class Messages extends Migration
              $table->foreign('message_id')->references('id')->on('messages')
                      ->onUpdate('cascade')->onDelete('cascade');
             
-        });
+        });*/
     }
 
     /**
@@ -69,6 +69,6 @@ class Messages extends Migration
     {
         schema::Drop('messages');
         schema::Drop('message_replies');
-        schema::Drop('message_attachements');
+        //schema::Drop('message_attachements');
     }
 }
