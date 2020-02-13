@@ -15,7 +15,7 @@ class Product extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'=>$this->id,
+            'product_id'=>$this->id,
             'name'=>$this->translate('name'),
             'image'=> url('/uploads/products/'.($this->image?$this->image:'default.jpg')),
             'isActive'=>$this->isActive,
@@ -24,7 +24,7 @@ class Product extends JsonResource
             'category_id'=>$this->category_id,
             'category_name'=>$this->category->translate('name'),
             'ingredients'=>$this->ingredients->where('isActive',1),
-            'options'=>$this->options->where('isActive',1),
+            'option_groups'=>new ProductOptionGroupCollection($this->option_groups->where('isActive',1)),
         ];
     }
 }

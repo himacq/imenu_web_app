@@ -19,7 +19,8 @@ class Category extends JsonResource
             'name'=>$this->translate('name'),
             'image'=> url('/uploads/categories/'.($this->image?$this->image:'default.jpg')),
             'isActive'=>$this->isActive,
-            'restaurant_id'=>$this->restaurant_id
+            'restaurant_id'=>$this->restaurant_id,
+            'restaurant_name'=>$this->restaurant->translate('name')
         ];
     }
 }

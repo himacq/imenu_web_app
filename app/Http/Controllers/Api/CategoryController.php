@@ -2,38 +2,25 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
-
-
-use App;
 use \App\Models\Category;
 
 use App\Http\Resources\Category as CategoryResource;
 use App\Http\Resources\CategoryCollection ;
+use App\Http\Controllers\Api\ApiController;
 
-
-class CategoryController extends Controller
+class CategoryController extends ApiController
 {
-    use AuthenticatesUsers;
-    
-    protected $user = null;
     public function __construct()
     {
-      $this->user =  Auth::guard('api')->user();
-      if($this->user)
-        App::setLocale($this->user->language_id);
+        parent::__construct();
     }
     
     /**
      * get categories list
      */
     
-    public function listCategories($restaurant_id=null,$language_id = 'en'){
-        if($language_id)
-            App::setLocale($language_id);
-        
+    public function listCategories($restaurant_id=null){
+                
         if($restaurant_id)
          $categories = new CategoryCollection(
                  Category::where(['restaurant_id'=>$restaurant_id,'isActive'=>1])
@@ -51,11 +38,7 @@ class CategoryController extends Controller
      * get category details by id
      */
     
-    public function Category($id,$language_id = 'en'){
-        
-        if($language_id)
-            App::setLocale($language_id);
-      
+    public function Category($id){
             $category = new CategoryResource(Category::findOrFail($id));
         return $category->additional(['status'=>true,'message'=>__('api.success')]);
     }

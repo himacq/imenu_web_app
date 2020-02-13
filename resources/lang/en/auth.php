@@ -18,6 +18,10 @@ return [
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
     'password'=>'Password Error',
     'login' =>'User Login',
-    'unauthenticated'=>'This user is not authenticated correctly'
+    'unauthenticated'=>'This user is not authenticated correctly',
+    'enter_login_data'=>'Enter Username and Password',
+    'login_button'=>'Login',
+    'remember_me'=>'Remember me',
+    'password'=>'Password',
 
 ];

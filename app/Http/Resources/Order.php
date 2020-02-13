@@ -19,12 +19,10 @@ class Order extends JsonResource
             'grand_total' =>$this->grand_total,
             'payment_method_id'=>$this->payment_id,
             'payment_method_name'=>$this->payment_method->translate('name'),
-            'order_status'=>$this->order_status,
-            'order_status_text'=>$this->status_text->translate('display_text'),
             'address_id'=>$this->address_id,
             'address'=>$this->address,
            
-            'products'=> new OrderDetailsCollection($this->details)
+            'items'=> new OrderRestaurantsCollection($this->orderRestaurants)
             ];
     }
 }

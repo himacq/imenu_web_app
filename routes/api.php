@@ -21,15 +21,17 @@
      * shoppingApi public Services
      */
     
-    Route::get('/restaurants/{language_id?}','Api\RestaurantController@listRestaurants');
-    Route::get('/restaurant/{id}/{language_id?}','Api\RestaurantController@Restaurant');
+    Route::post('/restaurants','Api\RestaurantController@listRestaurants');
+    Route::post('/withinMaxDistance','Api\RestaurantController@withinMaxDistance');
+    Route::get('/restaurant/{id}','Api\RestaurantController@Restaurant');
+    Route::get('/restaurant_categories','Api\RestaurantController@restaurant_categories');
 
     
-    Route::get('/categories/{restaurant_id?}/{language_id?}','Api\CategoryController@listCategories');
-    Route::get('/category/{id}/{language_id?}','Api\CategoryController@Category');
+    Route::get('/categories/{restaurant_id?}','Api\CategoryController@listCategories');
+    Route::get('/category/{id}','Api\CategoryController@Category');
     
-    Route::get('/products/{category_id?}/{language_id?}','Api\ProductController@listProducts');
-    Route::get('/product/{id}/{language_id?}','Api\ProductController@Product');
+    Route::get('/products/{category_id?}','Api\ProductController@listProducts');
+    Route::get('/product/{id}','Api\ProductController@Product');
     Route::get('/paymentMethods','Api\PaymentController@paymentMethods');
     
 Route::group(['middleware' => 'auth:api'], function () {
@@ -55,11 +57,13 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/favourites', 'Api\FavouriteController@listFavourites');
     
     Route::post('/cart', 'Api\CartController@addToCart');
+    Route::post('/cart_update', 'Api\CartController@updateItemCart');
     Route::post('/cartOption', 'Api\CartController@addOptionToCartDetails');
     Route::get('/cart', 'Api\CartController@getCart');
     Route::delete('/cart/{id}', 'Api\CartController@removeItemCart');
     Route::get('/cart/empty', 'Api\CartController@emptyCart');
     
+    Route::post('/delivered_order', 'Api\OrderController@delivered_order');
     Route::post('/order', 'Api\OrderController@createOrder');
     Route::get('/order/{id}', 'Api\OrderController@order');
     Route::get('/orders', 'Api\OrderController@listOrders');

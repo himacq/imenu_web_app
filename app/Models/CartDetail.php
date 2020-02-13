@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CartDetail extends Model
 {
-    protected $fillable = ['cart_id','product_id','qty','price'];
+    protected $fillable = ['cart_restaurant_id','product_id','qty','price'];
     
     public function product(){
         return $this->belongsTo('App\Models\Product','product_id','id');
@@ -15,4 +15,6 @@ class CartDetail extends Model
     public function options(){
         return $this->hasMany('App\Models\CartDetailOption','cart_details_id','id');
     }
+    
+    
 }

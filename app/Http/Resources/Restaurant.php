@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App;
 
+use App\Http\Resources\Manager as ManagerResource;
 class Restaurant extends JsonResource
 {
    /**
@@ -24,11 +25,12 @@ class Restaurant extends JsonResource
             'banner' => url('/uploads/restaurants/banners/'.($this->banner?$this->banner:'default.jpg')),
             'status' => $this->status,
             'status_text' => ($this->status_text?$this->status_text->translate('display_text'):null),
+            'category' =>$this->category,
+            'category_text' => ($this->category_text?$this->category_text->translate('display_text'):null),
             'manager_id' => $this->manager_id,
-            'manager' => $this->manager,
+            'manager' => new ManagerResource($this->manager),
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
-            'working_details' => $this->translate('working_details'),
             'extra_info' => $this->translate('extra_info'),
             'phone1' => $this->phone1,
             'phone2' => $this->phone2,
@@ -41,7 +43,8 @@ class Restaurant extends JsonResource
             'reviews_count'=>$this->reviews->count(),
             'branch_of' =>new Restaurant($this->main_branch),
             'reviews'=>$this->reviews->where('isActive',1),
-            'categories'=>$this->categories->where('isActive',1)
+            'categories'=> new CategoryCollection($this->categories->where('isActive',1)),
+            'working_details'=> new WorkingDetailsCollection($this->working_details)
         ];
          
          

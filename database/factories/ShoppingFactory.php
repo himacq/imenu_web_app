@@ -20,7 +20,6 @@
             'phone2' => $faker->phoneNumber,
             'phone1' => $faker->phoneNumber,
             'extra_info' => $faker->text,
-            'working_details' => $faker->text,
             'longitude' => $faker->longitude,
             'latitude' => $faker->latitude,
             'logo'=>$faker->colorName.".jpg",
@@ -28,6 +27,7 @@
             'verification_code' => str_random(4),
             'manager_id' => random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
             'status' => random_int(2, 4),
+            'category' => random_int(2, 4),
         ];
     });
 
@@ -61,15 +61,15 @@
     });
     
     /**
-     * Fake Product's ingredients
+     * Fake Product's options groups
      */
     
-    $factory->define(App\Models\ProductOptions::class,function (Faker $faker){
+    $factory->define(App\Models\ProductOptionGroup::class,function (Faker $faker){
         return [
             'name' => $faker->name,
             'isActive'=>1,
-            'price'=>$faker->numberBetween(1, 10),
-            'minutes_required'=>$faker->numberBetween(10, 50),
+            'minimum'=>$faker->numberBetween(1, 5),
+            'maximum'=>$faker->numberBetween(1, 5),
             'product_id'=>random_int(\DB::table('products')->min('id'), \DB::table('products')->max('id'))
         ];
         
@@ -79,7 +79,22 @@
      * Fake Product's options
      */
     
-    $factory->define(App\Models\ProductIngredients::class,function (Faker $faker){
+    $factory->define(App\Models\ProductOption::class,function (Faker $faker){
+        return [
+            'name' => $faker->name,
+            'isActive'=>1,
+            'price'=>$faker->numberBetween(1, 10),
+            'minutes_required'=>$faker->numberBetween(10, 50),
+            'group_id'=>random_int(\DB::table('product_option_groups')->min('id'), \DB::table('product_option_groups')->max('id'))
+        ];
+        
+    });
+    
+    /**
+     * Fake Product's ingredients
+     */
+    
+    $factory->define(App\Models\ProductIngredient::class,function (Faker $faker){
         return [
             'name' => $faker->name,
             'isActive'=>$faker->boolean,
@@ -116,10 +131,37 @@
      * Fake Cart Details
      */
     
-    $factory->define(App\Models\CartDetail::class,function (Faker $faker){
+    $factory->define(App\Models\CartRestaurant::class,function (Faker $faker){
         return [
             'cart_id' => random_int(\DB::table('carts')->min('id'), \DB::table('users')->max('id')),
+            'restaurant_id'=>random_int(\DB::table('restaurants')->min('id'), \DB::table('restaurants')->max('id')),
+            'sub_total'=>$faker->numberBetween(1, 10),
+        ];
+        
+    });
+    
+    /**
+     * Fake Cart Details
+     */
+    
+    $factory->define(App\Models\CartDetail::class,function (Faker $faker){
+        return [
+            'cart_restaurant_id' => random_int(\DB::table('cart_restaurants')->min('id'), \DB::table('cart_restaurants')->max('id')),
             'product_id'=>random_int(\DB::table('products')->min('id'), \DB::table('products')->max('id')),
+            'qty'=>$faker->numberBetween(1, 10),
+            'price'=>$faker->numberBetween(1, 10)
+        ];
+        
+    });
+    
+    /**
+     * Fake Cart Details
+     */
+    
+    $factory->define(App\Models\CartDetailOption::class,function (Faker $faker){
+        return [
+            'cart_details_id' => random_int(\DB::table('cart_details')->min('id'), \DB::table('cart_details')->max('id')),
+            'product_option_id'=>random_int(\DB::table('product_options')->min('id'), \DB::table('product_options')->max('id')),
             'qty'=>$faker->numberBetween(1, 10),
             'price'=>$faker->numberBetween(1, 10)
         ];
@@ -161,14 +203,37 @@
     $factory->define(App\Models\Order::class,function (Faker $faker){
         return [
             'user_id' => random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
-            'order_status'=>6,
+            'grand_total'=>random_int(10,100),
             'address_id'=>random_int(\DB::table('user_addresses')->min('id'), \DB::table('user_addresses')->max('id')),
             'payment_id'=>random_int(\DB::table('payment_methods')->min('id'), \DB::table('payment_methods')->max('id'))
         ];
         
     });
     
+    /**
+     * Fake order Details
+     */
     
+    $factory->define(App\Models\OrderRestaurant::class,function (Faker $faker){
+        return [
+            'order_id' => random_int(\DB::table('orders')->min('id'), \DB::table('orders')->max('id')),
+            'restaurant_id'=>random_int(\DB::table('restaurants')->min('id'), \DB::table('restaurants')->max('id')),
+            'sub_total'=>$faker->numberBetween(1, 10),
+        ];
+        
+    });
+    
+    /**
+     * Fake order Details
+     */
+    
+    $factory->define(App\Models\OrderRestaurantStatus::class,function (Faker $faker){
+        return [
+            'order_restaurant_id'=>random_int(\DB::table('order_restaurants')->min('id'), \DB::table('order_restaurants')->max('id')),
+            'status'=>6,
+        ];
+        
+    });
     
     /**
      * Fake Order Details
@@ -176,7 +241,7 @@
     
     $factory->define(App\Models\OrderDetail::class,function (Faker $faker){
         return [
-            'order_id' => random_int(\DB::table('orders')->min('id'), \DB::table('orders')->max('id')),
+            'order_restaurant_id' => random_int(\DB::table('order_restaurants')->min('id'), \DB::table('order_restaurants')->max('id')),
             'product_id'=>random_int(\DB::table('products')->min('id'), \DB::table('products')->max('id')),
             'qty'=>$faker->numberBetween(1, 10),
             'price'=>$faker->numberBetween(1, 10)

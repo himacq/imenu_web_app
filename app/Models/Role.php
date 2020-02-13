@@ -18,4 +18,8 @@ class Role extends EntrustRole
             Config::get('entrust.user_foreign_key'));
 
     }
+    
+    public function rolePermissions(){
+            return $this->hasMany('App\Models\PermissionRole','role_id');
+        }
 }

@@ -6,22 +6,40 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Auth;
+use App;
 
-class Controller extends BaseController
-{
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-    
-    
-    
-public function contacts() {
-        return DB::table('lookups')->where('lookup_parent', 70)->get();
+use App\Models\Translation;
+class Controller extends BaseController {
+
+    use AuthorizesRequests,
+        DispatchesJobs,
+        ValidatesRequests;
+
+    public $data = array();
+    public $user;
+
+    public function change_language() {
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            App::setLocale($this->user->language_id);
+            return $next($request);
+        });
     }
 
-
-    public function lookup_title($id) {
-
-        return DB::table('lookups')->where('lookup_id', $id)->first();
+    public function new_translation($record_id,$language_id,$model,$field,$record_text){
+        $translate_record =  Translation::updateOrCreate([
+                    'record_id'=>$record_id,
+                    'language_id'=>$language_id,
+                    'model'=>$model,
+                    'field'=>$field,
+                ]);
+        
+        $translate_record->update(['display_text'=>$record_text]);
+        
+        return $translate_record;
     }
+
 
     /**
      * 
@@ -29,7 +47,8 @@ public function contacts() {
      * @param type $status
      * @return type
      */
-    public function response($data,$status,$messages = null){
-        return response()->json(['status'=>$status,'message'=>$messages,'data' => $data], 200);
+    public function response($data, $status, $messages = null) {
+        return response()->json(['status' => $status, 'message' => $messages, 'data' => $data], 200);
     }
+
 }

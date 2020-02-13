@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\ApiController;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 use App\Http\Resources\User as UserResource;
@@ -20,19 +19,14 @@ use App\Models\Cart;
 
 
 
-class UserController extends Controller
+class UserController extends ApiController
 {
     use AuthenticatesUsers;
     
-    protected $user = null;
     public function __construct()
     {
-      $this->user =  Auth::guard('api')->user();
-      if($this->user)
-        App::setLocale($this->user->language_id);
-    }
-    
-       
+        parent::__construct();
+    }  
     //
     // users API
     //*********************/
@@ -43,10 +37,6 @@ class UserController extends Controller
      * @return type
      */
       public function register(Request $request){
-
-          if($request->language_id)
-              App::setLocale($request->language_id);
-          
         $rules = [
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
@@ -72,6 +62,8 @@ class UserController extends Controller
 
        $user->attachRole(Role::where('name', 'user')->first());
 
+       return $this->login($request);
+       
         return $this->response($user->toArray(), true,__('api.success'));
     }
     
@@ -83,10 +75,7 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-        
-        if($request->language_id)
-              App::setLocale($request->language_id);
-        
+ 
         $this->validateLogin($request);
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
@@ -105,14 +94,14 @@ class UserController extends Controller
                 return $this->response(null,false,__('auth.notActive'));
             }
         
-            if($request->language_id){
-            $this->user->update(['language_id' => $request->language_id]);
+            if($request->header('lang')){
+            $this->user->update(['language_id' => $request->header('lang')]);
             }
             
             Cart::firstOrCreate(['user_id' => $this->user->id]);
             
-            $restaurant = new UserResource($this->user);
-            return $restaurant->additional(['status'=>true,'message'=>__('api.success')]);
+            $user = new UserResource($this->user);
+            return $user->additional(['status'=>true,'message'=>__('api.success')]);
         }
 
         // If the login attempt was unsuccessful we will increment the number of attempts
@@ -143,7 +132,8 @@ class UserController extends Controller
      */
     public function userProfile(Request $request)
     {
-        return $this->response($this->user->toArray(), true,__('api.success'));
+        $user = new UserResource($this->user);
+            return $user->additional(['status'=>true,'message'=>__('api.success')]);
     }
     
     /**
@@ -167,7 +157,7 @@ class UserController extends Controller
        
         $this->user->update($request->all());
         
-        App::setLocale($request->language_id);
+        App::setLocale($request->header('lang'));
         
         return $this->response($this->user->toArray(), true,__('api.success'));
     }
@@ -250,7 +240,11 @@ class UserController extends Controller
             return $this->response(null, false,$validate->errors()->first());
 
         }
-       
+        $isDefault = $request->isDefault;
+       if($request->isDefault){
+            UserAddress::where(['user_id'=>$this->user->id])->update(['isDefault' => 0]);
+        }
+        else $isDefault = 0; 
         $userAddress = UserAddress::create([
             'user_id' => $this->user->id,
             'city' => $request->city,
@@ -258,7 +252,13 @@ class UserController extends Controller
             'house_no' => $request->house_no,
             'governorate' => $request->governorate,
             'zip_code' => $request->zip_code,
-            'isDefault' => $request->isDefault,
+            'isDefault' => $isDefault,
+            'address_type'=> $request->address_type,
+            'house_name'=> $request->house_name,
+            'floor_no'=> $request->floor_no,
+            'apartment_no'=> $request->apartment_no,
+            'latitude'=> $request->latitude,
+            'longitude'=> $request->longitude
         ]);
 
         return $this->response($userAddress->toArray(), true,__('api.success'));
@@ -289,16 +289,18 @@ class UserController extends Controller
             return $this->response(null, false,__('api.not_found',['var'=>'address']));
         }
         
-        if($request->isDefault){
+         $isDefault = $request->isDefault;
+       if($request->isDefault){
             UserAddress::where(['user_id'=>$this->user->id])->update(['isDefault' => 0]);
         }
+        else $isDefault = 0; 
         $address->update([
             'city' => $request->city,
             'street' => $request->street,
             'house_no' => $request->house_no,
             'governorate' => $request->governorate,
             'zip_code' => $request->zip_code,
-            'isDefault' => $request->isDefault,
+            'isDefault' => $isDefault,
         ]);
 
         return $this->response($address->toArray(), true,__('api.success'));

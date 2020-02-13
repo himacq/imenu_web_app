@@ -20,11 +20,12 @@ class CartDetailsCollection extends ResourceCollection
         return  $this->collection->transform(function ($data) {
              $options = new CartDetailsOptionCollection($data->options);
                 return [
-                        'id'=>$data->id,
-                        'price'=>$data->price,
-                        'qty'=>$data->qty,
-                        'product'=> new ProductFavouriteResource($data->product),
-                        'options'=>$options
+                            'item_id'=>$data->id,
+                            'price'=>$data->price,
+                            'qty'=>$data->qty,
+                            'product'=> new ProductFavouriteResource($data->product),
+                            'options'=>$options
+                        
                     ] ;
                         
             });

@@ -18,7 +18,7 @@ class OrderDetailsCollection extends ResourceCollection
     {
         return  $this->collection->transform(function ($data) {
                 return [
-                        'id'=>$data->id,
+                        'item_id'=>$data->id,
                         'price'=>$data->price,
                         'qty'=>$data->qty,
                         'product'=> new ProductFavouriteResource($data->product),

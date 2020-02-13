@@ -3,28 +3,22 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-
+use App\Http\Controllers\Api\ApiController;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
-use App;
-
 use App\Models\Cart;
 use App\Models\CartDetail;
 use App\Models\CartDetailOption;
 use App\Http\Resources\Cart as CartResource;
 
 use App\Models\Product;
-use \App\Models\ProductOptions;
+use App\Models\ProductOption;
+use App\Models\CartRestaurant;
 
-class CartController extends Controller
-{
-    protected $user = null;
+class CartController extends ApiController
+{  
     public function __construct()
     {
-      $this->user =  Auth::guard('api')->user();
-      if($this->user)
-        App::setLocale($this->user->language_id);
+        parent::__construct();
     }
     /**
      * get user's cart
@@ -41,6 +35,7 @@ class CartController extends Controller
      */
     
     public function addToCart(Request $request){
+         
         $rules = [
             'product_id' => 'required|integer',
             'qty' => 'required|integer',
@@ -51,63 +46,68 @@ class CartController extends Controller
             return $this->response(null, false,$validate->errors()->first());
 
         }
+
+        // add  item
         $product = Product::where(['isActive'=>1,'id'=>$request->product_id])->first();
+        
         
         if(!$product)
             return $this->response(null, false,__('api.not_found'));
 
+        // get or create cart restaurant record
+        $cart_restaurant = CartRestaurant::firstOrCreate([
+            'cart_id'=>$this->user->getCart->id,
+            'restaurant_id'=>$product->category->restaurant->id,
+            'sub_total'=>0
+                ]);
+        
+        // add the product to the cart
         $cartDetail = CartDetail::create([
             'product_id' => $request->product_id,
-            'cart_id'   => $this->user->getCart->id,
+            'cart_restaurant_id'   => $cart_restaurant->id,
             'qty'   => $request->qty,
             'price' => $product->price
         ]);
         
         if($cartDetail){
+            // if added successfully update grand total and sub total
             $grand_total = $this->user->getCart->grand_total;
             $this->user->getCart->update(['grand_total'=>$grand_total+($request->qty*$product->price)]);
+            $cart_restaurant->update(['sub_total'=>$cart_restaurant->sub_total+($request->qty*$product->price)]);
+            
+            // add options tot the requested item
+            if(is_array($request->options)){
+                foreach($request->options as $option){
+                $product_option = ProductOption::where(['isActive'=>1,'id'=>$option['option_id']])->first();
+                
+                if(!$product_option)
+                    return $this->response(null, false,__('api.not_found'));
+
+                $cartDetailOption = CartDetailOption::create([
+                    'cart_details_id' => $cartDetail->id,
+                    'product_option_id'   => $product_option->id,
+                    'qty'   => $option['qty'],
+                    'price' => $product_option->price
+                ]);
+
+                if($cartDetailOption){
+                    // if added successfully update grand total and sub total
+                    $grand_total = $this->user->getCart->grand_total;
+                    $this->user->getCart->update([
+                        'grand_total'=>$grand_total+($option['qty']*$product_option->price)
+                            ]);
+                    $cart_restaurant->update(['sub_total'=>$cart_restaurant->sub_total+($option['qty']*$product_option->price)]);
+                }
+            }
+            
+            }
+            
+            
         }
         
-        return $this->response($cartDetail->toArray(), true,__('api.success'));
+        return $this->getCart();
     }
     
-    /**
-     * add to Carts
-     */
-    
-    public function addOptionToCartDetails(Request $request){
-        $rules = [
-            'cart_details_id' => 'required|integer',
-            'product_option_id' => 'required|integer',
-            'qty' => 'required|integer',
-        ];
-        
-          $validate = Validator::make($request->all(), $rules);
-          if ($validate->fails()) {
-            return $this->response(null, false,$validate->errors()->first());
-
-        }
-        
-        $product_option = ProductOptions::where(['isActive'=>1,'id'=>$request->product_option_id])->first();
-        if(!$product_option)
-            return $this->response(null, false,__('api.not_found'));
-
-        $cartDetailOption = CartDetailOption::create([
-            'cart_details_id' => $request->cart_details_id,
-            'product_option_id'   => $request->product_option_id,
-            'qty'   => $request->qty,
-            'price' => $product_option->price
-        ]);
-        
-        if($cartDetailOption){
-            $grand_total = $this->user->getCart->grand_total;
-            $this->user->getCart->update([
-                'grand_total'=>$grand_total+($request->qty*$product_option->price)
-                    ]);
-        }
-        
-        return $this->response($cartDetailOption->toArray(), true,__('api.success'));
-    }
     
     /**
      * Remove Item From Cart
@@ -117,16 +117,53 @@ class CartController extends Controller
         if (!$id) {
             return $this->response(null, false,__('api.not_found'));
         }
-        $cartItem= CartDetail::where(['cart_id'=>$this->user->getCart->id,'id'=>$id])->first();
+        $cartItem= CartDetail::where(['id'=>$id])->first();
+        if (!$cartItem) {
+            return $this->response(null, false,__('api.not_found'));
+        }
+        // get cart restaurant record
+        $cart_restaurant = CartRestaurant::find($cartItem->cart_restaurant_id);
+        
+        $cartItemOptions = CartDetailOption::where(['cart_details_id'=>$cartItem->id])->get();
+        $total = 0;
+        foreach($cartItemOptions as $option){
+            $total+=($option->price)*($option->qty);
+        }
+        if($cartItem->delete()){
+            $grand_total = $this->user->getCart->grand_total;
+            $this->user->getCart->update([
+                'grand_total'=>$grand_total-($cartItem->qty*$cartItem->price)-$total
+                    ]);
+            
+            $cart_restaurant->update(['sub_total'=>$cart_restaurant->sub_total-($cartItem->qty*$cartItem->price)-$total]);
+       
+            
+            //check if there are no items associated with this restaurant => delete this record
+            $cartItems= CartDetail::where(['cart_restaurant_id'=>$cart_restaurant->id])->first();
+            if (!$cartItems) {
+                $cart_restaurant->delete();
+            }
+        }
+        
+        return $this->getCart();
+    }
+    
+    /**
+     * update Item From Cart
+     * @param type $id
+     */
+    public function updateItemCart(Request $request){
+        if (!$request->item_id) {
+            return $this->response(null, false,__('api.not_found'));
+        }
+        $cartItem= CartDetail::where(['id'=>$request->item_id])->first();
         if (!$cartItem) {
             return $this->response(null, false,__('api.not_found'));
         }
         
-        if($cartItem->delete()){
-            $grand_total = $this->user->getCart->grand_total;
-            $this->user->getCart->update([
-                'grand_total'=>$grand_total-($cartItem->qty*$cartItem->price)
-                    ]);
+        if($this->removeItemCart($request->item_id)){
+        $request->request->add(['product_id' => $cartItem->product_id]);
+            return $this->addToCart($request);
         }
         return $this->response(null, true,__('api.success'));
         

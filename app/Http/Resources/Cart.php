@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\CartDetailsCollection;
+use App\Http\Resources\CartRestaurantsCollection;
 
 class Cart extends JsonResource
 {
@@ -15,13 +15,46 @@ class Cart extends JsonResource
      */
     public function toArray($request)
     {
-        $products = new CartDetailsCollection($this->details);
-        if(count($products)==0)
-            $products = null;
+        $items = new CartRestaurantsCollection($this->cartRestaurants);
+        if(count($items)==0)
+            $items = null;
+
+        // count cart items
+        $cart_items = 0;
+        if($this->cartRestaurants){
+            $restaurants = $this->cartRestaurants;
+            foreach ($restaurants as $restaurant){
+                $products = $restaurant->products;
+                
+                $cart_items+=$products->sum('qty');
+            }
+            
+        }
+        
+        //calcaulate grand_total
+       /* $grand_total = 0;
+        if($this->cartRestaurants){
+            $restaurants = $this->cartRestaurants;
+            foreach ($restaurants as $restaurant){
+                $products = $restaurant->products;
+                foreach ($products as $product){
+                    
+                    $grand_total+=($product->qty*$product->price);
+                    $options = $product->options;
+                    foreach($options as $option){
+                        $grand_total+=($option->qty*$option->price);
+                    }
+                }
+            }
+        }
+        */
+        
+        
         return [
             'id' =>$this->id,
             'grand_total' =>$this->grand_total,
-            'products'=> $products
+            'cart_items'=>$cart_items,
+            'items'=> $items
             ];
     }
 }

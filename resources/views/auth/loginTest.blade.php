@@ -114,9 +114,9 @@ License: You must have a valid license purchased only from themeforest(the above
 </div>
         <!-- END LOGIN -->
         <!--[if lt IE 9]>
-<script src="{{url('')}}/assets/global/plugins/respond.min.js"></script>
-<script src="{{url('')}}/assets/global/plugins/excanvas.min.js"></script>
-<script src="{{url('')}}/assets/global/plugins/ie8.fix.min.js"></script>
+<script src="{{url('')}}/assets2/global/plugins/respond.min.js"></script>
+<script src="{{url('')}}/assets2/global/plugins/excanvas.min.js"></script> 
+<script src="{{url('')}}/assets2/global/plugins/ie8.fix.min.js"></script> 
 <![endif]-->
         <!-- BEGIN CORE PLUGINS -->
         <script src="{{url('')}}/assets2/global/plugins/jquery.min.js" type="text/javascript"></script>

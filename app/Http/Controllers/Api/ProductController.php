@@ -2,38 +2,26 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
 
-
+use App\Http\Controllers\Api\ApiController;
 use App;
 use App\Models\Product;
 
 use App\Http\Resources\Product as ProductResource;
 use App\Http\Resources\ProductCollection ;
 
-class ProductController extends Controller
-{
-    use AuthenticatesUsers;
-    
-    protected $user = null;
+class ProductController extends ApiController
+{  
     public function __construct()
     {
-      $this->user =  Auth::guard('api')->user();
-      if($this->user)
-        App::setLocale($this->user->language_id);  
+        parent::__construct();
     }
  
     /**
      * get products' list
      */
     
-    public function listProducts($category_id = null, $language_id = 'en'){
-        if($language_id)
-            App::setLocale($language_id);
+    public function listProducts($category_id = null){
         
         if($category_id)
          $products = new ProductCollection(
@@ -55,11 +43,8 @@ class ProductController extends Controller
      * get product details by id
      */
     
-    public function Product($id,$language_id = 'en'){
-        
-        if($language_id)
-            App::setLocale($language_id);
-      
+    public function Product($id){
+
             $product = new ProductResource(Product::findOrFail($id));
         return $product->additional(['status'=>true,'message'=>__('api.success')]);
     }

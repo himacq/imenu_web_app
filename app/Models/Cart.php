@@ -8,7 +8,7 @@ class Cart extends Model
 {
     protected $fillable = ['user_id','grand_total'];
     
-    public function details(){
-        return $this->hasMany('App\Models\CartDetail','cart_id','id');
+    public function cartRestaurants(){
+        return $this->hasMany('App\Models\CartRestaurant','cart_id','id');
     }
 }

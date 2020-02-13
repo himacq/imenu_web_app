@@ -3,25 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\ApiController;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
-use App;
-
 use App\Models\Favourite;
 use App\Http\Resources\Favourite as FavouriteResource;
 
 
-class FavouriteController extends Controller
-{
-   
-    
-    protected $user = null;
+class FavouriteController extends ApiController
+{  
     public function __construct()
     {
-      $this->user =  Auth::guard('api')->user();
-      if($this->user)
-        App::setLocale($this->user->language_id);
+        parent::__construct();
     }
     
     /**

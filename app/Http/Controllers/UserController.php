@@ -8,7 +8,7 @@ use App\Http\Requests\AddUserRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UpdateUserInfoRequest;
-use App\Permission;
+use App\Models\Permission;
 use App\Models\Rank;
 use App\Models\Role;
 use App\Models\User;
@@ -18,26 +18,29 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Route;
 use Auth;
+
 use Illuminate\Http\Request;
 use Validator;
 use Session;
-use Datatables;
+use DataTables;
 
-
+use App;
 class UserController extends Controller
 {
 
-    public $data;
-
+    
+    
     public function __construct()
     {
-       // $this->middleware('role:admin')->except(['profile', 'changePassword', 'updateInfo']);
+        $this->middleware(['role:admin'])->except(['profile', 'changePassword', 'updateInfo']);
 
-        $this->middleware('permission:user_display|user_update|user_delete', ['only' => ['index']]);
-        $this->middleware('permission:user_create', ['only' => ['create']]);
-        $this->middleware('permission:user_update', ['only' => ['edit']]);
-        $this->middleware('permission:user_delete', ['only' => ['destroy']]);
+//        $this->middleware('permission:user_display|user_update|user_delete', ['only' => ['index']]);
+//        $this->middleware('permission:user_create', ['only' => ['create']]);
+//        $this->middleware('permission:user_update', ['only' => ['edit']]);
+//        $this->middleware('permission:user_delete', ['only' => ['destroy']]);
 
+
+        $this->change_language();
         $this->data['menu'] = 'users';
         $this->data['selected'] = 'users';
         $this->data['location'] = trans('main.users');
@@ -45,10 +48,11 @@ class UserController extends Controller
 
     }
 
+
+ 
     public function index()
     {
         $this->data['sub_menu'] = 'Display-user';
-        $this->data['users'] = User::orderBy('name')->get();
         return view('user.index', $this->data);
     }
 
@@ -87,6 +91,10 @@ class UserController extends Controller
         } else return redirect('/');
     }
 
+    /**
+     * to view user create form
+     * @return type
+     */
     public function create()
     {
         $this->data['sub_menu'] = 'users-create';
@@ -96,22 +104,22 @@ class UserController extends Controller
 
     public function store(AddUserRequest $request)
     {
-        $password = bcrypt($request->password);
-        $name = $request->name;
-        $email = $request->email;
-        $username = $request->username;
-
-        $data = array(
-            'name' => $name,
-            'user_pass' => $password,
-            'email' => $email,
-            'username' => $username
-
-        );
-
-        $user = User::create($data);
-        $user->attachRole(8);
-        return redirect()->route('users.index')->with('status', 'Add user is done successfully');
+        
+        $user = User::create([
+            'name' => $request->name,
+            'password' => bcrypt($request->password),
+            'email' => $request->email,
+            'username' => $request->username,
+            'phone' => $request->phone,
+            'mobile' => $request->mobile,
+    
+        ]);
+        
+        foreach ($request->role as $key => $value) {
+            $user->attachRole($value);
+        }
+        
+        return redirect()->route('users.index')->with('status', trans('main.success'));
     }
 
     public function edit($id)
@@ -119,9 +127,7 @@ class UserController extends Controller
         $this->data['sub_menu'] = 'users-edit';
         $this->data['user'] = User::find($id);
         $this->data['roles'] = Role::all();
-        $this->data['permissions'] = Permission::all();
         $this->data['user_roles'] = $this->data['user']->roles->pluck('id', 'id')->toArray();
-        $this->data['user_permissions'] = $this->data['user']->permissions->pluck('id', 'id')->toArray();
         return view('user.edit', $this->data);
     }
 
@@ -133,38 +139,28 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, $id)
     {
+        
+        
         $user = User::find($id);
 
         $user->name = $request->name;
         $user->email = $request->email;
-        if ($request->password != '') $user->user_pass = bcrypt($request->password);
+        $user->phone = $request->phone;
+        $user->mobile = $request->mobile;
+        $user->isActive = $request->isActive;
+        $user->news_letter = $request->news_letter;
+        
+        if ($request->password != '') $user->password = bcrypt($request->password);
         $user->username = $request->username;
 
-        /*
-        $role = $user->roles()->get();
 
-        DB::table('role_user')->where('user_id', $id)->delete();
-        foreach ($request->role as $key => $value) {
-            $user->attachRole($value);
-        }
-
-        */
-
-        $user->permissions()->detach();
-       if(!empty($request->permission)) {
-           foreach ($request->permission as $value) {
-               $user->permissions()->attach($value);
+        $user->roles()->detach();
+       if(!empty($request->role)) {
+           foreach ($request->role as $value) {
+                $user->attachRole($value);
            }
        }
 
-
-        /*
-        foreach ($role as $key => $value) {
-            $user->attachRole($value->id);
-
-        }
-        */
-        //$user->attachRole(8);
         $user->update();
 
         return redirect()->route('users.index')->with('status', 'Update is done successfully');
@@ -185,21 +181,27 @@ class UserController extends Controller
             return response()->json(['status' => true]);
         } catch (QueryException $e) {
             if ($e->getCode() == "2292") {
-                return response()->json(['status', "You can't delete this user"]);
+                return response()->json(['status'=>false]);
             }
         }
 
     }
 
+    /**
+     * return dataTable
+     * @param Request $request
+     * @return type
+     */
 
     public function contentListData(Request $request)
     {
         if ($request->status) {
-            $user = User::where('isActive', '=', $request->status)->get();
+            if($request->status==-1)$request->status=0;
+            $user = User::where('id','!=',1)->where('isActive', '=', $request->status)->get();
         } else {
-            $user = User::select('*')->get();
+            $user = User::where('id','!=',1)->get();
         }
-        return Datatables::of($user)
+        return DataTables::of($user)
             ->setRowId(function ($model) {
                 return "row-" . $model->id;
             })
@@ -208,7 +210,7 @@ class UserController extends Controller
 
                 $activeON = "";
                 $activeOff = "";
-                $model->isActive != -1 ? $activeON = "active" : $activeOff = "active";
+                $model->isActive !=0 ? $activeON = "active" : $activeOff = "active";
                 return '<div class="btn-group btnToggle" data-toggle="buttons" style="position: relative;margin:5px;">
                               <input type="hidden" class="id_hidden" value="' . $model->id . '">
                               <label class="btn btn-default btn-on-1 btn-xs ' . "$activeON" . '">
@@ -218,7 +220,9 @@ class UserController extends Controller
                            </div>';
 
 
-            })->EditColumn('created_at', function ($model) {
+            })
+            
+            ->EditColumn('created_at', function ($model) {
                 $date = date('d-m-Y', strtotime($model->created_at));
                 return $date;
 
@@ -228,6 +232,7 @@ class UserController extends Controller
                     . "<a class='btn btn-danger btn-sm delete' ><input type = 'hidden' class='id_hidden' value = '" . $id . "' > <i class='fa fa-remove' ></i ></a > ";
 
             })
+            ->rawColumns(['active','control'])
             ->make(true);
 
     }

@@ -1,0 +1,6 @@
+[02-Feb-2020 09:46:14 UTC] PHP Warning:  require(/home1/menudeli/public_html/../vendor/autoload.php): failed to open stream: No such file or directory in /home1/menudeli/public_html/index.php on line 24
+[02-Feb-2020 09:46:14 UTC] PHP Warning:  require(/home1/menudeli/public_html/../vendor/autoload.php): failed to open stream: No such file or directory in /home1/menudeli/public_html/index.php on line 24
+[02-Feb-2020 09:46:14 UTC] PHP Fatal error:  require(): Failed opening required '/home1/menudeli/public_html/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php72/root/usr/share/pear') in /home1/menudeli/public_html/index.php on line 24
+[02-Feb-2020 09:46:54 UTC] PHP Warning:  require(/home1/menudeli/public_html/../vendor/autoload.php): failed to open stream: No such file or directory in /home1/menudeli/public_html/index.php on line 24
+[02-Feb-2020 09:46:54 UTC] PHP Warning:  require(/home1/menudeli/public_html/../vendor/autoload.php): failed to open stream: No such file or directory in /home1/menudeli/public_html/index.php on line 24
+[02-Feb-2020 09:46:54 UTC] PHP Fatal error:  require(): Failed opening required '/home1/menudeli/public_html/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php72/root/usr/share/pear') in /home1/menudeli/public_html/index.php on line 24

@@ -13,11 +13,11 @@ class Product extends BaseModel
     }
     
     public function ingredients(){
-        return $this->hasMany('App\Models\ProductIngredients','product_id','id');
+        return $this->hasMany('App\Models\ProductIngredient','product_id','id');
     }
     
-    public function options(){
-        return $this->hasMany('App\Models\ProductOptions','product_id','id');
+    public function option_groups(){
+        return $this->hasMany('App\Models\ProductOptionGroup','product_id','id');
     }
     
     

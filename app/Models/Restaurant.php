@@ -6,8 +6,8 @@ namespace App\Models;
 class Restaurant extends BaseModel
 {
             
-    protected $fillable = ['email','mobile2','mobile1','phone3','phone2','phone1','extra_info'
-        ,'working_details','longitude','latitude','branch_of','manager_id','verification_code'
+    protected $fillable = ['category','email','mobile2','mobile1','phone3','phone2','phone1','extra_info'
+        ,'longitude','latitude','branch_of','manager_id','verification_code'
         ,'status','banner','logo','name'];
     
     public function manager() {
@@ -26,12 +26,21 @@ class Restaurant extends BaseModel
         return $this->belongsTo('App\Models\Lookup','status','id');
     }
     
+    public function category_text(){
+        return $this->belongsTo('App\Models\Lookup','category','id');
+    }
+    
     public function reviews(){
        return $this->hasMany('App\Models\RestaurantReview','restaurant_id','id');
     }
     
+    
     public function categories(){
         return $this->hasMany('App\Models\Category','restaurant_id','id');
+    }
+    
+    public function working_details(){
+        return $this->hasMany('App\Models\RestaurantWorkingDetails','restaurant_id','id');
     }
     
    /* public function ranks(){

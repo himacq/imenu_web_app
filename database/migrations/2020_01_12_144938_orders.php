@@ -15,19 +15,26 @@ class Orders extends Migration
     {
         schema::create('user_addresses',function(Blueprint $table){
             $table->increments('id');
-            $table->integer('user_id')->unsigned();;
+            $table->integer('user_id')->unsigned();
+            $table->string('address_type')->nullable();
             $table->string('street');
             $table->string('city');
             $table->integer('house_no')->nullable();
+            $table->integer('house_name')->nullable();
             $table->integer('floor_no')->nullable();
             $table->integer('apartment_no')->nullable()->default(0);
             $table->string('governorate')->nullable();
             $table->string('zip_code')->nullable();
+            $table->text('latitude')->nullable();
+            $table->text('longitude')->nullable();
             $table->boolean('isDefault');
             
             $table->timestamps();
             
              $table->foreign('user_id')->references('id')->on('users')
+                     ->onUpdate('cascade')->onDelete('cascade');
+             
+             $table->foreign('address_type')->references('id')->on('lookup')
                      ->onUpdate('cascade')->onDelete('cascade');
         });
         
@@ -44,8 +51,7 @@ class Orders extends Migration
         schema::create('orders',function(Blueprint $table){
             $table->increments('id');
             $table->integer('grand_total')->double()->default(0);
-            $table->integer('user_id')->unsigned();;
-            $table->integer('order_status');
+            $table->integer('user_id')->unsigned();
             $table->integer('address_id')->unsigned();
             $table->integer('payment_id')->unsigned();
                         
@@ -61,15 +67,43 @@ class Orders extends Migration
                      ->onUpdate('cascade')->onDelete('cascade');
         });
         
+        schema::create('order_restaurants',function(Blueprint $table){
+            $table->increments('id');
+            $table->integer('order_id')->unsigned();
+            $table->integer('restaurant_id')->unsigned();
+            $table->double('sub_total');
+            $table->timestamps();
+            
+             $table->foreign('order_id')->references('id')->on('orders')
+                     ->onUpdate('cascade')->onDelete('cascade');
+             
+             $table->foreign('restaurant_id')->references('id')->on('restaurants')
+                     ->onUpdate('cascade')->onDelete('cascade');
+
+        });
+        
+        schema::create('order_restaurant_statuses',function(Blueprint $table){
+            $table->increments('id');
+            $table->integer('order_restaurant_id')->unsigned();
+            $table->integer('status')->unsigned();
+            $table->timestamps();
+            
+             $table->foreign('order_restaurant_id')->references('id')->on('order_restaurants')
+                     ->onUpdate('cascade')->onDelete('cascade');
+ 
+             $table->foreign('status')->references('id')->on('lookup')
+                     ->onUpdate('cascade')->onDelete('cascade');
+        });
+        
         schema::create('order_details',function(Blueprint $table){
             $table->increments('id');
-            $table->integer('order_id')->unsigned();;
+            $table->integer('order_restaurant_id')->unsigned();;
             $table->integer('product_id')->unsigned();;
             $table->integer('qty');
             $table->double('price');
             $table->timestamps();
             
-             $table->foreign('order_id')->references('id')->on('orders')
+             $table->foreign('order_restaurant_id')->references('id')->on('order_restaurants')
                      ->onUpdate('cascade')->onDelete('cascade');
              
              $table->foreign('product_id')->references('id')->on('products')
@@ -101,6 +135,7 @@ class Orders extends Migration
     {
         schema::Drop('user_addresses');
         schema::Drop('orders');
+        schema::Drop('order_restaurants');
         schema::Drop('order_details');
         schema::Drop('order_detail_options');
     }

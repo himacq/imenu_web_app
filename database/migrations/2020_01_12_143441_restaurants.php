@@ -19,12 +19,12 @@ class Restaurants extends Migration
             $table->string('logo')->nullable();
             $table->string('banner')->nullable();
             $table->integer('status')->unsigned();
+            $table->integer('category')->unsigned();
             $table->string('verification_code', 4)->unique();
             $table->integer('manager_id')->unsigned();
             $table->integer('branch_of')->nullable()->unsigned();
             $table->text('latitude')->nullable();
             $table->text('longitude')->nullable();
-            $table->text('working_details')->nullable();
             $table->text('extra_info')->nullable();
             $table->string('phone1')->nullable();
             $table->string('phone2')->nullable();
@@ -40,10 +40,15 @@ class Restaurants extends Migration
             
         });
         
-        Schema::table('restaurants', function($table) {
-            $table->foreign('status')->references('id')->on('lookup')
-                    ->onUpdate('cascade')->onDelete('cascade');
-            });
+            Schema::table('restaurants', function($table) {
+                $table->foreign('status')->references('id')->on('lookup')
+                        ->onUpdate('cascade')->onDelete('cascade');
+                });
+            
+            Schema::table('restaurants', function($table) {
+                $table->foreign('category')->references('id')->on('lookup')
+                        ->onUpdate('cascade')->onDelete('cascade');
+                });
             
             Schema::table('restaurants', function($table) {
              $table->foreign('manager_id')->references('id')->on('users')
@@ -71,6 +76,19 @@ class Restaurants extends Migration
              $table->foreign('restaurant_id')->references('id')->on('restaurants')
                      ->onUpdate('cascade')->onDelete('cascade');
         });
+        
+        
+        schema::create('restaurant_working_details',function(Blueprint $table){
+            $table->increments('id');
+            $table->integer('restaurant_id')->unsigned();
+            $table->text('display_text');
+            $table->time('start_at');
+            $table->time('end_at');
+            $table->timestamps();
+
+             $table->foreign('restaurant_id')->references('id')->on('restaurants')
+                     ->onUpdate('cascade')->onDelete('cascade');
+        });
     }
 
     /**
@@ -82,6 +100,7 @@ class Restaurants extends Migration
     {
         Schema::dropIfExists('restaurants');
         Schema::dropIfExists('restaurant_review');
+        Schema::dropIfExists('restaurant_working_details');
         
     }
 }

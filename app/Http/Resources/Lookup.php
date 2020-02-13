@@ -18,8 +18,7 @@ class Lookup extends JsonResource
             'id' => $this->id,
             'display_text' => $this->translate('display_text'),
             'parent_id' => $this->parent_id,
-            'description' => $this->translate('description'),
-            'notes' => $this->translate('notes'),
+            'description' => $this->translate('description')
             ];
     }
 }

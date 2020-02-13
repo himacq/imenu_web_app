@@ -40,9 +40,7 @@ $factory->define(Lookup::class, function (Faker $faker) {
 
         'display_text' => $faker->name,
         'description' => $faker->text,
-        'parent_id' => 'factory:App\Models\Lookup',
-        'notes' => $faker->text
-         
+        'parent_id' => 'factory:App\Models\Lookup'         
              ];
 });
 

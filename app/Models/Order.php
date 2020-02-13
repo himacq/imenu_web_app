@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable = ['user_id','grand_total','order_status','address_id','payment_id'];
+    protected $fillable = ['user_id','grand_total','address_id','payment_id'];
     
-    public function details(){
-        return $this->hasMany('App\Models\OrderDetail','order_id','id');
+    public function orderRestaurants(){
+        return $this->hasMany('App\Models\OrderRestaurant','order_id','id');
     }
     
     public function payment_method(){
@@ -20,7 +20,5 @@ class Order extends Model
         return $this->belongsTo('App\Models\UserAddress','address_id','id');
     }
     
-    public function status_text(){
-        return $this->belongsTo('App\Models\Lookup','order_status','id');
-    }
+    
 }

@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AddNewRoleRequest;
 use App\Http\Requests\AddRoleRequest;
-use App\Http\Requests\UpdatePermissionRequest;
+use App\Http\Requests\UpdateRoleRequest;
 use Illuminate\Http\Request;
-use App\Role;
-use App\Permission;
-use Illuminate\Support\Facades\DB;
+use App\Models\Role;
+use App\Models\Permission;
+use DataTables;
 
 class RoleController extends Controller
 {
@@ -16,14 +15,14 @@ class RoleController extends Controller
 
     public function __construct()
     {
-        //$this->middleware('role:admin');
+        $this->change_language();
+        $this->middleware('role:superadmin');
         $this->data['menu'] = 'system';
-        $this->data['selected'] = 'permissions';
+        $this->data['selected'] = 'system';
         $this->data['location'] = 'roles';
-        $this->data['location_title'] = 'الصلاحيات';
+        $this->data['location_title'] = __('main.roles');
 
     }
-
 
     /**
      * Display a listing of the resource.
@@ -32,11 +31,45 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $this->data['sub_menu'] = 'permissions';
-        $this->data['roles'] = Role::all();
+        $this->data['sub_menu'] = 'roles';
         return view('role.index', $this->data);
     }
 
+    /**
+     * return dataTable
+     * @param Request $request
+     * @return type
+     */
+
+    public function contentListData(Request $request)
+    {
+        
+        $roles = Role::all();
+          return DataTables::of($roles)
+            ->setRowId(function ($model) {
+                return "row-" . $model->id;
+            })
+            ->EditColumn('created_at', function ($model) {
+                $date = date('d-m-Y', strtotime($model->created_at));
+                return $date;
+
+            })->EditColumn('display_name', function ($model) {
+                return $model->translate('display_name');
+
+            })->EditColumn('description', function ($model) {
+                return $model->translate('description');
+
+            })->addColumn('control', function ($model) {
+                $id = $model->id;
+                return "<a class='btn btn-primary btn-sm' href = '" . url("roles/" . $id . "/edit") . "'><i class='fa fa-pencil' ></i ></a> "
+                    . "<a class='btn btn-danger btn-sm delete' ><input type = 'hidden' class='id_hidden' value = '" . $id . "' > <i class='fa fa-remove' ></i ></a > ";
+
+            })
+            ->rawColumns(['active','control'])
+            ->make(true);
+
+    }
+    
     /**
      * Show the form for creating a new resource.
      *
@@ -44,32 +77,9 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $this->data['sub_menu'] = 'permissions-create';
+        $this->data['sub_menu'] = 'roles';
         $this->data['permissions'] = Permission::all();
         return view('role.create', $this->data);
-    }
-
-    public function newRole()
-    {
-        $this->middleware('permission:role-add');
-        $this->data['sub_menu'] = 'role-new';
-        return view('role.new', $this->data);
-    }
-
-    public function editRole($id)
-    {
-        $this->data['permission'] = Permission::find($id);
-        return view('role.editRole', $this->data);
-    }
-
-    public function updateRole(UpdatePermissionRequest $request,$id)
-    {
-        $permission = Permission::find($id);
-        //$permission->name = $request->name;
-        $permission->display_name = $request->display_name;
-        $permission->description = $request->description;
-        $permission->save();
-        return redirect()->route('roles.view')->with('status','تم تعديل الصلاحية بنجاح');
     }
 
     /**
@@ -80,30 +90,31 @@ class RoleController extends Controller
      */
     public function store(AddRoleRequest $request)
     {
-        $role = Role::create($request->except(['permission','_token']));
+        if(!$request->permission){
+            return back()
+            ->withInput()
+            ->withErrors(['permission.required',trans('roles.enter_permissions')]);
+        }
+        $role = Role::create([
+            'name'=>$request->name,
+            'display_name'=>$request->display_name,
+            'description'=>$request->description
+        ]);
+        if($role){
+        $this->new_translation($role->id,'ar','roles','display_name',$request['display_name_ar']);
+        $this->new_translation($role->id,'ar','roles','description',$request['description_ar']);
+        
+        $this->new_translation($role->id,'tr','roles','display_name',$request['display_name_tr']);
+        $this->new_translation($role->id,'tr','roles','description',$request['description_tr']);
+        
         foreach($request->permission as $key=>$value) {
             $role->attachPermission($value);
         }
-
-        return redirect()->route('roles.index')->with('status','تم إضافة المجموعة بنجاح');
+        }
+        return redirect()->route('roles.index')->with('status',trans('main.success'));
     }
 
-    public function storeRole(AddNewRoleRequest $request)
-    {
-        Permission::create($request->except(['_token']));
-        return back()->with('status','تم إضافة الصلاحية بنجاح');
-    }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -113,18 +124,18 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        $this->data['role'] = Role::find($id);
-        if($this->data['role']->name == 'admin') return back();
+        $role = Role::find($id);
         $this->data['permissions'] = Permission::all();
-        $this->data['role_permissions'] = $this->data['role']->perms()->pluck('id','id')->toArray();
+        $this->data['role_permissions'] = $role->rolePermissions->pluck('permission_id')->toArray();
+        
+        $role->display_name_ar = $role->translate('display_name','ar');
+        $role->description_ar = $role->translate('description','ar');
+        $role->display_name_tr = $role->translate('display_name','tr');
+        $role->description_tr = $role->translate('description','tr');
+        
+        $this->data['role'] = $role;
+        
         return view('role.edit', $this->data);
-    }
-
-    public function view()
-    {
-        $this->data['sub_menu'] = 'role-view';
-        $this->data['permissions'] = Permission::orderBy('name')->get();
-        return view('role.view',$this->data);
     }
     /**
      * Update the specified resource in storage.
@@ -133,21 +144,35 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(AddRoleRequest $request, $id)
+    public function update(UpdateRoleRequest $request, $id)
     {
+         if(!$request->permission){
+            return back()
+            ->withInput()
+            ->withErrors(['permission.required',trans('roles.enter_permissions')]);
+        }
+        
         $role = Role::find($id);
         $role->name = $request->name;
         $role->display_name = $request->display_name;
         $role->description = $request->description;
         $role->save();
 
-        DB::table('permission_role')->where('role_id', $id)->delete();
-
+        if($role){
+        $this->new_translation($role->id,'ar','roles','display_name',$request['display_name_ar']);
+        $this->new_translation($role->id,'ar','roles','description',$request['description_ar']);
+        
+        $this->new_translation($role->id,'tr','roles','display_name',$request['display_name_tr']);
+        $this->new_translation($role->id,'tr','roles','description',$request['description_tr']);
+        
+        
+        $role->detachPermissions($role->rolePermissions);
+        
         foreach($request->permission as $key=>$value) {
             $role->attachPermission($value);
         }
-
-        return redirect()->route('roles.index')->with('status','تم تعديل المجموعة بنجاح');
+        }
+        return redirect()->route('roles.index')->with('status',trans('main.success'));
     }
 
     /**
@@ -159,15 +184,10 @@ class RoleController extends Controller
     public function destroy($id)
     {
         $role = Role::find($id);
-        if($role->name == 'admin') return back();
+        if($role->name == 'superadmin')  return response()->json(['status' => false]);
         $role->delete();
-        return back()->with('status','تم الحذف');
+        return response()->json(['status' => true]);
     }
 
-    public function destroyRole($id)
-    {
-        $permission = Permission::find($id);
-        $permission->delete();
-        return back()->with('status','تم الحذف');
-    }
+    
 }

@@ -20,7 +20,7 @@ class Translations extends Migration
             $table->string('field');
             $table->integer('record_id');
             $table->string('language_id');
-            $table->string('display_text');
+            $table->string('display_text')->nullable();
             $table->timestamps();
         });
     }

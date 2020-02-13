@@ -3,35 +3,35 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
-use App;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-
+use App\Http\Controllers\Api\ApiController;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\OrderDetailOption;
 use App\Models\CartDetailOption;
+use App\Models\OrderRestaurant;
+use App\Models\CartDetail;
+use App\Models\OrderRestaurantStatus;
+use App\Models\RestaurantReview;
 use App\Http\Resources\Order as OrderResource;
 use App\Http\Resources\OrderCollection;
 
-class OrderController extends Controller
-{
-    protected $user = null;
+class OrderController extends ApiController
+{  
     public function __construct()
     {
-      $this->user =  Auth::guard('api')->user();
-      if($this->user)
-        App::setLocale($this->user->language_id);
+        parent::__construct();
     }
     /**************************************************************
      * create and confirm order
      */
     public function createOrder(Request $request){
         $cart = $this->user->getCart;
-        $cartDetails = $cart->details;
+        $notEmptyCart = $cart->cartRestaurants;
         
-        
+        if(!count($notEmptyCart)){
+             return $this->response(null, false,__('api.not_found'));
+        }
         $rules = [
             'payment_id' => 'required|integer',
             'address_id' => 'required|integer',
@@ -43,37 +43,55 @@ class OrderController extends Controller
 
         }
         
-
+        // create the order
+        /*********************************/
         $order = Order::create([
             'payment_id' => $request->payment_id,
             'user_id'   => $this->user->id,
             'grand_total'   => $cart->grand_total,
-            'address_id'   => $request->address_id,
-            'order_status' => \Config::get('settings.new_order_status')
+            'address_id'   => $request->address_id
         ]);
         
         if(!$order)
             return $this->response(null, false,__('api.not_found'));
         
-        
-        
-        foreach($cartDetails as $detail){
-        $orderDetail = OrderDetail::create([
-            'product_id' => $detail->product_id,
-            'order_id'   => $order->id,
-            'qty'   => $detail->qty,
-            'price' => $detail->price
-        ]);
-        
-        $product_detail_options = CartDetailOption::where(['cart_details_id'=>$detail->id])->get();
-        foreach($product_detail_options as $option){
-            OrderDetailOption::create([
-            'order_details_id' => $orderDetail->id,
-            'product_option_id'   => $option->product_option_id,
-            'qty'   => $option->qty,
-            'price' => $option->price
-        ]);
-        }
+
+        // create order restaurant records
+        /*****************************************************************/
+        foreach($cart->cartRestaurants as $restaurant){
+            $order_restaurant = OrderRestaurant::Create([
+                'order_id'=>$order->id,
+                'restaurant_id'=>$restaurant['restaurant_id'],
+                'sub_total' =>$restaurant['sub_total']
+                ]);
+            
+            $order_status = OrderRestaurantStatus::Create([
+                'order_restaurant_id'=>$order_restaurant->id,
+                'status' => \Config::get('settings.new_order_status')
+                ]);
+            
+            // create order details for each restaurant
+            $cartDetails = CartDetail::where(['cart_restaurant_id'=>$restaurant['id']])->get();
+            foreach($cartDetails as $detail){
+                $orderDetail = OrderDetail::create([
+                    'product_id' => $detail->product_id,
+                    'order_restaurant_id'   => $order_restaurant->id,
+                    'qty'   => $detail->qty,
+                    'price' => $detail->price
+                ]);
+                
+            //create order detail option for each item    
+            $product_detail_options = CartDetailOption::where(['cart_details_id'=>$detail->id])->get();
+                foreach($product_detail_options as $option){
+                    OrderDetailOption::create([
+                    'order_details_id' => $orderDetail->id,
+                    'product_option_id'   => $option->product_option_id,
+                    'qty'   => $option->qty,
+                    'price' => $option->price
+                ]);
+                }
+
+                }
         
         }
         
@@ -109,5 +127,40 @@ class OrderController extends Controller
         
         return $orders->additional(['status'=>true,'message'=>__('api.success')]);
         
+    }
+    
+    /**
+     * receive order and review the restaurant
+     */
+    
+    public function delivered_order(Request $request){
+        $orderData = Order::where(['id'=>$request->order_id,'user_id'=>$this->user->id])->first();
+        if (!$orderData) {
+            return $this->response(null, false,__('api.not_found'));
+        }
+        
+        foreach ($request->restaurants as $restaurant_review){
+            $order_restaurant = OrderRestaurant::where(
+                    ['order_id'=>$request->order_id,'restaurant_id'=>$restaurant_review['restaurant_id']
+                    ])->first();
+            
+            OrderRestaurantStatus::firstOrCreate(
+                    [
+                        'order_restaurant_id'=>$order_restaurant->id,
+                        'status' => \Config::get('settings.delivered_order_status')
+                    ]);
+            
+            
+             RestaurantReview::create(
+                    [
+                        'user_id'=>$this->user->id,
+                        'restaurant_id'=>$restaurant_review['restaurant_id'],
+                        'review_text'=>$restaurant_review['review_text'],
+                        'review_rank'=>$restaurant_review['review_rank'],
+                        'isActive'=>1
+                    ]);
+            
+        }
+        return $this->response(null, true,__('api.success'));
     }
 }

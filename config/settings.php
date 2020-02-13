@@ -7,6 +7,9 @@
  */
 return [
     'per_page'=>10,
-    'new_order_status'=>6
+    'new_order_status'=>6,
+    'delivered_order_status'=>9,
+    'restaurant_status_accepted'=>2,
+    'restaurant_categories'=>10
     
 ];

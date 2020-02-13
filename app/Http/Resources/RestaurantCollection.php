@@ -23,11 +23,12 @@ class RestaurantCollection extends ResourceCollection
                     'banner' => url('/uploads/restaurants/banners/'.($data->banner?$data->banner:'default.jpg')),
                     'status' => $data->status,
                     'status_text' => ($data->status_text?$data->status_text->translate('display_text'):null),
+                    'category' => $data->category,
+                    'category_text' => ($data->category_text?$data->category_text->translate('display_text'):null),
                     'manager_id' => $data->manager_id,
                     'manager_name' => ($data->manager?$data->manager->name:null),
                     'latitude' => $data->latitude,
                     'longitude' => $data->longitude,
-                    'working_details' => $data->translate('working_details'),
                     'extra_info' => $data->translate('extra_info'),
                     'phone1' => $data->phone1,
                     'phone2' => $data->phone2,
@@ -36,9 +37,12 @@ class RestaurantCollection extends ResourceCollection
                     'mobile2' => $data->mobile2,
                     'email' => $data->email,
                     'branch_of_name' => ($data->main_branch?$data->main_branch->translate('name'):null),
-                    'ranks_sum'=>$data->reviews->sum('review_rank'),
+                    'created_at'=>date('d-m-Y', strtotime($data->created_at)),
+                    //'ranks_sum'=>$data->reviews->sum('review_rank'),
                     'reviews_count'=>$data->reviews->count(),
-                    //'average_rating' => $this->reviews->avg('review_rank')
+                    //'average_rating' => $data->reviews->avg('review_rank'),
+                    'distance'=> number_format($data->distance,2),
+                    
 
                 ];
                         

@@ -9,12 +9,15 @@ class BaseModel extends Model
 {
     
     
-    public function translate($field){
-        if(App::getLocale()=='en')
-            return $this->$field;
+    public function translate($field,$language_id=null){
+//        if(App::getLocale()=='en')
+//            return $this->$field;
+        
+        if(!$language_id)
+            $language_id = App::getLocale();
         
         $translation = DB::table('translations')
-                ->where(['model'=>$this->getTable(),'field'=>$field,'record_id'=>$this->id,'language_id'=>App::getLocale()])
+                ->where(['model'=>$this->getTable(),'field'=>$field,'record_id'=>$this->id,'language_id'=>$language_id])
                 ->value('display_text');
         
         if(!$translation)
@@ -22,4 +25,6 @@ class BaseModel extends Model
         
         return $translation;
     }
+    
+    
 }

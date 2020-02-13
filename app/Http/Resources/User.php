@@ -16,8 +16,17 @@ class User extends JsonResource
     {     
         $cart_items = 0;
         
-        if($this->getCart->getDetails)
-            $cart_items = $this->getCart->getDetails->sum('qty');
+        // count cart items
+        if($this->getCart->cartRestaurants){
+            $restaurants = $this->getCart->cartRestaurants;
+            foreach ($restaurants as $restaurant){
+                $products = $restaurant->products;
+                
+                $cart_items+=$products->sum('qty');
+            }
+            
+        }
+            
         
         return [
             'id'=>$this->id,

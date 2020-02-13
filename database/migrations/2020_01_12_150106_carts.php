@@ -38,15 +38,30 @@ class Carts extends Migration
 
         });
         
-        schema::create('cart_details',function(Blueprint $table){
+        schema::create('cart_restaurants',function(Blueprint $table){
             $table->increments('id');
             $table->integer('cart_id')->unsigned();;
+            $table->integer('restaurant_id')->unsigned();;
+            $table->double('sub_total');
+            $table->timestamps();
+            
+             $table->foreign('cart_id')->references('id')->on('carts')
+                     ->onUpdate('cascade')->onDelete('cascade');
+             
+             $table->foreign('restaurant_id')->references('id')->on('restaurants')
+                     ->onUpdate('cascade')->onDelete('cascade');
+        });
+        
+        
+        schema::create('cart_details',function(Blueprint $table){
+            $table->increments('id');
+            $table->integer('cart_restaurant_id')->unsigned();;
             $table->integer('product_id')->unsigned();;
             $table->integer('qty');
             $table->double('price');
             $table->timestamps();
             
-             $table->foreign('cart_id')->references('id')->on('carts')
+             $table->foreign('cart_restaurant_id')->references('id')->on('cart_restaurants')
                      ->onUpdate('cascade')->onDelete('cascade');
              
              $table->foreign('product_id')->references('id')->on('products')
@@ -78,6 +93,7 @@ class Carts extends Migration
     {
         schema::Drop('favourites');
         schema::Drop('carts');
+        schema::Drop('cart_restaurants');
         schema::Drop('cart_details');
         schema::Drop('cart_detail_options');
     }

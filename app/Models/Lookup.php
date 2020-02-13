@@ -9,4 +9,5 @@ class Lookup extends BaseModel
     protected $table = 'lookup';
     protected $fillable = ['display_text' , 'description', 'parent_id', 'notes'];
 
+
 }

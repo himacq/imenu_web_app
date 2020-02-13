@@ -18,7 +18,6 @@ class CreateLookupTable extends Migration
             $table->string('display_text');
             $table->string('description');
             $table->integer('parent_id')->nullable();
-            $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

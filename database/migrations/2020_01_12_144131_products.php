@@ -38,16 +38,30 @@ class Products extends Migration
                      ->onUpdate('cascade')->onDelete('cascade');
         });
         
-        schema::create('product_options',function(Blueprint $table){
+        schema::create('product_option_groups',function(Blueprint $table){
             $table->increments('id');
             $table->string('name');
             $table->boolean('isActive');
             $table->integer('product_id')->unsigned();
+            $table->integer('minimum');
+            $table->integer('maximum');
+            $table->timestamps();
+            
+             $table->foreign('product_id')->references('id')->on('products')
+                     ->onUpdate('cascade')->onDelete('cascade');
+        });
+        
+        
+        schema::create('product_options',function(Blueprint $table){
+            $table->increments('id');
+            $table->string('name');
+            $table->boolean('isActive');
+            $table->integer('group_id')->unsigned();
             $table->integer('minutes_required');
             $table->double('price');
             $table->timestamps();
             
-             $table->foreign('product_id')->references('id')->on('products')
+             $table->foreign('group_id')->references('id')->on('product_option_groups')
                      ->onUpdate('cascade')->onDelete('cascade');
         });
     }
@@ -62,6 +76,8 @@ class Products extends Migration
         //
         schema::Drop('products');
         schema::Drop('product_ingredients');
+        schema::Drop('product_option_groups');
         schema::Drop('product_options');
+        
     }
 }
