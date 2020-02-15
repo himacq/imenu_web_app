@@ -10,6 +10,7 @@ return [
     'new_order_status'=>6,
     'delivered_order_status'=>9,
     'restaurant_status_accepted'=>2,
-    'restaurant_categories'=>10
+    'restaurant_categories'=>10,
+    'meta_description'=>'iMenu App for food delivery, famous restaurants '
     
 ];

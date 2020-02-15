@@ -59,37 +59,30 @@ class UserController extends Controller
     public function profile()
     {
         if (Auth::user()->id) {
-            $this->data['sub_menu'] = '';
-            $this->data['location_title'] = 'My profile';
-            $this->data['location'] = 'users/profile';
+            $this->data['sub_menu'] = 'Display-user';
             $this->data['user'] = User::find(Auth::user()->id);
             return view('user.profile', $this->data);
-        } else return redirect('/');
+        }
+        
+        else return redirect('/');
     }
 
-    public function updateInfo(UpdateUserInfoRequest $request, $id)
+    public function updateUserInfo(UpdateUserInfoRequest $request)
     {
-        $user = User::find(Auth::user()->id);
+        $user = Auth::user();
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->mobile = $request->mobile;
+        $user->news_letter = $request->news_letter;
+        
+        if ($request->password != '') $user->password = bcrypt($request->password);
+
         $user->update();
 
-        return redirect()->route('users.profile')->with('status', 'Update is done successfully');
+        return redirect()->route('users.profile')->with('status', trans('main.success'));
     }
 
-    public function changePassword(ChangePasswordRequest $request)
-    {
-        if (Auth::user()->id) {
-            // check if the old password is correct
-            $user = User::where('id', Auth::user()->id)->first();
-            if (Hash::check($request->old_password, $user->user_pass)) {
-                $user->update(['user_pass' => Hash::make($request->new_password)]);
-                return back()->with('status', 'Change password is done successfully');
-            } else return back()->with('error', 'The old password is error');
-            //$this->data['user'] = User::find(Auth::user()->id);
-
-        } else return redirect('/');
-    }
 
     /**
      * to view user create form
@@ -216,7 +209,7 @@ class UserController extends Controller
                               <label class="btn btn-default btn-on-1 btn-xs ' . "$activeON" . '">
                               <input   type="radio" value="1" name="multifeatured_module[module_id][status]" >ON</label>
                               <label class="btn btn-default btn-off-1 btn-xs ' . "$activeOff" . '">
-                              <input  type="radio" value="-1" name="multifeatured_module[module_id][status]">OFF</label>
+                              <input  type="radio" value="0" name="multifeatured_module[module_id][status]">OFF</label>
                            </div>';
 
 

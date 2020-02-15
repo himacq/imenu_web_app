@@ -2,6 +2,7 @@
 
 @section('content')
  <form id='form-data' action="{{ route('permissions.store') }}" method="post" role="form">
+     {{csrf_field()}}
                 <!-- Main Content -->
                 <div class="row" style="margin-top: 30px;">
                 
@@ -31,10 +32,9 @@
 
                                 </div>
                                 <div class="portlet-body form">
-                                   
-                                        {{csrf_field()}}
-                                        <div class="form-body">
-                                            <div class="form-group form-md-line-input">
+                                   <div class="form-body">
+                                        
+                                        <div class="form-group form-md-line-input">
 
                                                 <input type="text" class="form-control" name="name" value="{{ old('name') }}"
                                                        placeholder="{{trans('permissions.enter_name')}}">
@@ -59,6 +59,34 @@
                                                 </label>
                                                 <span class="help-block"></span>
                                             </div>
+                                    
+                                       
+                                        </div>
+                                        
+                                       
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="col-md-6">
+                        <div class="portlet light bordered">
+                            
+                            <div class="portlet light bordered">
+                                <div class="portlet-title">
+                                    <div class="caption font-red-sunglo">
+                                        <i class="icon-settings font-red-sunglo"></i>
+                                        <span class="caption-subject bold uppercase">{{trans('main.translations')}}</span>
+                                    </div>
+
+                                </div>
+                                <div class="portlet-body form">
+                                   
+                                        
+                                        <div class="form-body">
+                                            
                                             
                                             <div class="form-group form-md-line-input">
                                                 <input type="text" class="form-control" name="display_name_ar" value="{{ old('display_name_ar') }}"
@@ -97,6 +125,14 @@
                                                 </label>
                                                 <span class="help-block"></span>
                                             </div>
+                                            
+                                            <div class="form-actions">
+                                                <div class="row">
+                                                    <div class="col-md-offset-3 col-md-12">
+                                                        <input type="submit" class="btn btn-success" value="{{trans('main.save')}}">
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                        
                                 </div>
@@ -106,58 +142,7 @@
                     </div>
                     
                 
-                
-                    <div class="col-md-6">
-                        <div class="portlet light bordered">
-                           
-                            <div class="portlet light bordered">
-                                <div class="portlet-title">
-                                    <div class="caption font-red-sunglo">
-                                        <i class="icon-settings font-red-sunglo"></i>
-                                        <span class="caption-subject bold uppercase">{{trans('main.permissions')}}</span>
-                                    </div>
-
-                                </div>
-                                <div class="portlet-body form">
-                                   
-                                        
-                                        <div class="form-body">
-                                              <div class="form-group form-md-checkboxes">
-                                                <label>{{trans('main.permissions')}}</label>
-                                                <div class="md-checkbox-list">
-                                                    @foreach($permissions as $permission)
-                                                        <div class="md-checkbox">
-                                                            <input type="checkbox" id="checkbox{{$permission->id}}"  name="permission[]"
-                                                                   value="{{ $permission->id }}" class="md-check">
-                                                            <label for="checkbox{{$permission->id}}" >
-                                                                <span></span>
-                                                                <span class="check"></span>
-                                                                <span class="box"></span> {{$permission->translate('display_name')}}
-                                                            </label>
-                                                        </div>
-                                                    @endforeach
-
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="form-actions">
-                                                <div class="row">
-                                                    <div class="col-md-offset-3 col-md-12">
-                                                        <input type="submit" class="btn btn-success" value="{{trans('main.save')}}">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                        </div>
-                                        
-                                   
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    
-                    
+                  
                     
                 </div>
 

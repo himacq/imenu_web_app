@@ -69,8 +69,14 @@
                             </select>
                         </div>
                     </div>
+                       <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-offset-3 col-md-9">
+                                <button type="button" class="btn btn-primary" id="new1" >{{trans('main.new_button')}}</button>
+                                </div>
+                            </div>
+                    </div>
                         
-                            
                     </div>
                     
                     
@@ -186,6 +192,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="col-md-offset-3 col-md-9">
+                                    <button type="button" class="btn btn-primary" id="save1" style="display: none;" >{{trans('main.save')}}</button>
                                 <button type="button" class="btn btn-primary" id="update1" style="display: none;">{{trans('main.save')}}</button>
 
                                 </div>
@@ -250,7 +257,7 @@
 @push('js')
 <script>
     $(document).ready(function () {
-        /*$( "#new1" ).click(function() {
+        $( "#new1" ).click(function() {
            $("#name1").val("");
            $("#description1").val("");
            $("#name_ar1").val("");
@@ -263,8 +270,8 @@
          $("#title1Update").html("{{trans('main.add_new')}}");
 
            
-        });*/
-       /* 
+        });
+        
         $( "#save1" ).click(function() {
             $("#update1").hide();
             $("#delete1").hide();
@@ -273,13 +280,15 @@
             url:"{{url('/lookup')}}/"+$("#mainId").val()+"",
             data: $("#form1").serialize(),
             success: function(result) {
-                 $("#level1").append($("<option></option>", {"value":result.id, "text":result.id+" - "+result.name}));
-
+                var dataList = result;
+                dataList = JSON.parse( result );
+                $("#level1").append($("<option></option>", {"value":dataList.id, "text":dataList.id+" - "+dataList.display_text}));
+                 $.toaster({priority: 'success', message: "{{trans('main.success')}}",title:"{{trans('main.notice')}}"}); 
             }
 
         });
         });
-        */
+        
        /* $( "#delete1" ).click(function() {
             if(confirm("{{trans('main.sure_delete')}}")){
                 
@@ -359,7 +368,9 @@
             url:"{{url('/lookup')}}/"+$("#level1").val(),
             data: $("#form1").serialize(),
             success: function(result) {
-              $("#level1 option:selected").text($("#name1").val());
+                var dataList = result;
+                dataList = JSON.parse( result );
+              $("#level1 option:selected").text(dataList.id+" - "+dataList.display_text);
               $("#title1Update").html("{{trans('main.update')}}"+$("#level1 option:selected").text());
               $.toaster({priority: 'success', message: "{{trans('main.success')}}",title:"{{trans('main.notice')}}"});  
             }

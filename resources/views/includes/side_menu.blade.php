@@ -97,21 +97,36 @@
                 </ul>
             </li>
             
-
-             <li class="nav-item {{ (@$menu == 'report') ? 'open active' : '' }}">
-                <a href="{{ url('report') }}" class="nav-link">
-                    <i class="fa fa-file"></i>
-                    <span class="title">Report</span>
-                    <span class="selected"></span>
+            
+            <li class="nav-item {{ (@$menu == 'restaurant') ? 'open active' : '' }}">
+                <a href="javascript:;" class="nav-link nav-toggle">
+                    <i class="icon-layers"></i>
+                    <span class="title">{{trans('main.restaurants')}}</span>
+                    <span class="arrow {{ (@$selected == 'system') ? 'open' : '' }}"></span>
                 </a>
+                <ul class="sub-menu">
+
+
+
+                    <li class="nav-item {{ (@$sub_menu == 'restaurants') ? 'open active' : '' }} ">
+                        <a href="{{ url('restaurants') }}" class="nav-link">
+                            <i class="fa fa-eye"></i>
+                            <span class="title">{{trans('main.restaurants')}}</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+
+                </ul>
             </li>
+            
+
             @endrole
 
-            @role('admin')
+            @role('adminx')
             <li class="nav-item {{ (@$menu == 'category') ? 'open active' : '' }}">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="fa fa-tag"></i>
-                    <span class="title">{{trans('main.category')}}</span>
+                    <span class="title">{{trans('main.categories')}}</span>
                     <span class="arrow"></span>
                 </a>
                 <ul class="sub-menu">
@@ -137,15 +152,9 @@
                 </ul>
             </li>
             
-            <li class="nav-item {{ (@$menu == 'product') ? 'open active' : '' }}">
-                <a href="{{ url('product') }}" class="nav-link">
-                    <i class="icon-graph"></i>
-                    <span class="title">Product</span>
-                    <span class="selected"></span>
-                </a>
-            </li>
+  
             
-            
+           <!-- 
              <li class="nav-item {{ (@$menu == 'orders') ? 'open active' : '' }}">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-diamond"></i>
@@ -171,7 +180,7 @@
 
 
 
-            </li>
+            </li>-->
             @endrole
 
            
@@ -180,7 +189,7 @@
             <li class="nav-item start ">
                 <a href="{{ route('logout') }}" class="nav-link">
                     <i class="fa fa-sign-out"></i>
-                    <span class="title">Logout</span>
+                    <span class="title">{{trans('main.logout')}}</span>
                     <span class="selected"></span>
                 </a>
             </li>

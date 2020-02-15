@@ -27,12 +27,8 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => 'required|min:3',
             'password'=> 'nullable',
-            'username' => [
-                'required',
-                    Rule::unique('users')->ignore($this->user,'id'),
-                'min:5'
-                ],
-          //  'role'=> 'required'
+            'isActive'=> 'required',
+            
         ];
     }
 

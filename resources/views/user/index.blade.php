@@ -46,7 +46,7 @@
                                             <select id="statusFilter" class="form-control" style="margin-bottom: 13px;">
                                                 <option value="">{{trans('main.all_status')}}</option>
                                                 <option value="1">{{trans('main.active')}}</option>
-                                                <option value="-1">{{trans('main.not_active')}}</option>
+                                                <option value="0">{{trans('main.not_active')}}</option>
                                             </select>
                                         </div>
                                         <div class="col-md-8"></div>
@@ -175,7 +175,7 @@
                         var message = "";
 
                         var selected = $('select#statusFilter option:selected').val();
-                        if (active == -1) {
+                        if (active == 0) {
                             message = "{{trans('users.suspends')}}";
                             if(selected != "") {
                                 var new_url = '{{url("/")}}/user/contentListData/'+1;
@@ -186,7 +186,7 @@
 
                             message = "{{trans('users.activate')}}";
                             if(selected != "") {
-                                var new_url = '{{url("/")}}/user/contentListData/'+-1;
+                                var new_url = '{{url("/")}}/user/contentListData/'+0;
                                 table.ajax.url(new_url).load();
                             }
 

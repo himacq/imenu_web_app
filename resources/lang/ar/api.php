@@ -2,7 +2,7 @@
 
 return [
 'success' => "تمت العملية بنجاح" ,
-'error' => "The operation is not done successfully" ,
+'error' => "خطأ في اتمام العملية يرجى التأكد من المدخلات" ,
 'not_found' => "لا يمكن ايجاد السجل المحدد",
-'no_auth' => "You don't have permissions to do this operation"
+'no_auth' => "ليس لديك صلاحيات لاتمام العملية المحددة"
 ];

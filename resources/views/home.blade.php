@@ -4,7 +4,7 @@
          
                 <div class="row">
                     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                        <a class="dashboard-stat dashboard-stat-v2 blue" href="{{url('product')}}">
+                        <a class="dashboard-stat dashboard-stat-v2 blue" href="{{url('products')}}">
                             <div class="visual">
                                 <i class="fa fa-comments"></i>
                             </div>
@@ -17,25 +17,25 @@
                         </a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                        <a class="dashboard-stat dashboard-stat-v2 red" href="{{url('ticket')}}">
+                        <a class="dashboard-stat dashboard-stat-v2 red" href="{{url('restaurants')}}">
                             <div class="visual">
                                 <i class="fa fa-bar-chart-o"></i>
                             </div>
                             <div class="details">
                                 <div class="number">
-                                    <span data-counter="counterup" data-value="">0</span></div>
+                                    <span data-counter="counterup" data-value="{{$restaurants}}">0</span></div>
                                 <div class="desc">{{trans('main.restaurants')}}</div>
                             </div>
                         </a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                        <a class="dashboard-stat dashboard-stat-v2 green" href="{{url('category')}}">
+                        <a class="dashboard-stat dashboard-stat-v2 green" href="{{url('orders')}}">
                             <div class="visual">
                                 <i class="fa fa-shopping-cart"></i>
                             </div>
                             <div class="details">
                                 <div class="number">
-                                    <span data-counter="counterup" data-value="">0</span>
+                                    <span data-counter="counterup" data-value="{{$orders}}">0</span>
                                 </div>
                                 <div class="desc">{{trans('main.orders')}}</div>
                             </div>
@@ -48,7 +48,7 @@
                             </div>
                             <div class="details">
                                 <div class="number">
-                                    <span data-counter="counterup" data-value=""></span></div>
+                                    <span data-counter="counterup" data-value="{{$users}}">0</span></div>
                                 <div class="desc">{{trans('main.users')}}</div>
                             </div>
                         </a>

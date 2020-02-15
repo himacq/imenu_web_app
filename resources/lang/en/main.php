@@ -35,6 +35,23 @@ return [
     'done'=>'done!',
     'success_delete'=>'Successfully deleted recored.',
     'error'=>'error!',
-    'error_delete'=>'The record was not deleted successfully.'
+    'error_delete'=>'The record was not deleted successfully.',
+    
+    'new_button'=>' New ',
+    'system'=>'System',
+    'categories'=>'Categories',
+    'roles'=>'Roles',
+    'permissions'=>'Permissions',
+    'lookup'=>'Lookup',
+    'add_category'=>'Add Category',
+    'main_level'=>'Main Level',
+    'select'=>'select',
+    'child_records'=>'Records For',
+    'display_text'=>'Display Text',
+    'description'=>'Description',
+    'save'=>' Save ',
+    'update_record'=>'Update Record',
+    'translations'=>'Translations',
+    'logout'=>'Logout'
     
 ];

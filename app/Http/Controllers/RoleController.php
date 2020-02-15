@@ -185,7 +185,10 @@ class RoleController extends Controller
     {
         $role = Role::find($id);
         if($role->name == 'superadmin')  return response()->json(['status' => false]);
-        $role->delete();
+        
+        if($role->delete()){
+            $this->delete_translation($id, 'roles');
+        }
         return response()->json(['status' => true]);
     }
 

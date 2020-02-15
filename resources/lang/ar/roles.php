@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'add_permission'=>'اضافة صلاحية',
-    'display_text'=>'النص',
+    'add_role'=>'اضافة مجموعة',
+    'display_text'=>'النص للعرض',
     'description'=>'الوصف',
     'display_name'=>'الاسم',
     'name'=>'الاسم',
-    'edit_permission'=>'تعديل صلاحية',
-    'enter_name'=>'ادحل اسم الصلاحية',
+    'edit_role'=>'تعديل المجموعة',
+    'enter_name'=>'ادخل اسم المجموعة',
     'enter_display_name'=>'ادخل الاسم للعرض',
     'enter_description'=>'ادخل الوصف',
 ];

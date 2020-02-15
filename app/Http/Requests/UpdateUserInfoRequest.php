@@ -25,12 +25,8 @@ class UpdateUserInfoRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'email' => [
-                'required',
-                'email',
-                Rule::unique('users')->ignore($this->id,'id')
-            ]
+            'name' => 'required|min:3',
+            'password'=> 'nullable',
 
         ];
     }
@@ -38,7 +34,6 @@ class UpdateUserInfoRequest extends FormRequest
     public function messages()
     {
         return [
-            'email.unique' => 'البريد الإلكتروني مسجل مسبقا',
             'name.required' => 'الرجاء كتابة الاسم',
         ];
     }

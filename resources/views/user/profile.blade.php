@@ -1,146 +1,200 @@
-@extends('layouts.main2')
+@extends('layouts.main')
 
 @section('content')
-    <div class="page-container">
-        @include('includes2.side_menu')
-                <!-- BEGIN CONTENT -->
-        <div class="page-content-wrapper">
-            <!-- BEGIN CONTENT BODY -->
-            <div class="page-content">
-                <!-- BEGIN PAGE BAR -->
-                @include('includes2.breadcrumb')
-                        <!-- END PAGE BAR -->             <!-- BEGIN PAGE TITLE-->
-                <div class="col-md-12" style="margin-top: 30px;">
-                    <!-- BEGIN PROFILE CONTENT -->
-                    <div class="profile-content">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="portlet light ">
-                                    <div class="portlet-title tabbable-line">
-                                        <div class="caption caption-md">
-                                            <i class="icon-globe theme-font hide"></i>
-                                            <span class="caption-subject font-blue-madison bold uppercase"> My profile - {{ $user->username }}</span>
-                                        </div>
-                                        <ul class="nav nav-tabs">
-                                            <li class="active">
-                                                <a href="#tab_1_1" data-toggle="tab">Personal information
-</a>
-                                            </li>
-                                            <li>
-                                                <a href="#tab_1_3" data-toggle="tab">Change your password</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="portlet-body">
-                                        @if (session('status'))
-                                            <div class="alert alert-success">
-                                                {{ session('status') }}
+ <form id='form-user' action="{{ route('users.updateUserInfo') }}" method="post" role="form">
+                                        {{csrf_field()}}
+                <!-- Main Content -->
+                <div class="row" style="margin-top: 30px;">
+                
+                    
+                    <div class="col-md-12">
+                        
+                        <div class="portlet box blue">
+                                            <div class="portlet-title">
+                                                <div class="caption">
+                                                    <i class="fa fa-gift"></i>{{trans('users.edit_user')}}</div>
+                                                
                                             </div>
-                                        @endif
-                                            @if(session('error'))
-                                                <div class="alert alert-danger">
-                                                    {{ session('error') }}
-                                                </div>
-                                            @endif
-                                        @if (count($errors) > 0)
-                                            <div class="alert alert-danger">
-                                                <ul>
-                                                    @foreach ($errors->all() as $error)
-                                                        <li>{{ $error }}</li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-                                        @endif
-                                        <div class="tab-content">
-                                            <!-- PERSONAL INFO TAB -->
-                                            <div class="tab-pane active" id="tab_1_1">
-                                                <form role="form" action="{{ route('updateUserInfo',$user->id) }}" method="post">
-                                                {{ csrf_field() }}
-                                                {{ method_field('PATCH') }}
-                                                    <div class="form-group">
-                                                        <label class="control-label">Name</label>
-                                                        <input type="text" placeholder="name" name="name" class="form-control" value="{{ $user->name }}">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="control-label">Email</label>
-                                                        <input type="email" placeholder="email name="email" class="form-control" value="{{ $user->email }}">
-                                                    </div>
-                                                    <div class="margiv-top-10">
-                                                        <button class="btn green">Save change</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <!-- END PERSONAL INFO TAB -->
-                                            <!-- CHANGE PASSWORD TAB -->
-                                            <div class="tab-pane" id="tab_1_3">
-                                                <form action="{{ route('users.changePassword') }}" method="post">
-                                                    {{ csrf_field() }}
-                                                    <div class="form-group">
-                                                        <label class="control-label">Current password</label>
-                                                        <input type="password" name="old_password" class="form-control"> </div>
-                                                    <div class="form-group">
-                                                        <label class="control-label">New password</label>
-                                                        <input type="password" name="new_password" class="form-control"> </div>
-                                                    <div class="form-group">
-                                                        <label class="control-label">Confirm new password</label>
-                                                        <input type="password" name="password_confirmation" class="form-control"> </div>
-                                                    <div class="margin-top-10">
-                                                        <button class="btn green" type="submit">تغيير كلمة المرور</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <!-- END CHANGE PASSWORD TAB -->
-                                        </div>
-                                    </div>
+                                            <div class="portlet-body form">
+                                                @if (session('status'))
+                                <div class="alert alert-success">
+                                    {{ session('status') }}
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- END PROFILE CONTENT -->
-                </div>
+                            @endif
+                            @if (count($errors) > 0)
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+                                                <!-- BEGIN FORM-->
+                                                    <div class="form-body">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                 <div class="form-group form-md-line-input">
 
-            </div>
-            <!-- /Main Content -->
-        </div>
-        <!-- END CONTENT BODY -->
-    </div>
-    <!-- END CONTENT -->
-    </div>
-    <!-- END CONTAINER -->
-    @include('includes/footer')
+                                                                    <input type="text" class="form-control" name="name" id=""
+                                                                           value="{{ $user->name }}"
+                                                                           placeholder="{{trans('users.enter_name')}} ">
+                                                                    <label for="form_control_1">{{trans('users.name')}}</label>
+                                                                    <span class="help-block"></span>
+                                                                </div>
+                                                            </div>
+                                                            <!--/span-->
+                                                            <div class="col-md-6">
+                                                                <div class="form-group form-md-line-input">
+                                                                <input type="text" class="form-control" name="username"
+                                                                       value="{{ $user->username }}"  readonly=""
+                                                                       id="" placeholder="{{trans('users.enter_username')}}">
+                                                                <label for="form_control_1">{{trans('users.username')}}</label>
+                                                                <span class="help-block"></span>
+                                                            </div>
+                                                            </div>
+                                                            <!--/span-->
+                                                        </div>
+                                                        <!--/row-->
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group form-md-line-input">
+                                                                    <input type="text" class="form-control" name="email" id=""
+                                                                           value="{{ $user->email }}" placeholder="{{trans('users.enter_email')}}">
+                                                                    <label for="form_control_1">{{trans('users.email')}}</label>
+                                                                    <span class="help-block"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                           
+                                                                <div class="form-group form-md-line-input">
+                                                                     <input type="text" class="form-control" name="phone" value="{{ $user->phone }}"
+                                                                            placeholder="{{trans('users.enter_phone')}}">
+                                                                     <label for="form_control_1">{{trans('users.phone')}}</label>
+                                                                     <span class="help-block"></span>
+                                                                 </div>
+                                                                
+                                                                </div>
+                                                        </div>
+                                                        <div  class="row">
+                                                            <div class="col-md-6">
+                                                              
+                                            <div class="form-group form-md-line-input">
+                                                <input type="text" class="form-control" name="mobile" value="{{ $user->mobile }}"
+                                                       placeholder="{{trans('users.enter_mobile')}}">
+                                                <label for="form_control_1">{{trans('users.mobile')}}</label>
+                                                <span class="help-block"></span>
+                                            </div>
+                                            </div>
+                                                            <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                    <label class="col-md-4 control-label">{{trans('users.news_letter')}}</label>
+                                                    <div class="col-md-8">
+                                                        <div class="mt-radio-inline">
+                                                            <label class="mt-radio">
+                                                                <input type="radio" name="news_letter" id="optionsRadios25" 
+                                                                       value="1" {{$user->news_letter==1 ? "checked" : ""}} >
+                                                                {{trans('users.news_letter_subscribed')}}
+                                                                <span></span>
+                                                            </label>
+                                                            <label class="mt-radio">
+                                                                <input type="radio" name="news_letter" id="optionsRadios26" 
+                                                                       value="0" {{$user->news_letter==0 ? "checked" : ""}}  >{{trans('users.news_letter_unsubscribed')}}
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                            <div class="form-group form-md-line-input">
+                                                <input type="password" class="form-control" name="password" id="">
+
+                                                <label for="form_control_1">{{trans('users.newpassword')}}</label>
+                                                <span class="help-block"></span>
+                                            </div>
+                                                            </div>
+                                                        </div>
+                                                           
+                                                        </div>
+                                                    <div class="form-actions right">
+                                                        <button type="submit" class="btn blue">
+                                                            <i class="fa fa-check"></i> {{trans('users.save')}}</button>
+                                                    </div>
+                                            
+                                                <!-- END FORM-->
+                                            </div>
+                                        </div>
+                        
+                        
+                   
+                                        </div>
+
+                    </div>
+                    
+                
+   
+               
+
+    </form>
 @stop
 
 @push('css')
 
 @endpush
 @push('js')
+
+		<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 <script>
-    $(document).ready(function () {
-        $('#unit_id').on('change', function(){
-            $('#section_id').html('');
-            var $this = $(this);
-            if($this.val() != -1) {
-                $.ajax({
-                    url: "{{ url('getSections') }}",
-                    data: {
-                        unit: $this.val()
-                    },
-                    type: 'GET',
-                    dataType: 'json'
-                }).done(function(response){
-                    var option = $('<option />');
-                    option.attr('value', -1).text('');
-                    $('#section_id').append(option);
-                    $(response.data).each(function(){
-                        var option = $('<option />');
-                        option.attr('value', this.unit_section_id).text(this.section_title);
-                        $('#section_id').append(option);
-                    });
-                });
-            } else {
-                $('#section_id').html('');
+$(document).ready(function () {
+
+        $('#form-user').validate({
+            errorElement: 'span', //default input error message container
+            errorClass: 'help-block', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: "",
+            rules: {
+                name: {
+                    required: true
+                },            
+                email: {
+                    email:true
+                },
+                
+                
+                
+            },
+            
+            invalidHandler: function (event, validator) { //display error alert on form submit   
+
+            },
+            highlight: function (element) { // hightlight error inputs
+                $(element)
+                        .closest('.form-group').addClass('has-error'); // set error class to the control group
+            },
+            success: function (label) {
+                label.closest('.form-group').removeClass('has-error');
+                label.remove();
+            },
+            errorPlacement: function (error, element) {
+                if (element.attr("name") == "tnc") { // insert checkbox errors after the container                  
+                    error.insertAfter($('#register_tnc_error'));
+                } else if (element.closest('.input-icon').size() === 1) {
+                    error.insertAfter(element.closest('.input-icon'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            submitHandler: function (form) {
+                form.submit();
             }
         });
+
+
     });
-</script>
+		</script>
+                
 @endpush

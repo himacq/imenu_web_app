@@ -77,7 +77,34 @@ class LookupController extends Controller {
         $this->new_translation($id,'tr','lookup','display_text',$input['name_tr1']);
         $this->new_translation($id,'tr','lookup','description',$input['description_tr1']);
         
-        return;
+        return json_encode(['id'=>$id,'display_text'=>$lookup->translate('display_text')]);
+        
+    }
+
+    
+    /**
+     * save a new record.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function Store($id) {
+        $input = Request::All();
+        
+        $lookup = Lookup::create(
+                [
+                    'parent_id'=>$id,
+                    'display_text'=>$input['name'],
+                    'description'=>$input['description']
+                ]);
+        
+        $this->new_translation($lookup->id,'ar','lookup','display_text',$input['name_ar1']);
+        $this->new_translation($lookup->id,'ar','lookup','description',$input['description_ar1']);
+        
+        $this->new_translation($lookup->id,'tr','lookup','display_text',$input['name_tr1']);
+        $this->new_translation($lookup->id,'tr','lookup','description',$input['description_tr1']);
+        
+       return json_encode(['id'=>$lookup->id,'display_text'=>$lookup->translate('display_text')]);
         
     }
 

@@ -13,10 +13,15 @@ return [
     |
     */
 
-    'failed' => 'These credentials do not match our records.',
+    'failed' => 'بيانات الدخول غير صحيحة',
     'notActive' => 'الحساب غير مفعل يرجى التواصل مع ادارة النظام',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-    'password'=>'Password Error',
-    'login' =>'User Login'
+    'throttle' => 'تكرار محاولات غير ناجحة للدخول الى النظام, يرجى اعادة المحاولة بعد :seconds ثواني',
+    'password'=>'كلمة المرور غير صحيحة',
+    'login' =>'دخول المستخدم',
+    'unauthenticated'=>'لم يتم اجراء الدخول بشكل صحيح',
+    'enter_login_data'=>'ادخل اسم المستخدم وكلمة المرور',
+    'login_button'=>'دخول',
+    'remember_me'=>'تذكرني',
+    'password'=>'كلمة المرور',
 
 ];

@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App;
 use App\Models\Product;
+use App\Models\Restaurant;
+use App\Models\Order;
+use App\Models\User;
+
 class HomeController extends Controller
 {
     /**
@@ -30,7 +34,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $this->data['products'] = Product::where(['isActive'=>1])->count();
+        $this->data['products'] = Product::all()->count();
+        $this->data['restaurants'] = Restaurant::all()->count();
+        $this->data['orders'] = Order::all()->count();
+        $this->data['users'] = User::all()->count();
         return view('home', $this->data);
     }
     

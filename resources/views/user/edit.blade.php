@@ -28,7 +28,7 @@
                                 <div class="portlet-title">
                                     <div class="caption font-red-sunglo">
                                         <i class="icon-settings font-red-sunglo"></i>
-                                        <span class="caption-subject bold uppercase">{{trans('users.add_user')}}</span>
+                                        <span class="caption-subject bold uppercase">{{trans('users.edit_user')}}</span>
                                     </div>
 
                                 </div>
@@ -47,7 +47,7 @@
                                                 <input type="text" class="form-control" name="username"
                                                        value="{{ $user->username }}"  readonly=""
                                                        id="" placeholder="{{trans('users.enter_username')}}">
-                                                <label for="form_control_1">{{trans('users.usernamne')}}</label>
+                                                <label for="form_control_1">{{trans('users.username')}}</label>
                                                 <span class="help-block"></span>
                                             </div>
                                             <div class="form-group form-md-line-input">
@@ -133,7 +133,7 @@
                                 <div class="portlet-title">
                                     <div class="caption font-red-sunglo">
                                         <i class="icon-settings font-red-sunglo"></i>
-                                        <span class="caption-subject bold uppercase">{{trans('users.user_roles')}}</span>
+                                        <span class="caption-subject bold uppercase">{{trans('users.roles')}}</span>
                                     </div>
 
                                 </div>
@@ -142,7 +142,6 @@
                                         
                                         <div class="form-body">
                                         <div class="form-group form-md-checkboxes">
-                                                <label>{{trans('users.rols')}}</label>
                                                 <div class="md-checkbox-list">
                                                     @foreach($roles as $role)
                                                         <div class="md-checkbox">

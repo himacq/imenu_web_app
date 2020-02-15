@@ -19,6 +19,9 @@ class Controller extends BaseController {
     public $data = array();
     public $user;
 
+    /**
+     * to change the App local language based on the logged user's language
+     */
     public function change_language() {
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
@@ -27,6 +30,16 @@ class Controller extends BaseController {
         });
     }
 
+    /**
+     * create a new translation for this record
+     * @param type $record_id
+     * @param type $language_id
+     * @param type $model
+     * @param type $field
+     * @param type $record_text
+     * @return type
+     */
+    
     public function new_translation($record_id,$language_id,$model,$field,$record_text){
         $translate_record =  Translation::updateOrCreate([
                     'record_id'=>$record_id,
@@ -36,6 +49,22 @@ class Controller extends BaseController {
                 ]);
         
         $translate_record->update(['display_text'=>$record_text]);
+        
+        return $translate_record;
+    }
+    
+    /**
+     * delete translation record
+     * @param type $record_id
+     * @param type $model
+     * @return type
+     */
+    
+    public function delete_translation($record_id,$model){
+        $translate_record =  Translation::where([
+                    'record_id'=>$record_id,
+                    'model'=>$model,
+                ])->delete();
         
         return $translate_record;
     }

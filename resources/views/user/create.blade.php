@@ -44,7 +44,7 @@
                                             <div class="form-group form-md-line-input">
                                                 <input type="text" class="form-control" name="username" value="{{ old('username') }}"
                                                        placeholder="{{trans('users.enter_username')}}">
-                                                <label for="form_control_1">{{trans('users.usernamne')}}</label>
+                                                <label for="form_control_1">{{trans('users.username')}}</label>
                                                 <span class="help-block"></span>
                                             </div>
                                             <div class="form-group form-md-line-input">
@@ -132,7 +132,7 @@
                                         
                                         <div class="form-body">
                                            <div class="form-group form-md-checkboxes">
-                                                <label>{{trans('users.rols')}}</label>
+                                                <label>{{trans('users.roles')}}</label>
                                                 <div class="md-checkbox-list">
                                                     @foreach($roles as $role)
                                                         <div class="md-checkbox">
@@ -209,6 +209,9 @@ $(document).ready(function () {
                 
                 
                 
+            },
+            messages: {
+		//name: "blabla",
             },
             
             invalidHandler: function (event, validator) { //display error alert on form submit   
