@@ -20,12 +20,13 @@
     /**
      * shoppingApi public Services
      */
+    Route::get('/restaurant/registration_questions','Api\RestaurantController@listQuestions');
     
     Route::post('/restaurants','Api\RestaurantController@listRestaurants');
     Route::post('/withinMaxDistance','Api\RestaurantController@withinMaxDistance');
     Route::get('/restaurant/{id}','Api\RestaurantController@Restaurant');
     Route::get('/restaurant_categories','Api\RestaurantController@restaurant_categories');
-
+    
     
     Route::get('/categories/{restaurant_id?}','Api\CategoryController@listCategories');
     Route::get('/category/{id}','Api\CategoryController@Category');
@@ -39,6 +40,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     /**
      * CoreApi services
      */
+    Route::post('/restaurant/register','Api\RestaurantController@register');
     Route::post('/user/logout' , 'Api\UserController@logout');
     Route::get('/user/profile' , 'Api\UserController@userProfile');
     Route::post('/user/update' , 'Api\UserController@updateUserProfile');

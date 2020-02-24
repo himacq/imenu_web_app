@@ -91,7 +91,10 @@ class UserController extends Controller
     public function create()
     {
         $this->data['sub_menu'] = 'users-create';
-        $this->data['roles'] = Role::all();
+        if($this->user->hasRole('superadmin'))
+            $this->data['roles'] = Role::all();
+        else
+            $this->data['roles'] = Role::where('id','>',1)->get();
         return view('user.create', $this->data);
     }
 
@@ -105,6 +108,7 @@ class UserController extends Controller
             'username' => $request->username,
             'phone' => $request->phone,
             'mobile' => $request->mobile,
+            'restaurnt_id'=>$this->user->restaurant_id
     
         ]);
         
@@ -115,11 +119,39 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('status', trans('main.success'));
     }
 
+    /**
+     * 
+     * @param type $id
+     * @return type
+     */
+        public function check_user_authority($user2){
+        if( $this->user->hasRole('superadmin'))
+                return false ;
+            
+        if(($this->user->restaurant_id==$user2->restaurant_id) && $this->user->hasRole('admin'))
+               return false;
+     
+       return true;
+        
+    }
+    /**
+     * 
+     * @param type $id
+     * @return type
+     */
     public function edit($id)
     {
+       $user = User::find($id);
+
+        if($this->check_user_authority($user))
+           return  redirect()->route('logout');
+        
         $this->data['sub_menu'] = 'users-edit';
-        $this->data['user'] = User::find($id);
-        $this->data['roles'] = Role::all();
+        $this->data['user'] = $user;
+        if($this->user->hasRole('superadmin'))
+            $this->data['roles'] = Role::all();
+        else
+            $this->data['roles'] = Role::where('id','>',1)->get();
         $this->data['user_roles'] = $this->data['user']->roles->pluck('id', 'id')->toArray();
         return view('user.edit', $this->data);
     }
@@ -132,10 +164,11 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, $id)
     {
-        
-        
         $user = User::find($id);
 
+        if($this->check_user_authority($user))
+           return  redirect()->route('logout');
+        
         $user->name = $request->name;
         $user->email = $request->email;
         $user->phone = $request->phone;
@@ -190,11 +223,17 @@ class UserController extends Controller
     {
         if ($request->status) {
             if($request->status==-1)$request->status=0;
-            $user = User::where('id','!=',1)->where('isActive', '=', $request->status)->get();
+            $users = User::where('id','!=',1)->where('isActive', '=', $request->status);
         } else {
-            $user = User::where('id','!=',1)->get();
+            $users = User::where('id','!=',1);
         }
-        return DataTables::of($user)
+        
+        if($this->user->hasRole('superadmin'))
+            $users_data = $users->get();
+        else 
+            $users_data = $users->where(['restaurant_id'=>$this->user->restaurant_id])->get();
+        
+        return DataTables::of($users_data)
             ->setRowId(function ($model) {
                 return "row-" . $model->id;
             })
@@ -236,6 +275,10 @@ class UserController extends Controller
         $isActive = $request->active;
 
         $user = User::find($user_id);
+        if($this->check_user_authority($user))
+           return  redirect()->route('logout');
+        
+        
         $user->update([
             'isActive' => $isActive,
         ]);

@@ -25,9 +25,11 @@
             'logo'=>$faker->colorName.".jpg",
             'banner'=>$faker->colorName.".jpg",
             'verification_code' => str_random(4),
-            'manager_id' => random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
-            'status' => random_int(2, 4),
+            'owner_id' => random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
+            'isActive' => 1,
             'category' => random_int(2, 4),
+            'commision' => random_int(1, 3),
+            'discount' => random_int(1, 3),
         ];
     });
 

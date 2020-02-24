@@ -6,6 +6,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 use Auth;
 use App;
 
@@ -26,9 +27,19 @@ class Controller extends BaseController {
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
             App::setLocale($this->user->language_id);
+            
+            if(!$this->user->isActive){
+                return redirect()->route('not_active_user');
+            }
+            
+            if(!($this->user->restaurant_id || $this->user->hasRole('superadmin'))){
+                return redirect()->route('logout');
+            }
             return $next($request);
         });
     }
+    
+
 
     /**
      * create a new translation for this record

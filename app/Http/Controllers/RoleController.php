@@ -11,7 +11,6 @@ use DataTables;
 
 class RoleController extends Controller
 {
-    public $data;
 
     public function __construct()
     {

@@ -8,6 +8,10 @@ class OrderRestaurant extends Model
 {
     protected $fillable = ['order_id','restaurant_id','sub_total'];
     
+    public function order(){
+        return $this->belongsTo('App\Models\Order','order_id','id');
+    }
+    
     public function restaurant(){
         return $this->belongsTo('App\Models\Restaurant','restaurant_id','id');
     }

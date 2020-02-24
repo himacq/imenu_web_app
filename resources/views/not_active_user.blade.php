@@ -79,15 +79,14 @@
     @include('includes.top_nav')
     <div class="page-container">
 
-    @include('includes.side_menu')
     <!-- BEGIN CONTENT -->
         <div class="page-content-wrapper">
             <!-- BEGIN CONTENT BODY -->
             <div class="page-content">
                 <!-- BEGIN PAGE BAR -->
-            @include('includes.breadcrumb')
-            
-    @yield('content')
+            <div class="note note-info">
+                            <p> {{trans('main.not_active_user')}} </p>
+                        </div>
      
     </div>
             <!-- /Main Content -->

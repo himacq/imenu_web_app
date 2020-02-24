@@ -31,7 +31,12 @@ class RestaurantApiTest extends TestCase
         $response->assertJson(['status'=>true]);
         
     }
-    
+    /**
+     * @testx
+     */
+    public function get_registration_questions(){
+        
+    }
     /**
      * @test
      */

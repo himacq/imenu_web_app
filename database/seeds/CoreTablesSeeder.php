@@ -115,6 +115,9 @@ class CoreTablesSeeder extends Seeder
             
         ]);
         
+        
+        
+        
 
     }
 }

@@ -52,6 +52,12 @@ return [
     'save'=>' Save ',
     'update_record'=>'Update Record',
     'translations'=>'Translations',
-    'logout'=>'Logout'
+    'logout'=>'Logout',
     
+    'registered_restaurants'=>'Restaurants Registrations',
+    'view'=>'View',
+    'undefine'=>'Undefined',
+    'not_found'=>'Not found Record',
+    
+    'currency'=>'$'
 ];

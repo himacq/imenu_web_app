@@ -18,10 +18,10 @@ class Restaurants extends Migration
             $table->string('name');
             $table->string('logo')->nullable();
             $table->string('banner')->nullable();
-            $table->integer('status')->unsigned();
+            $table->integer('isActive')->unsigned();
             $table->integer('category')->unsigned();
             $table->string('verification_code', 4)->unique();
-            $table->integer('manager_id')->unsigned();
+            $table->integer('owner_id')->unsigned();
             $table->integer('branch_of')->nullable()->unsigned();
             $table->text('latitude')->nullable();
             $table->text('longitude')->nullable();
@@ -32,6 +32,8 @@ class Restaurants extends Migration
             $table->string('mobile1')->nullable();
             $table->string('mobile2')->nullable();
             $table->string('email');
+            $table->double('commision');
+            $table->double('discount');
             
             $table->timestamps();
             
@@ -40,10 +42,7 @@ class Restaurants extends Migration
             
         });
         
-            Schema::table('restaurants', function($table) {
-                $table->foreign('status')->references('id')->on('lookup')
-                        ->onUpdate('cascade')->onDelete('cascade');
-                });
+            
             
             Schema::table('restaurants', function($table) {
                 $table->foreign('category')->references('id')->on('lookup')
@@ -51,7 +50,7 @@ class Restaurants extends Migration
                 });
             
             Schema::table('restaurants', function($table) {
-             $table->foreign('manager_id')->references('id')->on('users')
+             $table->foreign('owner_id')->references('id')->on('users')
                      ->onUpdate('cascade')->onDelete('cascade');
             });
             

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Auth;
 use App;
+use Illuminate\Support\Facades\File;
 
 class ApiController extends Controller
 {
@@ -17,6 +18,19 @@ class ApiController extends Controller
       if(app('request')->header('lang'))
           App::setLocale(app('request')->header('lang'));
       
+    }
+    
+    public function storeImage($imageBase64,$store_in,$name)
+    {
+        $arr = explode(",", $imageBase64);
+        $ext = $arr[0];
+        $imgContent = base64_decode($arr[1]);
+        $file_name = $name."_".str_random(5) . time() . "." . $ext;
+
+        $fullPath = public_path() . $store_in . $file_name;
+        $path = $store_in . $file_name;
+        File::put($fullPath, $imgContent);
+        return $file_name;
     }
     
 }

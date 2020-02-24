@@ -37,13 +37,6 @@
                             <span class="arrow {{ (@$selected == 'users') ? 'open' : '' }}"></span>
                         </a>
                         <ul class="sub-menu" style="display: {{ (@$selected == 'users') ? 'block' : 'none' }}">
-                            <li class="nav-item {{ (@$sub_menu == 'users-create') ? 'active open' : '' }}">
-
-                                <a href="{{ url('users/create') }}" class="nav-link">
-                                    <i class="fa fa-user-plus"></i>
-                                    <span class="title">{{trans('users.add_user')}}</span>
-                                </a>
-                            </li>
                             <li class="nav-item {{ (@$sub_menu == 'Display-user') ? 'active open' : '' }}">
 
                                 <a href="{{ url('users') }}" class="nav-link">
@@ -102,13 +95,21 @@
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-layers"></i>
                     <span class="title">{{trans('main.restaurants')}}</span>
-                    <span class="arrow {{ (@$selected == 'system') ? 'open' : '' }}"></span>
+                    <span class="arrow {{ (@$selected == 'restaurant') ? 'open' : '' }}"></span>
                 </a>
                 <ul class="sub-menu">
 
 
 
-                    <li class="nav-item {{ (@$sub_menu == 'restaurants') ? 'open active' : '' }} ">
+                    <li class="nav-item {{ (@$sub_menu == 'register-restaurants') ? 'open active' : '' }} ">
+                        <a href="{{ url('registered-restaurants') }}" class="nav-link">
+                            <i class="fa fa-eye"></i>
+                            <span class="title">{{trans('main.registered_restaurants')}}</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item {{ (@$sub_menu == 'Display-restaurants') ? 'open active' : '' }} ">
                         <a href="{{ url('restaurants') }}" class="nav-link">
                             <i class="fa fa-eye"></i>
                             <span class="title">{{trans('main.restaurants')}}</span>
@@ -122,26 +123,15 @@
 
             @endrole
 
-            @role('adminx')
-            <li class="nav-item {{ (@$menu == 'category') ? 'open active' : '' }}">
+            @permission('catalog-manage')
+            <li class="nav-item {{ (@$menu == 'catalog') ? 'open active' : '' }}">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="fa fa-tag"></i>
-                    <span class="title">{{trans('main.categories')}}</span>
+                    <span class="title">{{trans('main.catalog')}}</span>
                     <span class="arrow"></span>
                 </a>
                 <ul class="sub-menu">
-
-
-
-                    <li class="nav-item {{ (@$sub_menu == 'category-create') ? 'open active' : '' }} ">
-                        <a href="{{ url('category/create') }}" class="nav-link">
-                            <i class="fa fa-plus"></i>
-                            <span class="title">{{trans('main.add_category')}}</span>
-                            <span class="selected"></span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ (@$sub_menu == 'Display-category') ? 'open active' : '' }} ">
+                    <li class="nav-item {{ (@$sub_menu == 'category') ? 'open active' : '' }} ">
                         <a href="{{ url('category') }}" class="nav-link">
                             <i class="fa fa-eye"></i>
                             <span class="title">{{trans('main.categories')}}</span>
@@ -151,38 +141,28 @@
 
                 </ul>
             </li>
-            
-  
-            
-           <!-- 
-             <li class="nav-item {{ (@$menu == 'orders') ? 'open active' : '' }}">
+            @endpermission
+
+            @permission('orders-manage')
+            <li class="nav-item {{ (@$menu == 'sales') ? 'open active' : '' }}">
                 <a href="javascript:;" class="nav-link nav-toggle">
-                    <i class="icon-diamond"></i>
-                    <span class="title">Orders management</span>
+                    <i class="fa fa-shopping-cart fw"></i>
+                    <span class="title">{{trans('main.sales')}}</span>
                     <span class="arrow"></span>
                 </a>
                 <ul class="sub-menu">
-
-                    <li class="nav-item {{ (@$selected == 'orders') ? 'active open' : '' }}">
-                        <a href="javascript:;" class="nav-link nav-toggle">
-                            <span class="title">Orders</span>
-                            <span class="arrow {{ (@$selected == 'orders') ? 'open' : '' }}"></span>
+                    <li class="nav-item {{ (@$sub_menu == 'orders') ? 'open active' : '' }} ">
+                        <a href="{{ url('orders') }}" class="nav-link">
+                            <i class="fa fa-eye"></i>
+                            <span class="title">{{trans('main.orders')}}</span>
+                            <span class="selected"></span>
                         </a>
-                        <ul class="sub-menu" style="display: {{ (@$selected == 'orders') ? 'block' : 'none' }}">
-
-                            <li class="nav-item {{ (@$sub_menu == 'orders-list') ? 'active open' : '' }}">
-                                <a href="{{ url('order') }}" class="nav-link">Display orders</a>
-                            </li>
-                        </ul>
                     </li>
 
                 </ul>
-
-
-
-            </li>-->
-            @endrole
-
+            </li>
+            
+            @endpermission
            
 
 
