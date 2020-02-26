@@ -28,7 +28,7 @@
                     <span class="selected"></span>
                 </a>
             </li>
-            @role('admin')
+            @permission('users-manage')
 
                     <li class="nav-item {{ (@$selected == 'users') ? 'active open' : '' }}">
                         <a href="javascript:;" class="nav-link nav-toggle">
@@ -47,7 +47,7 @@
                         </ul>
                     </li>
 
-           @endrole
+           @endpermission
 
             @role('superadmin')
            <li class="nav-item {{ (@$menu == 'system') ? 'open active' : '' }}">
@@ -132,9 +132,17 @@
                 </a>
                 <ul class="sub-menu">
                     <li class="nav-item {{ (@$sub_menu == 'category') ? 'open active' : '' }} ">
-                        <a href="{{ url('category') }}" class="nav-link">
+                        <a href="{{ url('categories') }}" class="nav-link">
                             <i class="fa fa-eye"></i>
                             <span class="title">{{trans('main.categories')}}</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item {{ (@$sub_menu == 'product') ? 'open active' : '' }} ">
+                        <a href="{{ url('products') }}" class="nav-link">
+                            <i class="fa fa-eye"></i>
+                            <span class="title">{{trans('main.products')}}</span>
                             <span class="selected"></span>
                         </a>
                     </li>

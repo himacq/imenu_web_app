@@ -20,5 +20,9 @@ class Product extends BaseModel
         return $this->hasMany('App\Models\ProductOptionGroup','product_id','id');
     }
     
+    public function order_details(){
+        return $this->hasMany('App\Models\OrderDetail','product_id','id');
+    }
+    
     
 }

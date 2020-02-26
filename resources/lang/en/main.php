@@ -8,6 +8,11 @@ return [
     'develop_address' => 'himacq@gmail.com - ابراهيم خليل ابوجلنبو',
     'incident_information' => 'Home event data',
     'users' => 'Users',
+    'restaurant'=>'Restaurant',
+    'edit'=>'Edit',
+    'copy'=>'Copy',
+    'catalog'=>'Catalog',
+    'sales'=>'Sales',
     'arabic'=>'Arabic',
     'english'=>'English',
     'turkish'=>'Turkish',
@@ -26,6 +31,7 @@ return [
     'control'=>'Control',
     'success'=>'The operation is done successfully',
     'error_msg' => "The operation is not done successfully" ,
+    'success_continue'=>'The Product is added successfully,Now you can add Product`s options and ingredients',
     
     'notice'=>'Notice',
     'sure_delete'=>'Are you sure to delete this record?',
@@ -38,6 +44,7 @@ return [
     'error_delete'=>'The record was not deleted successfully.',
     
     'new_button'=>' New ',
+    'name'=>'Name',
     'system'=>'System',
     'categories'=>'Categories',
     'roles'=>'Roles',
@@ -54,10 +61,28 @@ return [
     'translations'=>'Translations',
     'logout'=>'Logout',
     
-    'registered_restaurants'=>'Restaurants Registrations',
+    'registered_restaurants'=>'New Registrations',
     'view'=>'View',
+    'category'=>'Category',
     'undefine'=>'Undefined',
     'not_found'=>'Not found Record',
     
-    'currency'=>'$'
+    'currency'=>'$',
+    
+    'suspends'=>'Suspend Record successfully',
+    'activate'=>'Activate Record successfully',
+    
+    'enter_name'=>'Enter Name',
+    'image'=>'Image',
+    'change'=>'Change',
+    'minutes_required'=>'Minutes Required',
+    'price'=>'Price',
+    'product'=>'Product',
+    'ingredients'=>'Ingredients',
+    'name_ar'=>'Arabic Name',
+    'name_tr'=>'Turkish Name',
+    'options'=>'Options',
+    'minimum'=>'Minimum',
+    'maximum'=>'Maximum',
+    
 ];

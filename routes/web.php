@@ -1,21 +1,42 @@
 <?php
 
-use Dompdf\Dompdf;
+// manage categories and products
+Route::group(['middleware' => 'permission:catalog-manage'], function () {
+    /**
+     * categories
+     */
+    Route::post('categories/contentListData', 'CategoryController@contentListData');
+    Route::post('categories/store_copy', 'CategoryController@store_copy')->name('categories.store_copy');
+    Route::get('category_activate', 'CategoryController@activeCategory');
+    Route::resource('categories', 'CategoryController');
+    
+    /**
+     * products
+     */
+    Route::post('products/contentListData', 'ProductController@contentListData');
+    Route::post('products/store_copy/{id}', 'ProductController@store_copy')->name('products.store_copy');
+    Route::get('product_activate', 'ProductController@activeProduct');
+    Route::delete('product_ingredient/{id}', 'ProductController@destroy_ingredient');
+    Route::delete('product_option_group/{id}', 'ProductController@destroy_option_group');
+    Route::delete('product_option/{id}', 'ProductController@destroy_option');
+    Route::resource('products', 'ProductController');
+});
 
+// manage orders
+Route::group(['middleware' => 'permission:orders-manage'], function () {
+    Route::post('orders/contentListData', 'OrderController@contentListData');
+    Route::resource('orders', 'OrderController');
+});
 
-
-Route::group(['middleware' => 'auth'], function () {
-
-    Route::get('/language/{id}', 'HomeController@changeLanguage');
-    Route::get('/', 'HomeController@index');
-
-
+// manage users
+Route::group(['middleware' => 'permission:users-manage'], function () {
     Route::post('user/contentListData{status?}', 'UserController@contentListData');
     Route::get('user_activate', 'UserController@activeUser');
-    Route::get('users/profile', 'UserController@profile')->name('users.profile');
-    Route::post('users/updateUserInfo', 'UserController@updateUserInfo')->name('users.updateUserInfo');
-
     Route::resource('users', 'UserController');
+});
+
+// system managment - lookup,roles,permissions,restaurant
+Route::group(['middleware' => 'role:superadmin'], function () {
     
     Route::get('lookup/level/{id}', 'LookupController@level');
     Route::post('lookup/{id}', 'LookupController@store');
@@ -36,13 +57,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('restaurants/childContentListData', 'RestaurantController@childContentListData');
     Route::post('restaurants/reviewsContentListData', 'RestaurantController@reviewsContentListData');
     Route::resource('restaurants', 'RestaurantController');
+});
+
+Route::group(['middleware' => 'auth'], function () {
+
+    Route::get('/language/{id}', 'HomeController@changeLanguage');
+    Route::get('/', 'HomeController@index');
     
-    Route::post('orders/contentListData', 'OrderController@contentListData');
-    Route::resource('orders', 'OrderController');
-    
-    Route::post('categories/contentListData', 'CategoryController@contentListData');
-    Route::resource('categories', 'CategoryController');
-    
+    Route::get('users/profile', 'UserController@profile')->name('users.profile');
+    Route::post('users/updateUserInfo', 'UserController@updateUserInfo')->name('users.updateUserInfo');
 
     Route::get('logout', function () {
         \Illuminate\Support\Facades\Auth::logout();

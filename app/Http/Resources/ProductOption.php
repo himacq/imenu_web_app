@@ -17,7 +17,6 @@ class ProductOption extends JsonResource
         return [
             'option_id' => $this->id,
             'name' => $this->translate('name'),
-            'isActive' => $this->isActive,
             'minutes_required' => $this->minutes_required,
             'price' => $this->price,
             ];

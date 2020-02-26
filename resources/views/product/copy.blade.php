@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
- <form id='form-data' action="{{ route('roles.store') }}" method="post" role="form">
+ <form id='form-data' action="{{ route('products.store_copy', $product->id) }}" method="post" enctype="multipart/form-data">
                 <!-- Main Content -->
                 <div class="row" style="margin-top: 30px;">
                 
@@ -26,7 +26,7 @@
                                 <div class="portlet-title">
                                     <div class="caption font-red-sunglo">
                                         <i class="icon-settings font-red-sunglo"></i>
-                                        <span class="caption-subject bold uppercase">{{trans('roles.add_role')}}</span>
+                                        <span class="caption-subject bold uppercase">{{trans('main.new_button')}}</span>
                                     </div>
 
                                 </div>
@@ -36,67 +36,72 @@
                                         <div class="form-body">
                                             <div class="form-group form-md-line-input">
 
-                                                <input type="text" class="form-control" name="name" value="{{ old('name') }}"
-                                                       placeholder="{{trans('roles.enter_name')}}">
-                                                <label for="form_control_1">{{trans('roles.name')}}</label>
-                                                <span class="help-block"></span>
-                                            </div>
+                                                    <select name="category_id" class="form-control" style="margin-bottom: 13px;">
+                                                        @foreach($categories as $category)
+                                                        <option value="{{$category->id}}" {{$product->category_id==$category->id ? "selected" : ""}} >{{$category->translate('name')}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <label for="form_control_1">{{trans('restaurants.category')}}</label>
+                                                    <span class="help-block"></span>
+                                                </div>
+                                            
                                             <div class="form-group form-md-line-input">
-                                                <input type="text" class="form-control" name="display_name" value="{{ old('display_name') }}"
-                                                       placeholder="{{trans('roles.enter_display_name')}}">
-                                                <label for="form_control_1">{{trans('roles.display_name')}}
-                                                <i class="fa fa-angle-left"></i>
-                                                {{__('main.english')}}
-                                                </label>
-                                                <span class="help-block"></span>
-                                            </div>
-                                            <div class="form-group form-md-line-input">
-                                                <input type="text" class="form-control" name="description" value="{{ old('description') }}"
-                                                       placeholder="{{trans('roles.enter_description')}}">
-                                                <label for="form_control_1">{{trans('roles.description')}}
-                                                <i class="fa fa-angle-left"></i>
-                                                {{__('main.english')}}
-                                                </label>
+
+                                                <input type="text" class="form-control" name="name" value="{{ $product->name }}"
+                                                       placeholder="{{trans('main.enter_name')}}">
+                                                <label for="form_control_1">{{trans('main.name')}}</label>
                                                 <span class="help-block"></span>
                                             </div>
                                             
+                                            
                                             <div class="form-group form-md-line-input">
-                                                <input type="text" class="form-control" name="display_name_ar" value="{{ old('display_name_ar') }}"
-                                                       placeholder="{{trans('roles.enter_display_name')}}">
-                                                <label for="form_control_1">{{trans('roles.display_name')}}
+                                                <input type="text" class="form-control" name="name_ar" value="{{ $product->name_ar }}"
+                                                       placeholder="{{trans('main.enter_name')}}">
+                                                <label for="form_control_1">{{trans('main.name')}}
                                                 <i class="fa fa-angle-left"></i>
                                                 {{__('main.arabic')}}
                                                 </label>
                                                 <span class="help-block"></span>
                                             </div>
+                                              
                                             <div class="form-group form-md-line-input">
-                                                <input type="text" class="form-control" name="description_ar" value="{{ old('description_ar') }}"
-                                                       placeholder="{{trans('roles.enter_description')}}">
-                                                <label for="form_control_1">{{trans('roles.description')}}
-                                                <i class="fa fa-angle-left"></i>
-                                                {{__('main.arabic')}}
-                                                </label>
-                                                <span class="help-block"></span>
-                                            </div>
-                                            
-                                            <div class="form-group form-md-line-input">
-                                                <input type="text" class="form-control" name="display_name_tr" value="{{ old('display_name_tr') }}"
-                                                       placeholder="{{trans('roles.enter_display_name')}}">
-                                                <label for="form_control_1">{{trans('roles.display_name')}}
+                                                <input type="text" class="form-control" name="name_tr" value="{{ $product->name_tr }}"
+                                                       placeholder="{{trans('main.enter_name')}}">
+                                                <label for="form_control_1">{{trans('main.name')}}
                                                 <i class="fa fa-angle-left"></i>
                                                 {{__('main.turkish')}}
                                                 </label>
                                                 <span class="help-block"></span>
                                             </div>
                                             <div class="form-group form-md-line-input">
-                                                <input type="text" class="form-control" name="description_tr" value="{{ old('description_tr') }}"
-                                                       placeholder="{{trans('roles.enter_description')}}">
-                                                <label for="form_control_1">{{trans('roles.description')}}
-                                                <i class="fa fa-angle-left"></i>
-                                                {{__('main.turkish')}}
+                                                <input type="text" class="form-control" name="price" value="{{ $product->price }}"
+                                                       placeholder="{{trans('main.price')}}">
+                                                <label for="form_control_1">{{trans('main.price')}}
                                                 </label>
                                                 <span class="help-block"></span>
                                             </div>
+                                            <div class="form-group form-md-line-input">
+                                                <input type="text" class="form-control" name="minutes_required" value="{{ $product->minutes_required }}"
+                                                       placeholder="{{trans('main.minutes_required')}}">
+                                                <label for="form_control_1">{{trans('main.minutes_required')}}
+                                                </label>
+                                                <span class="help-block"></span>
+                                            </div>
+                                          <div class="form-group form-md-line-input">
+                                                    <label class="col-md-3 control-label">{{trans('main.isActive')}}</label>
+                                                    <div class="col-md-9">
+                                                        <div class="mt-radio-inline">
+                                                            <label class="mt-radio">
+                                                                <input type="radio" name="isActive" id="optionsRadios25" value="1" checked="">{{trans('main.active')}}
+                                                                <span></span>
+                                                            </label>
+                                                            <label class="mt-radio">
+                                                                <input type="radio" name="isActive" id="optionsRadios26" value="0" >{{trans('main.not_active')}}
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                         </div>
                                        
                                 </div>
@@ -111,35 +116,27 @@
                         <div class="portlet light bordered">
                            
                             <div class="portlet light bordered">
-                                <div class="portlet-title">
-                                    <div class="caption font-red-sunglo">
-                                        <i class="icon-settings font-red-sunglo"></i>
-                                        <span class="caption-subject bold uppercase">{{trans('main.permissions')}}</span>
-                                    </div>
-
-                                </div>
                                 <div class="portlet-body form">
                                    
-                                        
                                         <div class="form-body">
-                                              <div class="form-group form-md-checkboxes">
-                                                <label>{{trans('main.permissions')}}</label>
-                                                <div class="md-checkbox-list">
-                                                    @foreach($permissions as $permission)
-                                                        <div class="md-checkbox">
-                                                            <input type="checkbox" id="checkbox{{$permission->id}}"  name="permission[]"
-                                                                   value="{{ $permission->id }}" class="md-check">
-                                                            <label for="checkbox{{$permission->id}}" >
-                                                                <span></span>
-                                                                <span class="check"></span>
-                                                                <span class="box"></span> {{$permission->translate('display_name')}}
-                                                            </label>
+                                              
+                                                <div class="form-group form-md-line-input">
+                                                    
+                                                    <div class="fileinput fileinput-exists" data-provides="fileinput">
+                                                        <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px; line-height: 150px;">
+                                                             <img src="{{ url('/uploads/products/'.($product->image?$product->image:'default.png')) }}">
                                                         </div>
-                                                    @endforeach
+                                                        <div>
+                                                            <span class="btn red btn-outline btn-file">
+                                                                <span class="fileinput-exists"> {{trans('main.change')}} </span>
+                                                                <input type="hidden" value="{{$product->image}} " name="image_file_name">
+                                                                <input type="file" name="image" aria-invalid="false" class="valid"> </span>
+                                                        </div>
+                                                    </div>
 
                                                 </div>
-                                            </div>
-                                            
+
+
                                             <div class="form-actions">
                                                 <div class="row">
                                                     <div class="col-md-offset-3 col-md-12">
@@ -169,9 +166,11 @@
 @stop
 
 @push('css')
+<link href="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css" rel="stylesheet" type="text/css" />
 
 @endpush
 @push('js')
+    <script src="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js" type="text/javascript"></script>
 
 		<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 <script>
@@ -186,7 +185,10 @@ $(document).ready(function () {
                 name: {
                     required: true
                 },
-                display_name:{
+                price:{
+                    required: true
+                },
+                minutes_required:{
                     required: true
                 }
                 

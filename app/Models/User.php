@@ -40,6 +40,10 @@ class User extends Authenticatable
     public function roles() {
         return $this->belongsToMany('App\Models\Role');
     }
+    
+    public function restaurant() {
+        return $this->belongsTo('App\Models\Restaurant','restaurant_id','id');
+    }
 
 
     public function getAddresses(){
