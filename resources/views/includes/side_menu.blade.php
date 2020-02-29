@@ -173,6 +173,17 @@
             @endpermission
            
 
+            <li class="nav-item {{ (@$menu == 'reviews') ? 'open active' : '' }}">
+                    <li class="nav-item {{ (@$sub_menu == 'app_review') ? 'open active' : '' }} ">
+                        <a href="{{ url('home/app_review') }}" class="nav-link">
+                            <i class="fa fa-balance-scale"></i>
+                            <span class="title">{{trans('main.app_review')}}</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+
+            </li>
+            
 
             <li class="nav-item start ">
                 <a href="{{ route('logout') }}" class="nav-link">

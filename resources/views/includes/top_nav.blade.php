@@ -4,6 +4,7 @@
         <!-- BEGIN LOGO -->
         <div class="page-logo">
             <div class="menu-toggler sidebar-toggler">
+                
                 <span></span>
             </div>
         </div>
@@ -12,25 +13,27 @@
         <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse">
             <span></span>
         </a>
+        
+        
         <!-- END RESPONSIVE MENU TOGGLER -->
         <div class="top-menu">
+            
             <ul class="nav navbar-nav pull-right">
+                @if(isset($user->isAdmin))
                 <li class="dropdown dropdown-user">
-                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" aria-expanded="false">
-                        <span class="username username-hide-on-mobile"> {{ @Auth::user()->name }} </span>
-                        <i class="fa fa-angle-down"></i>
+                    <a href="{{ url('restaurants/profile') }}" class="dropdown-toggle" >
+                        <span class="username username-hide-on-mobile"> {{ trans('restaurants.restaurant_profile') }} </span>
+                        <i class="fa fa-cutlery"></i>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-default">
-                        <li>
-                            <a href="{{ url('users/profile') }}">
-                                <i class="icon-user"></i>My profile
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('logout') }}">
-                                <i class="icon-key"></i>Logout</a>
-                        </li>
-                    </ul>
+                </li>
+                
+                @endif
+                
+                <li class="dropdown dropdown-user">
+                    <a href="{{ url('users/profile') }}" class="dropdown-toggle" >
+                        <span class="username username-hide-on-mobile"> {{ @Auth::user()->name }} </span>
+                        <i class="icon-user"></i>
+                    </a>
                 </li>
 
                   <li class="dropdown dropdown-language">
@@ -68,7 +71,13 @@
                                     
                                 </ul>
                             </li>
+                     
                             
+                            <li class="dropdown dropdown-extended quick-sidebar-toggler">
+                                <a class="dropdown-toggle"  href="{{ route('logout') }}">
+                                <i class="icon-logout"></i>
+                                </a>
+                            </li>
             </ul>
         </div>
     </div>

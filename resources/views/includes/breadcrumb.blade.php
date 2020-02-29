@@ -11,6 +11,21 @@
     
 
     </ul>
+    
+    @if(session()->get('acting_as'))
+<div class='row'>
+            <div class="alert alert-danger" style="float: left; width:100%">
+           <p>{{ trans('main.manage_cpanel') }} : {{ session()->get('restaurant_name') }}
+                   <a href="{{ url('acting_as_cancle') }}" class="dropdown-toggle" >
+                        <span class="username username-hide-on-mobile"> {{ trans('main.cancle_acting') }} </span>
+                        <i class="eye-slash"></i>
+                    </a> </p>
+            </div>
+    </div>
+            @endif
 
 </div>
+
+
+
 

@@ -51,6 +51,10 @@
                         @endif
 
                         <li>
+                            <a href="#tab_location" data-toggle="tab" aria-expanded="false"> {{trans('restaurants.location')}} </a>
+                        </li>
+                        
+                        <li>
                             <a href="#tab_reviews" data-toggle="tab" aria-expanded="false"> {{trans('restaurants.reviews')}} </a>
                         </li>
 
@@ -71,12 +75,29 @@
                                                     <label for="form_control_1">{{trans('restaurants.name')}}</label>
                                                     <span class="help-block"></span>
                                                 </div>
-
+                                                
+                                                @role('superadmin')
                                                 <div class="form-group form-md-line-input">
                                                     <label for="form_control_1">{{trans('restaurants.owner')}}</label>
                                                     <a target="_blank" href="{{url('users/' . $restaurant->owner->id . '/edit')}}" >{{ $restaurant->owner->name }}</a>
                                                 </div>
+                                                @endrole
+                                                
+                                                @role('admin')
+                                                @if(isset($users))
+                                                <div class="form-group form-md-line-input">
 
+                                                    <select name="owner_id" class="form-control" style="margin-bottom: 13px;">
+                                                        @foreach($users as $user)
+                                                        <option value="{{$user->id}}" {{$restaurant->owner->id==$user->id ? "selected" : ""}}>{{$user->name}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <label for="form_control_1">{{trans('restaurants.owner')}}</label>
+                                                    <span class="help-block"></span>
+                                                </div>
+                                                @endif 
+                                                @endrole
+                                                
                                                 @if($restaurant->branch_of)
                                                 <div class="form-group form-md-line-input">
 
@@ -98,9 +119,7 @@
 
                                                 <div class="form-group form-md-line-input">
 
-                                                    <textarea  class="form-control" name="extra_info"  rows="5">
-                                                        {{$restaurant->extra_info}}
-                                                    </textarea>
+                                                    <textarea  class="form-control" name="extra_info"  rows="5">{{$restaurant->extra_info}}</textarea>
                                                     <label for="form_control_1">{{trans('restaurants.extra_info')}}</label>
                                                     <span class="help-block"></span>
                                                 </div>
@@ -243,6 +262,7 @@
                                        
                                         <th>#</th>
                                         <th>{{trans('restaurants.name')}}</th>
+                                        <th>{{trans('restaurants.owner')}}</th>
                                         <th>{{trans('main.status')}}</th>
                                         <th>{{trans('main.created_at')}}</th>
                                         <th>{{trans('main.control')}}</th>
@@ -251,6 +271,11 @@
                                     </thead>
 
                                 </table>
+                        </div>
+                        
+                        <div class="tab-pane fade " id="tab_location">
+                          
+
                         </div>
                         <div class="tab-pane fade " id="tab_reviews">
                             <table id="reviews-data-table"
@@ -291,6 +316,7 @@
 <link href="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css" rel="stylesheet" type="text/css" />
 @endpush
 @push('js')
+        
 <script src="{{url('')}}/assets/global/plugins/moment.min.js" type="text/javascript"></script>
 <script src="{{url('')}}/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
 <script src="{{url('')}}/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
@@ -411,6 +437,7 @@ $(function () {
                     
                     {data: 'id' ,name: 'id', 'class': 'id'},
                     {data: 'name',width:"20%" ,name: 'name', 'class': 'name'},
+                    {data: 'owner',width:"20%" ,name: 'owner', 'class': 'owner'},
                     {data: 'active', name: 'active', orderable: false, "searchable": false},
                     {data: 'created_at', name: 'created_at'},
 

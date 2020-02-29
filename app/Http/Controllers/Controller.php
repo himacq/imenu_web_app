@@ -11,6 +11,9 @@ use Auth;
 use App;
 
 use App\Models\Translation;
+use App\Models\User;
+use App\Models\Restaurant;
+
 class Controller extends BaseController {
 
     use AuthorizesRequests,
@@ -27,6 +30,12 @@ class Controller extends BaseController {
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
             App::setLocale($this->user->language_id);
+            
+            if(($this->user->restaurant_id && $this->user->hasRole('admin'))){
+                $this->user->isAdmin = true;
+                $this->data['user'] = $this->user;
+        
+            }
             
             if(!$this->user->isActive){
                 return redirect()->route('not_active_user');
@@ -89,6 +98,17 @@ class Controller extends BaseController {
      */
     public function response($data, $status, $messages = null) {
         return response()->json(['status' => $status, 'message' => $messages, 'data' => $data], 200);
+    }
+    
+    
+    public function get_all_users_restaurant($restaurant_id){
+        $restaurants = Restaurant::where(['branch_of'=>$restaurant_id])->get();
+        $restaurant_array = array($restaurant_id);
+        foreach($restaurants as $restaurant){
+            $restaurant_array[] = $restaurant->id;
+        }
+        
+        return User::whereIn('restaurant_id',$restaurant_array)->get();
     }
 
 }

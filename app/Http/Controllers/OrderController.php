@@ -8,6 +8,7 @@ use App\Models\OrderDetail;
 use App\Models\OrderRestaurantStatus;
 use App\Models\Lookup;
 use App\Models\OrderRestaurant;
+use App\Models\UserReview;
 
 use DataTables;
 
@@ -43,7 +44,9 @@ class OrderController extends Controller
 
     public function contentListData(Request $request)
     {
-       
+       if($this->user->hasRole('superadmin'))
+           $orders = OrderRestaurant::all();
+       else
         $orders = OrderRestaurant::where(['restaurant_id'=>$this->user->restaurant_id])->get();
         
           return DataTables::of($orders)
@@ -62,9 +65,10 @@ class OrderController extends Controller
 
             })
             ->addColumn('status', function ($model) {
+                if($model->status->count() > 0){
                 if($model->status->last()->status_text->translate('display_text'))
                     return $model->status->last()->status_text->translate('display_text');
-                
+                }
                 return __('main.undefine');
 
             })
@@ -91,14 +95,26 @@ class OrderController extends Controller
      */
     public function edit($id)
     {
-        $this->data['order'] = OrderRestaurant::where(['id'=>$id,'restaurant_id'=>$this->user->restaurant_id])->first();
+        if($this->user->hasRole('superadmin'))
+            $this->data['order'] = OrderRestaurant::where(['id'=>$id])->first();
+        else
+           $this->data['order'] = OrderRestaurant::where(['id'=>$id,'restaurant_id'=>$this->user->restaurant_id])->first();
+        
         if(!$this->data['order'])
            return redirect()->route('orders.index')->with('status',trans('main.not_found'));
 
         $this->data['order_status'] = Lookup::where(
                 ['parent_id'=>\Config::get('settings.order_status')])->get();
+        
+        
         return view('order.edit', $this->data);
     }
+    /**
+     * 
+     * @param Request $request
+     * @param type $id
+     * @return type
+     */
     
     public function update(Request $request,$id){
         OrderRestaurantStatus::create([
@@ -106,6 +122,24 @@ class OrderController extends Controller
             'status'=>$request->order_status
         ]);
         
-        return redirect()->route('orders.edit',$id);
+        return redirect()->route('orders.edit',$id)->with('status', trans('main.success'));
+    }
+    /**
+     * 
+     * @param Request $request
+     * @param type $id
+     * @return type
+     */
+     public function review_customer(Request $request,$id){
+         $order = OrderRestaurant::where(['id'=>$id])->first();
+         UserReview::create([
+            'order_restaurant_id'=>$id,
+            'user_id'=>$order->order->customer->id,
+             'review_text'=>$request->review_text,
+             'review_rank'=>$request->review_rank,
+             'isActive'=>1
+        ]);
+        
+        return redirect()->route('orders.edit',$id)->with('status', trans('main.success'));
     }
 }

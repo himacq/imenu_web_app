@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use FarhanWazir\GoogleMaps\GMaps;
 
 use App\Models\Lookup;
 use App\Models\Restaurant;
@@ -14,19 +15,29 @@ use DataTables;
 
 class RestaurantController extends Controller
 {
-    
+    protected $gmap;
     
     public function __construct()
     {
-        $this->middleware(['role:superadmin']);
+        $this->middleware(['role:superadmin'])->except([
+            'profile',
+            'childContentListData',
+            'reviewsContentListData',
+            'restaurant_activate',
+            'edit',
+            'update'
+            ]);
 
         $this->change_language();
         $this->data['menu'] = 'restaurant';
         $this->data['selected'] = 'restaurants';
-        $this->data['location'] = trans('main.restaurants');
+        $this->data['location'] = 'restaurants';
         $this->data['location_title'] = trans('main.restaurants');
+        
 
     }
+    
+
 
     /**
      * Display a listing of the resource.
@@ -221,6 +232,9 @@ class RestaurantController extends Controller
             ->setRowId(function ($model) {
                 return "row-" . $model->id;
             })
+             ->EditColumn('owner', function ($model) {
+                return $model->owner->name;
+            })
             ->addColumn('active', function ($model) {
 
 
@@ -245,7 +259,12 @@ class RestaurantController extends Controller
 
             })->addColumn('control', function ($model) {
                 $id = $model->id;
-                return "<a class='btn btn-primary btn-sm' href = '" . url("restaurants/" . $id . "/edit") . "'><i class='fa fa-pencil' ></i ></a> ";
+                if($this->user->hasRole('superadmin'))
+                    return "<a class='btn btn-primary btn-sm' target='_blank' href = '" . url("restaurants/" . $id . "/edit") . "'><i class='fa fa-pencil' ></i ></a> ";
+            else{
+                return "<a class='btn btn-primary btn-sm' target='_blank' href = '" . url("restaurants/" . $id . "/edit") . "'><i class='fa fa-pencil' ></i ></a> ".
+                        "<a class='btn btn-primary btn-sm' target='_blank'  href = '" . url("acting_as/" . $id . "") . "'>".__('restaurants.restaurant_cpanel')."</a> ";
+            }
 
             })
             ->rawColumns(['control','active'])
@@ -320,11 +339,43 @@ class RestaurantController extends Controller
         $this->data['sub_menu'] = 'restaurants-edit';
         $this->data['restaurant'] = Restaurant::find($id);
 
-
+       
+        if(!(($this->user->restaurant_id==$this->data['restaurant']->branch_of && $this->user->hasRole('admin'))
+                || $this->user->hasRole('superadmin')))
+            return  redirect()->route('logout');
+        
+        $this->data['users'] = $this->get_all_users_restaurant($this->user->restaurant_id);
+        
+                   
         $this->data['restaurant_categories'] = Lookup::where(
                 ['parent_id'=>\Config::get('settings.restaurant_categories')])->get();
         $this->data['working_days'] = Lookup::where(
                 ['parent_id'=>\Config::get('settings.working_days')])->get();
+        return view('restaurant.edit', $this->data);
+    }
+    
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function profile()
+    {
+        $this->data['sub_menu'] = 'home';
+        $this->data['location'] = 'restaurants/profile';
+        $this->data['location_title'] = trans('restaurants.restaurant_profile');
+        
+        $this->data['restaurant'] = Restaurant::find($this->user->restaurant_id);
+
+        
+        $this->data['restaurant_categories'] = Lookup::where(
+                ['parent_id'=>\Config::get('settings.restaurant_categories')])->get();
+        $this->data['working_days'] = Lookup::where(
+                ['parent_id'=>\Config::get('settings.working_days')])->get();
+        
+       
+
         return view('restaurant.edit', $this->data);
     }
 
@@ -352,6 +403,13 @@ class RestaurantController extends Controller
                  'commision'=>$request->commision,
                  'email'=>$request->email
              ]);
+        
+        if($request->owner_id){
+            $restaurant->update(['owner_id'=>$request->owner_id]);
+            $new_manager = User::find($request->owner_id);
+            $new_manager->update(['restaurant_id'=>$restaurant->id]);
+        }
+        
         if($request->logo){
              $file = $request->file('logo');
              $filename = "logo-".$restaurant->id.".".$file->getClientOriginalExtension();
@@ -380,7 +438,7 @@ class RestaurantController extends Controller
                 
         }
  
-           
+           if($request->day_select){
              for($i=0; $i<count($request->day_select); $i++){
                  \App\Models\RestaurantWorkingDetails::updateOrCreate([
                      'restaurant_id' => $restaurant->id,
@@ -389,6 +447,11 @@ class RestaurantController extends Controller
                      'end_at' =>$request->end[$i]
                  ]);
              }
+           }
+           
+           
+           if($this->user->hasRole('admin'))
+               return redirect()->route('restaurants.profile')->with('status', trans('main.success'));
              
         return redirect()->route('restaurants.index')->with('status', trans('main.success'));
     }

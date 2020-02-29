@@ -169,14 +169,9 @@
                         <h3 class="panel-title"><i class="fa fa-comment-o"></i>{{trans('orders.order_status_history')}}</h3>
                     </div>
                     <div class="panel-body">
-                        <ul class="nav nav-tabs">
-                            <li class="active"><a href="#tab-history" data-toggle="tab">{{trans('orders.history')}}</a></li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="tab-history">
+                        
                                 <div class="col-md-6">
-                                <fieldset>
-                                    <legend>{{trans('orders.add_status')}}</legend>
+                                
                                     <form class="form-horizontal" action="{{ route('orders.update',$order->id) }}" method="post">
                                        {{csrf_field()}}
                                             {{ method_field('PATCH') }}
@@ -200,7 +195,6 @@
                                             </div>
 
                                     </form>
-                                </fieldset>
                                 </div>
                                 
                                 <div id="history" class='col-md-6'>
@@ -226,11 +220,73 @@
                                 </div>
                                 
                                     
-                        </div>
-
-                    </div>
+                      
                 </div>
             </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-info-circle"></i> {{trans('orders.user_review')}}</h3>
+                    </div>
+                    <div class="panel-body">
+                @if(isset($order->user_review->review_rank))
+                
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td class="text">
+                                        <div class="row static-info">
+                                            <div class="col-md-5 name"> {{trans('orders.review_text')}} </div>
+                                            <div class="col-md-7 value"> {{$order->user_review->review_text }}</div>
+                                        </div>
+                                        <div class="row static-info">
+                                            <div class="col-md-5 name"> {{trans('orders.review_rank')}} </div>
+                                            <div class="col-md-7 value">{{$order->user_review->review_rank}}</div>
+                                        </div>
+                                        <div class="row static-info">
+                                            <div class="col-md-5 name"> {{trans('orders.created_at')}} </div>
+                                            <div class="col-md-7 value"> {{$order->user_review->created_at}} </div>
+                                        </div>
+                                       
+                                        
+                                    </td>
+                                    
+                                </tr>
+                            </tbody>
+                        </table>
+                       
+                   
+
+                @else
+                
+                   <form id='form-user' class="form-horizontal" action="{{ route('orders.review_customer',$order->id) }}" method="post">
+                                       {{csrf_field()}}
+                                            <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-order-status">{{trans('orders.review_text')}}</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="review_text" value="" />
+                                            </div>
+                                             </div>
+                                       
+                                       <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-order-status">{{trans('orders.review_rank')}}</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" name="review_rank" value="5" />
+                                            </div>
+                                             </div>
+
+                                        <div class="form-actions">
+                                                <div class="row">
+                                                    <div class="col-md-offset-3 col-md-12">
+                                                        <input type="submit" class="btn btn-success" value="{{trans('main.save')}}">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                    </form>
+                @endif
+                
+                 </div>
+                </div>
 
         </div>
     </div>
@@ -246,21 +302,29 @@
       @stop
 
                                                                                                                                       @push('css')
-                                                                                                                                <link href="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css" rel="stylesheet" type="text/css" />
-                                                                                                                                                                                                        @endpush
+@push('css')
+<link href="{{url('')}}/assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.css" rel="stylesheet" type="text/css" />
+@endpush                                                                                                                                                                                                        @endpush
 @push('js')
+<script src="{{url('')}}/assets/global/plugins/fuelux/js/spinner.min.js" type="text/javascript"></script>
+<script src="{{url('')}}/assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.js" type="text/javascript"></script>
 <script src="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js" type="text/javascript"></script>
         <!-- end: JAVASCRIPTS REQUIRED FOR THIS PA        GE ONLY -->
           <script>
 $(document).ready(function () {
-
+$("input[name='review_rank']").TouchSpin({
+                min: 1,
+                max: 5,
+                step: 1
+            });
+            
     $('#form-user').validate({
         errorElement: 'span', //default input error message container
         errorClass: 'help-block', // default input error message class
         focusInvalid: false, // do not focus the last invalid input
         ignore: "",
         rules: {
-            name: {
+            review_text: {
                 required: true
             },
 

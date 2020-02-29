@@ -36,6 +36,9 @@ class User extends Authenticatable
     ];
 
      
+    public function app_reviews(){
+        return $this->hasMany('App\Models\AppReview','user_id','id');
+    }
 
     public function roles() {
         return $this->belongsToMany('App\Models\Role');

@@ -6,7 +6,7 @@ return [
     'email' => 'Email',
     'status'=>'Status',
     'category'=>'Category',
-    'owner'=>'Owner',
+    'owner'=>'Owner/Manager',
     
     'save'=>'Save',
     'phone'=>'Phone',
@@ -34,6 +34,25 @@ return [
     'registered_restaurant'=>'Registered Restaurant',
     'suspends'=>'Suspend Restaurant successfully',
     'activate'=>'Activate Restaurant successfully',
+    
+    'commision'=>'Commision',
+    'discount'=>'Discount',
+    'extra_info'=>'Extra Information',
+    'phones'=>'Phones',
+    'mobiles'=>'Mobiles',
+    'banner'=>'Banner',
+    'logo'=>'Logo',
+    'change'=>'Change',
+    'working_details'=>'Working Details',
+    'day'=>'Day',
+    'start'=>'Start',
+    'end'=>'End',
+    'reviews'=>'Reviews',
+    'review_text'=>'Review Text',
+    'review_rank'=>'Review Rank',
+    'restaurant_profile'=>'Restaurant Profile',
+    'branch_of'=>'Branch Of',
+    'restaurant_cpanel'=>'CPanel'
     
     
     

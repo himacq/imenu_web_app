@@ -1,5 +1,36 @@
 <?php
 
+Route::get('/map', 'MapController@index');
+
+Route::get('/maps', function(){
+    $config = array();
+    $config['center'] = 'Defence Garden, Karachi';
+    GMaps::initialize($config);
+    $map = GMaps::create_map();
+
+    echo $map['js'];
+    echo $map['html'];
+});
+
+// user routes
+Route::group(['middleware' => 'auth'], function () {
+
+    Route::get('/language/{id}', 'HomeController@changeLanguage');
+    Route::get('/', 'HomeController@index');
+    Route::get('home/app_review', 'HomeController@app_review')->name('app_reviews');
+    Route::post('home/app_review', 'HomeController@store_app_review');
+    Route::post('home/reviewsContentListData', 'HomeController@reviewsContentListData');
+    
+    Route::get('users/profile', 'UserController@profile')->name('users.profile');
+    Route::post('users/updateUserInfo', 'UserController@updateUserInfo')->name('users.updateUserInfo');
+
+    Route::get('logout', function () {
+        \Illuminate\Support\Facades\Auth::logout();
+        return back();
+    });
+
+});
+
 // manage categories and products
 Route::group(['middleware' => 'permission:catalog-manage'], function () {
     /**
@@ -25,6 +56,7 @@ Route::group(['middleware' => 'permission:catalog-manage'], function () {
 // manage orders
 Route::group(['middleware' => 'permission:orders-manage'], function () {
     Route::post('orders/contentListData', 'OrderController@contentListData');
+    Route::post('orders/review_customer/{id}', 'OrderController@review_customer')->name('orders.review_customer');
     Route::resource('orders', 'OrderController');
 });
 
@@ -33,6 +65,19 @@ Route::group(['middleware' => 'permission:users-manage'], function () {
     Route::post('user/contentListData{status?}', 'UserController@contentListData');
     Route::get('user_activate', 'UserController@activeUser');
     Route::resource('users', 'UserController');
+});
+
+// restaurant managment 
+Route::group(['middleware' => 'role:admin||superadmin'], function () {
+    Route::get('restaurants/profile', 'RestaurantController@profile')->name('restaurants.profile');
+    Route::post('restaurants/childContentListData', 'RestaurantController@childContentListData');
+    Route::post('restaurants/reviewsContentListData', 'RestaurantController@reviewsContentListData');
+    Route::get('restaurant_activate', 'RestaurantController@activeRestaurant');
+    Route::get('acting_as/{id}', 'HomeController@acting_as');
+    Route::get('acting_as_cancle', 'HomeController@acting_as_cancle');
+    
+    
+    Route::resource('restaurants', 'RestaurantController');
 });
 
 // system managment - lookup,roles,permissions,restaurant
@@ -48,31 +93,15 @@ Route::group(['middleware' => 'role:superadmin'], function () {
     Route::post('permissions/contentListData', 'PermissionController@contentListData');
     Route::resource('permissions', 'PermissionController');
     
-    Route::get('restaurant_activate', 'RestaurantController@activeRestaurant');
+    
     Route::post('status-registered-restaurant/{id}', 'RestaurantController@registeredRestaurantStatus');
     Route::get('registered-restaurant/{id}', 'RestaurantController@registeredRestaurantView');
     Route::get('registered-restaurants', 'RestaurantController@registeredRestaurants')->name('restaurant.registered');
     Route::post('restaurants/registeredContentListData/{status?}', 'RestaurantController@registeredContentListData');
     Route::post('restaurants/contentListData/{status?}', 'RestaurantController@contentListData');
-    Route::post('restaurants/childContentListData', 'RestaurantController@childContentListData');
-    Route::post('restaurants/reviewsContentListData', 'RestaurantController@reviewsContentListData');
-    Route::resource('restaurants', 'RestaurantController');
-});
-
-Route::group(['middleware' => 'auth'], function () {
-
-    Route::get('/language/{id}', 'HomeController@changeLanguage');
-    Route::get('/', 'HomeController@index');
     
-    Route::get('users/profile', 'UserController@profile')->name('users.profile');
-    Route::post('users/updateUserInfo', 'UserController@updateUserInfo')->name('users.updateUserInfo');
-
-    Route::get('logout', function () {
-        \Illuminate\Support\Facades\Auth::logout();
-        return back();
-    });
-
 });
+
 
 
 Auth::routes();

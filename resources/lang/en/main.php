@@ -84,5 +84,13 @@ return [
     'options'=>'Options',
     'minimum'=>'Minimum',
     'maximum'=>'Maximum',
+    'manage_cpanel'=>'Manage Cpanel',
+    'cancle_acting'=>'Cancle !',
+    
+    'app_review'=>'Review Application',
+    'review_text'=>'Review Text',
+    'review_rank'=>'Rank',
+    'app_reviews'=>'Previous Reviews'
+    
     
 ];

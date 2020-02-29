@@ -32,7 +32,7 @@ class UserController extends Controller
     
     public function __construct()
     {
-        $this->middleware(['role:admin'])->except(['profile', 'changePassword', 'updateInfo']);
+        $this->middleware(['role:admin||superadmin'])->except(['profile', 'changePassword', 'updateInfo','logout']);
 
 //        $this->middleware('permission:user_display|user_update|user_delete', ['only' => ['index']]);
 //        $this->middleware('permission:user_create', ['only' => ['create']]);
@@ -43,7 +43,7 @@ class UserController extends Controller
         $this->change_language();
         $this->data['menu'] = 'users';
         $this->data['selected'] = 'users';
-        $this->data['location'] = trans('main.users');
+        $this->data['location'] = 'users';
         $this->data['location_title'] = trans('main.users');
 
     }
@@ -75,7 +75,7 @@ class UserController extends Controller
         $user->phone = $request->phone;
         $user->mobile = $request->mobile;
         $user->news_letter = $request->news_letter;
-        
+        unset($user->isAdmin);
         if ($request->password != '') $user->password = bcrypt($request->password);
 
         $user->update();
@@ -101,6 +101,7 @@ class UserController extends Controller
     public function store(AddUserRequest $request)
     {
         
+        
         $user = User::create([
             'name' => $request->name,
             'password' => bcrypt($request->password),
@@ -108,7 +109,7 @@ class UserController extends Controller
             'username' => $request->username,
             'phone' => $request->phone,
             'mobile' => $request->mobile,
-            'restaurnt_id'=>$this->user->restaurant_id
+            'restaurant_id'=>$this->user->restaurant_id
     
         ]);
         
@@ -127,9 +128,13 @@ class UserController extends Controller
         public function check_user_authority($user2){
         if( $this->user->hasRole('superadmin'))
                 return false ;
-            
-        if(($this->user->restaurant_id==$user2->restaurant_id) && $this->user->hasRole('admin'))
-               return false;
+        
+        $users = $this->get_all_users_restaurant($this->user->restaurant_id);
+        foreach($users as $user){
+            if($user2->id == $user->id)
+                return false;
+        }
+        
      
        return true;
         
@@ -223,15 +228,15 @@ class UserController extends Controller
     {
         if ($request->status) {
             if($request->status==-1)$request->status=0;
-            $users = User::where('id','!=',1)->where('isActive', '=', $request->status);
+            $users = User::where('id','!=',$this->user->id)->where('isActive', '=', $request->status);
         } else {
-            $users = User::where('id','!=',1);
+            $users = User::where('id','!=',$this->user->id);
         }
         
         if($this->user->hasRole('superadmin'))
             $users_data = $users->get();
         else 
-            $users_data = $users->where(['restaurant_id'=>$this->user->restaurant_id])->get();
+            $users_data = $this->get_all_users_restaurant($this->user->restaurant_id);
         
         return DataTables::of($users_data)
             ->setRowId(function ($model) {

@@ -24,5 +24,9 @@ class OrderRestaurant extends Model
         return $this->hasMany('App\Models\OrderRestaurantStatus','order_restaurant_id','id');
     }
     
+    public function user_review(){
+        return $this->hasOne('App\Models\UserReview','order_restaurant_id','id');
+    }
+    
     
 }

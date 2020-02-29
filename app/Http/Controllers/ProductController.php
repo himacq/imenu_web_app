@@ -302,7 +302,12 @@ class ProductController extends Controller
         $product->name_ar = $product->translate('name','ar');
         $product->name_tr = $product->translate('name','tr');
         
-        $this->data['categories'] = Category::where(['restaurant_id'=>$this->user->restaurant_id])->get();
+        if( $this->user->hasRole('superadmin'))
+            $this->data['categories'] = Category::where(['restaurant_id'=>$category->restaurant_id])->get();
+        else
+             $this->data['categories'] = Category::where(['restaurant_id'=>$this->user->restaurant_id])->get();
+        
+        
         $this->data['product'] = $product;
         
         return view('product.copy', $this->data);
@@ -326,7 +331,11 @@ class ProductController extends Controller
         $product->name_ar = $product->translate('name','ar');
         $product->name_tr = $product->translate('name','tr');
         
-        $this->data['categories'] = Category::where(['restaurant_id'=>$this->user->restaurant_id])->get();
+        if( $this->user->hasRole('superadmin'))
+            $this->data['categories'] = Category::where(['restaurant_id'=>$category->restaurant_id])->get();
+        else
+             $this->data['categories'] = Category::where(['restaurant_id'=>$this->user->restaurant_id])->get();
+        
         $this->data['product'] =$product;
         return view('product.edit', $this->data);
     }
