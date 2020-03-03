@@ -90,7 +90,8 @@ return [
     'app_review'=>'Review Application',
     'review_text'=>'Review Text',
     'review_rank'=>'Rank',
-    'app_reviews'=>'Previous Reviews'
+    'app_reviews'=>'Previous Reviews',
+    'option_groups'=>'Option Groups'
     
     
 ];

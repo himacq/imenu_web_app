@@ -444,7 +444,9 @@ class ProductController extends Controller
           // options
         
          if(is_array($request->thisoption_group_id)){
+           
         for($i=0; $i<count($request->thisoption_group_id); $i++){
+            
             if(is_null($request->option_name[$i]))
                 continue;
             
@@ -453,7 +455,7 @@ class ProductController extends Controller
             if($request->option_id[$i] == -1 || !$option)
                 $option = ProductOption::create([
                     'name' => $request->option_name[$i],
-                    'isActive'=>1,
+                    'isActive'=>$request->option_is_active[$i],
                     'group_id'=>$request->thisoption_group_id[$i],
                     'minutes_required'=>$request->option_minutes_required[$i],
                     'price'=>$request->option_price[$i]
@@ -462,7 +464,7 @@ class ProductController extends Controller
             else
                 $option->update([
                     'name' => $request->option_name[$i],
-                    'isActive'=>1,
+                    'isActive'=>$request->option_is_active[$i],
                     'group_id'=>$request->thisoption_group_id[$i],
                     'minutes_required'=>$request->option_minutes_required[$i],
                     'price'=>$request->option_price[$i]

@@ -15,6 +15,7 @@ Route::get('/maps', function(){
 // user routes
 Route::group(['middleware' => 'auth'], function () {
 
+    Route::get('/autoComplete/option_names/{language_id}', 'AutoCompleteController@option_names');
     Route::get('/language/{id}', 'HomeController@changeLanguage');
     Route::get('/', 'HomeController@index');
     Route::get('home/app_review', 'HomeController@app_review')->name('app_reviews');

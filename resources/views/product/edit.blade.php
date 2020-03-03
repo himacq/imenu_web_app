@@ -2,6 +2,8 @@
 
 @section('content')
 
+
+
  <form id='form-data' action="{{ route('products.update', $product->id) }}" method="post" enctype="multipart/form-data">
      {{csrf_field()}}
     {{ method_field('PATCH') }}
@@ -49,7 +51,7 @@
                         </li>
 
                         <li>
-                            <a href="#tab_options" data-toggle="tab" aria-expanded="false"> {{trans('main.options')}} </a>
+                            <a href="#tab_options" data-toggle="tab" aria-expanded="false"> {{trans('main.option_groups')}} </a>
                         </li>
 
 
@@ -239,7 +241,7 @@
                                             <?php $row2 = 0; ?>
                                             <?php $row3 = 0; ?>
                                             @foreach($product->option_groups as $option)
-                                            
+                                             
                                             <tr id="option-group-{{$row2}}">
 
                                             <td>
@@ -294,6 +296,7 @@
                                                     <th>{{trans('main.name_tr')}}</th>
                                                     <th>{{trans('main.minutes_required')}}</th>
                                                     <th>{{trans('main.price')}}</th>
+                                                    <th>{{trans('main.status')}}</th>
                                                     <th></th>
                                                     </thead>
                                                     <tbody>
@@ -302,15 +305,16 @@
                                                     <tr id="option-{{$row2}}-{{$row3}}">
 
                                                         <td>
+                                                            
                                                             <input type="hidden"  name="thisoption_group_id[]" value="{{ $opt->group_id }}">
                                                             <input type="hidden"  name="option_id[]" value="{{ $opt->id }}">
-                                                            <input type="text" size="3" class="form-control" name="option_name[]" value="{{ $opt->name }}">
+                                                            <input type="text" size="3" class="form-control option_name" onkeyup="autoCompleteName()" name="option_name[]" value="{{ $opt->name }}">
                                                         </td>
                                                         <td>
-                                                            <input type="text" size="3" class="form-control" name="option_name_ar[]" value="{{ $opt->translate('name','ar') }}">
+                                                            <input type="text" size="3" class="form-control option_name_ar" onkeyup="autoCompleteNameAr()" name="option_name_ar[]" value="{{ $opt->translate('name','ar') }}">
                                                         </td>
                                                         <td>
-                                                            <input type="text" size="3" class="form-control" name="option_name_tr[]" value="{{ $opt->translate('name','tr') }}">
+                                                            <input type="text" size="3" class="form-control option_name_tr" onkeyup="autoCompleteNameTr()" name="option_name_tr[]" value="{{ $opt->translate('name','tr') }}">
                                                         </td>
                                                         
 
@@ -320,6 +324,21 @@
 
                                                         <td>
                                                             <input type="text" size="3" class="form-control" name="option_price[]" value="{{ $opt->price }}">
+                                                        </td>
+                                                        <td>
+                                                                                                        <?php
+                                                                                                        $activeON = "";
+                                                                                                        $activeOff = "";
+                                                                                                        $opt->isActive !=0 ? $activeON = "active" : $activeOff = "active";
+                                                                                                        ?>
+                                                                                                        <div class="btn-group btnToggle" data-toggle="buttons" style="position: relative;margin:5px;">
+                                                                                                                <input type="hidden" id='active_option-{{$opt->id}}' name="option_is_active[]" value="{{$opt->isActive}}">
+                                                                                                                <label  onclick="javascript:set_option_active('active_option-{{$opt->id}}',1);" class="btn btn-default btn-on-1 btn-xs {{$activeON}}">
+                                                                                                                <input   type="radio" value="1" name="this_option_is_active[{{$opt->id}}][]" >ON</label>
+                                                                                                                <label onclick="javascript:set_option_active('active_option-{{$opt->id}}',0);" class="btn btn-default btn-off-1 btn-xs {{$activeOff}}">
+                                                                                                                <input  type="radio" value="0" name="this_option_is_active[{{$opt->id}}][]">OFF</label>
+                                                                                                             </div>
+                                                                                                       
                                                         </td>
                                                         <td>
                                                             <a href="javascript:delete_option_record({{$row3}},{{ $opt->id }},{{$row2}});" data-repeater-delete="" id="delete3-{{$row3}}" class="btn btn-danger delete">
@@ -333,7 +352,7 @@
                                                      
                                                     </tbody>
                                                 </table>
-                                                
+                                              
                                                <input type="hidden" id="option-row-{{$row2}}" value="{{$row3}}">
                                                  <a href="javascript:generate_option_record({{$row2}},{{$option->id}});" data-repeater-create="" class="btn btn-success " id="repeater-option-add">
                                             <i class="fa fa-plus"></i>{{trans('main.new_button')}}</a>
@@ -373,10 +392,17 @@
 @stop
 
 @push('css')
+<style>
+  .modal-dialog {
+    width: 90%;
+    margin: 30px auto;
+}
+</style>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link href="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css" rel="stylesheet" type="text/css" />
 @endpush
 @push('js')
-
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js" type="text/javascript"></script>
 <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
  
@@ -384,7 +410,62 @@
     <script src="{{url('')}}/assets/pages/scripts/components-bootstrap-switch.min.js" type="text/javascript"></script>
     
 <script>
+    
+var option_names = [] ;
+var option_names_ar = [] ;
+var option_names_tr = [] ;
+    
+             
+             
+    function set_option_active(id,value){
+        document.getElementById(id).value = value;
+    }
+    
+ 
+        
 $(document).ready(function () {
+    $.ajax({ url:"{{url('/autoComplete')}}/option_names/en" ,
+            type:'GET',
+            success:function( data ) {
+                var dataList = data; // assuming list object
+                if ( typeof(data) == "string"){ // but if string
+                    dataList = JSON.parse( data );
+                } 
+                $.each(dataList, function(index,result){
+                    option_names.push(result.name);
+                });
+            },
+            error:function( result ){ console.log(["error", result]); }
+     });
+     
+     $.ajax({ url:"{{url('/autoComplete')}}/option_names/ar" ,
+            type:'GET',
+            success:function( data ) {
+                var dataList = data; // assuming list object
+                if ( typeof(data) == "string"){ // but if string
+                    dataList = JSON.parse( data );
+                } 
+                $.each(dataList, function(index,result){
+                    option_names_ar.push(result.display_text);
+                });
+            },
+            error:function( result ){ console.log(["error", result]); }
+     });
+     
+     $.ajax({ url:"{{url('/autoComplete')}}/option_names/tr" ,
+            type:'GET',
+            success:function( data ) {
+                var dataList = data; // assuming list object
+                if ( typeof(data) == "string"){ // but if string
+                    dataList = JSON.parse( data );
+                } 
+                $.each(dataList, function(index,result){
+                    option_names_tr.push(result.display_text);
+                });
+            },
+            error:function( result ){ console.log(["error", result]); }
+     });
+             
 var row = {{$row}};
 var row2 = {{$row2}};
 $(".options-group-rows").hide();
@@ -559,12 +640,20 @@ var row3 = $( "#option-row-"+rowid ).val();
           var html = '<tr id="option-'+rowid+'-'+row3+'"><td>\n\
   <input type="hidden"  name="thisoption_group_id[]" value="'+group_id+'">\n\
 <input type="hidden"  name="option_id[]" value="-1">\n\
-<input type="text" size="3" class="form-control" name="option_name[]" value=""></td>\n\
-<td><input type="text" size="3" class="form-control" name="option_name_ar[]" value=""></td>\n\
-<td><input type="text" size="3" class="form-control" name="option_name_tr[]" ></td>\n\
+<input type="text" size="3" class="form-control option_name "  onkeyup="autoCompleteName()" name="option_name[]" value=""></td>\n\
+<td><input type="text" size="3" class="form-control option_name_ar" onkeyup="autoCompleteNameAr()" name="option_name_ar[]" value=""></td>\n\
+<td><input type="text" size="3" class="form-control option_name_tr"  onkeyup="autoCompleteNameTr()" name="option_name_tr[]" ></td>\n\
 <td>\n\
 <input type="text" size="3" class="form-control" name="option_minutes_required[]"></td>\n\
-<td><input type="text" size="3" class="form-control" name="option_price[]"></td>\n\
+<td><input type="text" size="3" class="form-control" name="option_price[]"></td>\n\\n\
+<td>\n\
+<div class="btn-group btnToggle" data-toggle="buttons" style="position: relative;margin:5px;">\n\
+<input type="hidden" name="option_is_active[]" value="1" id="active_option-'+rowid+'-generated">\n\
+<label  onclick="javascript:set_option_active('+"'active_option-"+rowid+"-generated'"+',1);" \n\
+class="btn btn-default btn-on-1 btn-xs active">\n\
+<input   type="radio" value="1" name="this_option_is_active[][]" >ON</label>\n\
+<label onclick="javascript:set_option_active('+"'active_option-"+rowid+"-generated'"+',0);" class="btn btn-default btn-off-1 btn-xs ">\n\
+<input  type="radio" value="0" name="this_option_is_active[][]">OFF</label></div></td>\n\
 <td><a href="javascript:delete_record3('+rowid+','+row3+');" data-repeater-delete="" id="delete3-{{$row3}}" class="btn btn-danger delete"><i class="fa fa-close"></i> </a></td></tr>';
     
     $( "#options_tb-"+rowid ).append(html);
@@ -573,9 +662,41 @@ var row3 = $( "#option-row-"+rowid ).val();
     
 }
 
+function autoCompleteName(){
+        $( ".option_name" ).autocomplete({
+			source: function( request, response ) {
+				var matcher = new RegExp( $.ui.autocomplete.escapeRegex( request.term ), "i" );
+				response( $.grep( option_names, function( value ) {
+					value = value.label || value.value || value;
+					return matcher.test( value );
+				}) );
+			}
+		});
+}
 
+function autoCompleteNameAr(){
+        $( ".option_name_ar" ).autocomplete({
+			source: function( request, response ) {
+				var matcher = new RegExp( $.ui.autocomplete.escapeRegex( request.term ), "i" );
+				response( $.grep( option_names_ar, function( value ) {
+					value = value.label || value.value || value;
+					return matcher.test( value );
+				}) );
+			}
+		});
+}
 
-
+function autoCompleteNameTr(){
+        $( ".option_name_tr" ).autocomplete({
+			source: function( request, response ) {
+				var matcher = new RegExp( $.ui.autocomplete.escapeRegex( request.term ), "i" );
+				response( $.grep( option_names_tr, function( value ) {
+					value = value.label || value.value || value;
+					return matcher.test( value );
+				}) );
+			}
+		});
+}
 
 
 </script>
