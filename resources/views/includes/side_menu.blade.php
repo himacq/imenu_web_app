@@ -173,6 +173,50 @@
             @endpermission
            
 
+            <li class="nav-item {{ (@$menu == 'messages') ? 'open active' : '' }}">
+                <a href="javascript:;" class="nav-link nav-toggle">
+                    <i class="icon-envelope-open"></i>
+                    <span class="title">{{trans('main.messages')}}</span>
+                    <span class="arrow"></span>
+                </a>
+                <ul class="sub-menu">
+                    <li class="nav-item {{ (@$sub_menu == 'create-message') ? 'open active' : '' }} ">
+                        <a href="{{ url('messages/create') }}" class="nav-link">
+                            <i class="fa fa-edit"></i>
+                            <span class="title">{{trans('messages.create_message')}}</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+                    
+                    @role('superadmin')
+                     <li class="nav-item {{ (@$sub_menu == 'customer_messages') ? 'open active' : '' }} ">
+                        <a href="{{ url('customer_messages') }}" class="nav-link">
+                            <i class="fa fa-edit"></i>
+                            <span class="title">{{trans('messages.customer_messages')}}</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+                    @endrole
+                    
+                    <li class="nav-item {{ (@$sub_menu == 'inbox-messages') ? 'open active' : '' }} ">
+                        <a href="{{ url('messages/inbox') }}" class="nav-link">
+                            <i class="fa fa-edit"></i>
+                            <span class="title">{{trans('messages.inbox')}}</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item {{ (@$sub_menu == 'sent-messages') ? 'open active' : '' }} ">
+                        <a href="{{ url('messages/sent') }}" class="nav-link">
+                            <i class="fa fa-edit"></i>
+                            <span class="title">{{trans('messages.sent')}}</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+
+                </ul>
+            </li>
+            
             <li class="nav-item {{ (@$menu == 'reviews') ? 'open active' : '' }}">
                     <li class="nav-item {{ (@$sub_menu == 'app_review') ? 'open active' : '' }} ">
                         <a href="{{ url('home/app_review') }}" class="nav-link">

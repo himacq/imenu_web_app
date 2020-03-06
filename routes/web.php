@@ -24,6 +24,16 @@ Route::group(['middleware' => 'auth'], function () {
     
     Route::get('users/profile', 'UserController@profile')->name('users.profile');
     Route::post('users/updateUserInfo', 'UserController@updateUserInfo')->name('users.updateUserInfo');
+    
+    Route::get('messages/inbox', 'MessageController@inbox');
+    Route::post('messages/inboxContentListData', 'MessageController@inboxContentListData');
+    Route::get('messages/details/{id}', 'MessageController@details')->name('details');
+    Route::get('messages/sent', 'MessageController@sent')->name('messages.sent');
+    Route::post('messages/sentContentListData', 'MessageController@sentContentListData');
+    
+    
+    Route::post('messages/store_reply/{id}', 'MessageController@store_reply')->name('store_reply');
+    Route::resource('messages', 'MessageController');
 
     Route::get('logout', function () {
         \Illuminate\Support\Facades\Auth::logout();
@@ -100,6 +110,10 @@ Route::group(['middleware' => 'role:superadmin'], function () {
     Route::get('registered-restaurants', 'RestaurantController@registeredRestaurants')->name('restaurant.registered');
     Route::post('restaurants/registeredContentListData/{status?}', 'RestaurantController@registeredContentListData');
     Route::post('restaurants/contentListData/{status?}', 'RestaurantController@contentListData');
+    
+    
+    Route::get('customer_messages', 'MessageController@customer_messages')->name('customer_messages');
+    Route::post('messages/customerMessagesContentListData', 'MessageController@customerMessagesContentListData');
     
 });
 

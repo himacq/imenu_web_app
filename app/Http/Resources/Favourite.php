@@ -17,6 +17,7 @@ class Favourite extends JsonResource
     {
         return [
             'id' =>$this->id,
+            'created_at'=>$this->created_at->format('Y-m-d H:i:s'),
             'product'=> new ProductFavouriteResource($this->product)
             ];
     }

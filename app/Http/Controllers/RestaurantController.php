@@ -130,7 +130,7 @@ class RestaurantController extends Controller
                      $newrestaurant = Restaurant::create([
                     'email' => $restaurant_registered->email,
                     'phone1'=>$restaurant_registered->phone,
-                    'owner_id'=>$restaurant_registered->user_id,
+                    'owner_id'=>null,
                     'verification_code'=>str_random(4),
                     'isActive'=>1,
                     'name'=>$branch->name,
@@ -233,7 +233,10 @@ class RestaurantController extends Controller
                 return "row-" . $model->id;
             })
              ->EditColumn('owner', function ($model) {
-                return $model->owner->name;
+                if($model->owner)
+                 return $model->owner->name;
+                
+                return trans('main.undefined');
             })
             ->addColumn('active', function ($model) {
 

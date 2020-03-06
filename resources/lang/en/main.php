@@ -64,7 +64,7 @@ return [
     'registered_restaurants'=>'New Registrations',
     'view'=>'View',
     'category'=>'Category',
-    'undefine'=>'Undefined',
+    'undefined'=>'Undefined',
     'not_found'=>'Not found Record',
     
     'currency'=>'$',
@@ -91,7 +91,9 @@ return [
     'review_text'=>'Review Text',
     'review_rank'=>'Rank',
     'app_reviews'=>'Previous Reviews',
-    'option_groups'=>'Option Groups'
+    'option_groups'=>'Option Groups',
+    'messages'=>'Messages',
+    'show_all'=>'Show All'
     
     
 ];

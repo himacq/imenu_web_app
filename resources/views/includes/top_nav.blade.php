@@ -19,6 +19,75 @@
         <div class="top-menu">
             
             <ul class="nav navbar-nav pull-right">
+                @role('superadmin')
+                
+                  <li class="dropdown dropdown-extended dropdown-inbox" id="header_inbox_bar">
+                                <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" aria-expanded="true">
+                                    <i class="icon-notebook"></i>
+                                    <span class="badge badge-default"> {{ count($customer_new_messages) }} </span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="external">
+                                        <h3>
+                                            <span class="bold">{{ count($customer_new_messages) }}</span> {{ trans('main.messages') }}</h3>
+                                        <a href="{{ url('customer_messages') }}">{{ trans('main.show_all') }}</a>
+                                    </li>
+                                    <li>
+                                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 275px;"><ul class="dropdown-menu-list scroller" style="height: 275px; overflow: hidden; width: auto;" data-handle-color="#637283" data-initialized="1">
+                                            @foreach($customer_new_messages as $message)
+                                                <li>
+                                                <a href="{{url('messages/details/'.$message->id)}}">
+                
+                                                    <span class="subject" style="margin-left: 0px">
+                                                        <span class="from" > {{ $message->sender->name }} </span>
+                                                        <span class="time">{{ $message->created_at }} </span>
+                                                    </span>
+                                                    <span class="message" style="margin-left: 0px">{{ $message->title }}</span>
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                           
+                                           
+                                        </ul><div class="slimScrollBar" style="background: rgb(99, 114, 131); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 159.211px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                                    </li>
+                                </ul>
+                            </li>
+                            
+                            
+                @endrole
+                <li class="dropdown dropdown-extended dropdown-inbox" id="header_inbox_bar">
+                                <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" aria-expanded="true">
+                                    <i class="icon-envelope-open"></i>
+                                    <span class="badge badge-default"> {{ count($new_messages) }} </span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="external">
+                                        <h3>
+                                            <span class="bold">{{ count($new_messages) }}</span> {{ trans('main.messages') }}</h3>
+                                        <a href="{{ url('messages/inbox') }}">{{ trans('main.show_all') }}</a>
+                                    </li>
+                                    <li>
+                                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 275px;"><ul class="dropdown-menu-list scroller" style="height: 275px; overflow: hidden; width: auto;" data-handle-color="#637283" data-initialized="1">
+                                            @foreach($new_messages as $message)
+                                                <li>
+                                                <a href="{{url('messages/details/'.$message->id)}}">
+                
+                                                    <span class="subject" style="margin-left: 0px">
+                                                        <span class="from" > {{ $message->sender->name }} </span>
+                                                        <span class="time">{{ $message->created_at }} </span>
+                                                    </span>
+                                                    <span class="message" style="margin-left: 0px">{{ $message->title }}</span>
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                           
+                                           
+                                        </ul><div class="slimScrollBar" style="background: rgb(99, 114, 131); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 159.211px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                                    </li>
+                                </ul>
+                            </li>
+                            
+                                            
                 @if(isset($user->isAdmin))
                 <li class="dropdown dropdown-user">
                     <a href="{{ url('restaurants/profile') }}" class="dropdown-toggle" >

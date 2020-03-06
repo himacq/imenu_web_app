@@ -15,8 +15,9 @@ class Messages extends Migration
     {
          schema::create('messages',function(Blueprint $table){
             $table->increments('id');
-            $table->integer('sender_id')->unsigned();;
-            $table->integer('receiver_id')->unsigned();;
+            $table->integer('sender_id')->unsigned();
+            $table->integer('receiver_id')->unsigned();
+            $table->integer('message_type');
             $table->string('title');
             $table->text('message');
             $table->boolean('isSeen');
@@ -25,8 +26,7 @@ class Messages extends Migration
              $table->foreign('sender_id')->references('id')->on('users')
                      ->onUpdate('cascade')->onDelete('cascade');
              
-             $table->foreign('receiver_id')->references('id')->on('users')
-                     ->onUpdate('cascade')->onDelete('cascade');
+            
 
         });
         

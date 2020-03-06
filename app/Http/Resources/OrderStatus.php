@@ -18,7 +18,7 @@ class OrderStatus extends JsonResource
             'id' => $this->id,
             'status' => $this->status,
             'status_text' => $this->status_text->translate('display_text'),
-            'created_at' =>\Carbon\Carbon::parse($this->created_at)->format('d-M H:i')
+            'created_at'=>$this->created_at->format('Y-m-d H:i:s'),
             ];
     }
 }

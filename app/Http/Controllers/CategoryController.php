@@ -92,6 +92,11 @@ class CategoryController extends Controller
 
     }
     
+    /**
+     * 
+     * @param Request $request
+     * @return type
+     */
      public function activeCategory(Request $request)
     {
         $isActive = $request->active;

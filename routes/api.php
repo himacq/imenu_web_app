@@ -70,6 +70,14 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/order/{id}', 'Api\OrderController@order');
     Route::get('/orders', 'Api\OrderController@listOrders');
     
+    Route::post('/messages/send_message_restaurant','Api\MessageController@send_message_restaurant');
+    Route::post('/messages/send_message_admin','Api\MessageController@send_message_admin');
+    Route::post('/messages/reply','Api\MessageController@reply');
+    Route::get('/messages/sent','Api\MessageController@get_sent_messages');
+    Route::get('/messages/inbox','Api\MessageController@inbox');
+    Route::get('/messages/unread','Api\MessageController@unread');
+    Route::get('/messages/details/{id}','Api\MessageController@details');
+    
 
 });
 /*

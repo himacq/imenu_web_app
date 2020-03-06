@@ -13,6 +13,10 @@ use App;
 use App\Models\Translation;
 use App\Models\User;
 use App\Models\Restaurant;
+use App\Models\Message;
+use App\Models\MessageReply;
+
+use DB;
 
 class Controller extends BaseController {
 
@@ -44,6 +48,50 @@ class Controller extends BaseController {
             if(!($this->user->restaurant_id || $this->user->hasRole('superadmin'))){
                 return redirect()->route('logout');
             }
+            
+            /** 
+             * count user's new messages
+             */
+            $new_messages = DB::select('SELECT DISTINCT messages.id FROM messages '
+                    . 'left outer join `message_replies` '
+                    . 'on messages.id=message_replies.message_id '
+                    . ' where ((messages.sender_id='.$this->user->id.' or messages.receiver_id='.$this->user->id.' )'
+                    . 'and (message_replies.`sender_id` !='.$this->user->id.' '
+                    . 'AND message_replies.`isSeen` = 0))  '
+                    . 'or (messages.receiver_id='.$this->user->id.' and messages.isSeen=0)'
+                    . '');
+            
+            
+            
+            $messages = array();
+            foreach($new_messages as $message){
+                $messages[] = $message->id;
+            }
+            
+            $this->data['new_messages'] = Message::whereIn('id',$messages)->get();
+            /**
+             * super admin new customer's new messages
+             */
+            if($this->user->hasRole('superadmin')){
+            $customer_new_messages = DB::select('SELECT DISTINCT messages.id FROM messages '
+                    . 'left outer join `message_replies` '
+                    . 'on messages.id=message_replies.message_id '
+                    . ' where ((messages.message_type=1 )'
+                    . 'and (message_replies.`sender_id` !='.$this->user->id.' '
+                    . 'AND message_replies.`isSeen` = 0))  '
+                    . 'or (messages.message_type=1 and messages.isSeen=0)'
+                    . '');
+            
+            
+            
+            $messages = array();
+            foreach($customer_new_messages as $message){
+                $messages[] = $message->id;
+            }
+            
+            $this->data['customer_new_messages'] = Message::whereIn('id',$messages)->get();
+            }
+            
             return $next($request);
         });
     }

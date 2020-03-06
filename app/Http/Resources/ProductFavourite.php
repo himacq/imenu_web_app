@@ -16,6 +16,7 @@ class ProductFavourite extends JsonResource
     {
         return [
             'product_id'=>$this->id,
+            'created_at'=>$this->created_at->format('Y-m-d H:i:s'),
             'name'=>$this->translate('name'),
             'image'=> url('/uploads/products/'.($this->image?$this->image:'default.jpg')),
             'isActive'=>$this->isActive,

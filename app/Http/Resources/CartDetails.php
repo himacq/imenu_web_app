@@ -19,7 +19,9 @@ class CartDetails extends JsonResource
             'id' => $this->id,
             'qty' => $this->qty,
             'price'=>$this->price,
-            'product' => new ProductFavouriteResource($this->product)
+            'created_at'=>$this->created_at->format('Y-m-d H:i:s'),
+            'product' => new ProductFavouriteResource($this->product),
+            
             ];
     }
 }

@@ -53,8 +53,10 @@ class Cart extends JsonResource
         return [
             'id' =>$this->id,
             'grand_total' =>$this->grand_total,
+            'created_at'=>$this->created_at->format('Y-m-d H:i:s'),
             'cart_items'=>$cart_items,
             'items'=> $items
+            
             ];
     }
 }

@@ -79,7 +79,12 @@
                                                 @role('superadmin')
                                                 <div class="form-group form-md-line-input">
                                                     <label for="form_control_1">{{trans('restaurants.owner')}}</label>
+                                                    @if($restaurant->owner)
                                                     <a target="_blank" href="{{url('users/' . $restaurant->owner->id . '/edit')}}" >{{ $restaurant->owner->name }}</a>
+                                                    @else
+                                                    {{trans('main.undefined')}}
+                                                    @endif
+                                                    
                                                 </div>
                                                 @endrole
                                                 
@@ -89,7 +94,7 @@
 
                                                     <select name="owner_id" class="form-control" style="margin-bottom: 13px;">
                                                         @foreach($users as $user)
-                                                        <option value="{{$user->id}}" {{$restaurant->owner->id==$user->id ? "selected" : ""}}>{{$user->name}}</option>
+                                                        <option value="{{$user->id}}" @if($restaurant->owner) {{$restaurant->owner->id==$user->id ? "selected" : ""}} @endif>{{$user->name}}</option>
                                                         @endforeach
                                                     </select>
                                                     <label for="form_control_1">{{trans('restaurants.owner')}}</label>
