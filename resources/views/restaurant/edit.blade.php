@@ -163,13 +163,25 @@
                                         <div class="portlet-body form">
                                             <div class="form-body">
                                                 <div class="form-group form-md-line-input">
+                                                    @role('superadmin')
                                                     <input type="text" class="form-control" name="commision" value="{{ $restaurant->commision }}">
+                                                    @endrole
+                                                    
+                                                    @role('admin')
+                                                    <input type="text" class="form-control" readonly="" name="commision" value="{{ $restaurant->commision }}">
+                                                    @endrole
                                                     <label for="form_control_1">{{trans('restaurants.commision')}}</label>
                                                     <span class="help-block"></span>
                                                 </div>
                                                 
                                                 <div class="form-group form-md-line-input">
+                                                    @role('superadmin')
                                                     <input type="text" class="form-control" name="discount" value="{{ $restaurant->discount }}">
+                                                    @endrole
+                                                    
+                                                    @role('admin')
+                                                    <input type="text" class="form-control" readonly="" name="discount" value="{{ $restaurant->discount }}">
+                                                    @endrole
                                                     <label for="form_control_1">{{trans('restaurants.discount')}}</label>
                                                     <span class="help-block"></span>
                                                 </div>
@@ -279,9 +291,13 @@
                         </div>
                         
                         <div class="tab-pane fade " id="tab_location">
-                          
-
-                        </div>
+                            <input type="hidden" id="lat-span" name="latitude" value="{{$restaurant->latitude}}">
+                            <input type="hidden" id="lon-span" name="longitude" value="{{$restaurant->longitude}}">
+                            <div id="map" style="width: 100%; height: 350px;">
+                                
+                            
+                            </div>
+                            </div>
                         <div class="tab-pane fade " id="tab_reviews">
                             <table id="reviews-data-table"
                                        class="table table-striped table-bordered ">
@@ -317,11 +333,67 @@
 @stop
 
 @push('css')
+<style>
+    #map_canvas{
+    position: relative !important;
+}
+
+</style>
 <link href="{{url('')}}/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" />
 <link href="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css" rel="stylesheet" type="text/css" />
 @endpush
 @push('js')
+<script>
+    var marker;
+function initMap() {
+    var center = {lat: {{$center_lat}}, lng: {{$center_long}}};
+    var marker_position = {lat: {{$marker_lat}}, lng: {{$marker_long}}};
+  
+    var map = new google.maps.Map(document.getElementById('map'), {
+      center: center,
+      zoom: {{$zoom}}
+    });
+  
+    marker = new google.maps.Marker({
+          position: marker_position,
+          map: map,
+          draggable: true
+        });
+  
+     google.maps.event.addListener(marker, 'dragend', function(marker) {
+        var latLng = marker.latLng;
+        document.getElementById('lat-span').value = latLng.lat();
+        document.getElementById('lon-span').value = latLng.lng();
+     });
+     
+     google.maps.event.addListener(map, 'click', function(event) {
+        placeMarker(event.latLng);         
+  });
+  
+  function placeMarker(location) {
+            if (marker == undefined){
+                marker = new google.maps.Marker({
+                    position: location,
+                    map: map, 
+                    animation: google.maps.Animation.DROP,
+                });
+            }
+            else{
+                marker.setPosition(location);
+            }
+            
+        document.getElementById('lat-span').value = location.lat();
+        document.getElementById('lon-span').value = location.lng();
         
+            map.setCenter(location);
+
+        }
+        
+}
+
+  
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGdpn4f1QYHxrQCzInRbPTYhwdMICR_DU&libraries=places&callback=initMap" async defer></script>      
 <script src="{{url('')}}/assets/global/plugins/moment.min.js" type="text/javascript"></script>
 <script src="{{url('')}}/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
 <script src="{{url('')}}/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
@@ -353,6 +425,8 @@
     }
 
 $(document).ready(function () {
+
+
 
 var row = {{$row}};
  $( "#repeater-add" ).click(function() {

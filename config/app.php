@@ -161,7 +161,6 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        FarhanWazir\GoogleMaps\GMapsServiceProvider::class,
 
         
 
@@ -233,7 +232,6 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
-        'GMaps' => FarhanWazir\GoogleMaps\Facades\GMapsFacade::class,
 
 
 

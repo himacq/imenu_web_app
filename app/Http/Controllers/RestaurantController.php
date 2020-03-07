@@ -11,6 +11,7 @@ use App\Models\RestaurantRegistration;
 use App\Models\RestaurantReview;
 use App\Models\User;
 
+
 use DataTables;
 
 class RestaurantController extends Controller
@@ -354,6 +355,27 @@ class RestaurantController extends Controller
                 ['parent_id'=>\Config::get('settings.restaurant_categories')])->get();
         $this->data['working_days'] = Lookup::where(
                 ['parent_id'=>\Config::get('settings.working_days')])->get();
+        
+        /*********************/
+        // google map generation
+        if($this->data['restaurant']->latitude && $this->data['restaurant']->longitude){
+            $this->data['center_lat'] = $this->data['restaurant']->latitude;
+            $this->data['center_long'] = $this->data['restaurant']->longitude;
+            
+            $this->data['marker_lat'] = $this->data['restaurant']->latitude;
+            $this->data['marker_long'] = $this->data['restaurant']->longitude;
+            $this->data['zoom'] = 15;
+        }
+        else {
+            $this->data['center_lat'] = "38.9637";
+            $this->data['center_long'] = "35.2433";
+            $this->data['marker_lat'] = "38.9637";
+            $this->data['marker_long'] = "35.2433";
+            $this->data['zoom'] = 5;
+        }
+       
+        
+        
         return view('restaurant.edit', $this->data);
     }
     
@@ -377,6 +399,23 @@ class RestaurantController extends Controller
         $this->data['working_days'] = Lookup::where(
                 ['parent_id'=>\Config::get('settings.working_days')])->get();
         
+       /*********************/
+        // google map generation
+        if($this->data['restaurant']->latitude && $this->data['restaurant']->longitude){
+            $this->data['center_lat'] = $this->data['restaurant']->latitude;
+            $this->data['center_long'] = $this->data['restaurant']->longitude;
+            
+            $this->data['marker_lat'] = $this->data['restaurant']->latitude;
+            $this->data['marker_long'] = $this->data['restaurant']->longitude;
+            $this->data['zoom'] = 15;
+        }
+        else {
+            $this->data['center_lat'] = "38.9637";
+            $this->data['center_long'] = "35.2433";
+            $this->data['marker_lat'] = "38.9637";
+            $this->data['marker_long'] = "35.2433";
+            $this->data['zoom'] = 5;
+        }
        
 
         return view('restaurant.edit', $this->data);
@@ -402,10 +441,17 @@ class RestaurantController extends Controller
                  'phone3'=>$request->phone3,
                  'mobile1'=>$request->mobile1,
                  'mobile2'=>$request->mobile2,
-                 'discount'=>$request->discount,
-                 'commision'=>$request->commision,
-                 'email'=>$request->email
+                 'email'=>$request->email,
+            'latitude'=>$request->latitude,
+            'longitude'=>$request->longitude,
              ]);
+        
+        if($this->user->hasRole('superadmin')){
+          $restaurant->update([
+                 'discount'=>$request->discount,
+                 'commision'=>$request->commision
+             ]);  
+        }
         
         if($request->owner_id){
             $restaurant->update(['owner_id'=>$request->owner_id]);

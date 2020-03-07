@@ -52,7 +52,8 @@ return [
     'review_rank'=>'Review Rank',
     'restaurant_profile'=>'Restaurant Profile',
     'branch_of'=>'Branch Of',
-    'restaurant_cpanel'=>'CPanel'
+    'restaurant_cpanel'=>'CPanel',
+    'location'=>'Location On Map'
     
     
     
