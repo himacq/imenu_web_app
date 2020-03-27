@@ -1,6 +1,64 @@
 @extends('layouts.main')
 
 @section('content')
+
+    @role(['a','superadmin'])
+    <form id='form-data' action="{{ url('restaurants/admin_review/'.$restaurant->id) }}" method="post" >
+        <!-- Main Content -->
+        <div class="row" style="margin-top: 30px;">
+
+            <div class="col-md-12">
+                <div class="portlet light bordered">
+
+                    <div class="portlet light bordered">
+                        <div class="portlet-body form">
+
+                            {{csrf_field()}}
+                            <div class="form-body">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label">{{trans('main.review_text')}}</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" name="review_text">
+                                            <span class="help-block"></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="col-md-6 control-label">{{trans('main.review_rank')}}</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="review_rank" value="5">
+                                            <span class="help-block"></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <input type="submit" class="btn btn-success" value="{{trans('main.save')}}">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- END SAMPLE FORM PORTLET-->
+
+
+
+    </form>
+    @endrole
 <form id='form-user'  action="{{ route('restaurants.update',$restaurant->id) }}" method="post" role="form" enctype="multipart/form-data">
     {{csrf_field()}}
     {{ method_field('PATCH') }}
@@ -38,14 +96,17 @@
                 </div>
                 <div class="portlet-body">
                     <ul class="nav nav-tabs">
-                        <li class="active">
+                        <li @if($sub_menu!='branches') class="active" @endif>
                             <a href="#tab_profile" data-toggle="tab" aria-expanded="true"> {{trans('restaurants.profile')}} </a>
+                        </li>
+                        <li>
+                            <a href="#tab_classification" data-toggle="tab" aria-expanded="true"> {{trans('restaurants.classifications')}} </a>
                         </li>
                         <li>
                             <a href="#tab_working_details" data-toggle="tab" aria-expanded="false"> {{trans('restaurants.working_details')}} </a>
                         </li>
                         @if($restaurant->branch_of==NULL)
-                        <li>
+                        <li  @if($sub_menu=='branches') class="active" @endif>
                             <a href="#tab_branches" data-toggle="tab" aria-expanded="false"> {{trans('restaurants.branches')}} </a>
                         </li>
                         @endif
@@ -53,16 +114,20 @@
                         <li>
                             <a href="#tab_location" data-toggle="tab" aria-expanded="false"> {{trans('restaurants.location')}} </a>
                         </li>
-                        
+
                         <li>
                             <a href="#tab_reviews" data-toggle="tab" aria-expanded="false"> {{trans('restaurants.reviews')}} </a>
+                        </li>
+
+                        <li>
+                            <a href="#tab_admin_reviews" data-toggle="tab" aria-expanded="false"> {{trans('restaurants.admin_reviews')}} </a>
                         </li>
 
 
 
                     </ul>
                     <div class="tab-content">
-                        <div class="tab-pane fade active in" id="tab_profile">
+                        <div class="tab-pane fade  @if($sub_menu!='branches') active in @endif  " id="tab_profile">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="portlet light bordered">
@@ -75,8 +140,8 @@
                                                     <label for="form_control_1">{{trans('restaurants.name')}}</label>
                                                     <span class="help-block"></span>
                                                 </div>
-                                                
-                                                @role('superadmin')
+
+                                                @role(['admin','a','superadmin'])
                                                 <div class="form-group form-md-line-input">
                                                     <label for="form_control_1">{{trans('restaurants.owner')}}</label>
                                                     @if($restaurant->owner)
@@ -84,43 +149,35 @@
                                                     @else
                                                     {{trans('main.undefined')}}
                                                     @endif
-                                                    
-                                                </div>
-                                                @endrole
-                                                
-                                                @role('admin')
-                                                @if(isset($users))
-                                                <div class="form-group form-md-line-input">
+
+                                                    @if(Auth::user()->id != $restaurant->owner_id)
 
                                                     <select name="owner_id" class="form-control" style="margin-bottom: 13px;">
+                                                        <option value="0" >{{trans('restaurants.owner')}}</option>
                                                         @foreach($users as $user)
-                                                        <option value="{{$user->id}}" @if($restaurant->owner) {{$restaurant->owner->id==$user->id ? "selected" : ""}} @endif>{{$user->name}}</option>
+                                                            <option value="{{$user->id}}" @if($restaurant->owner) {{$restaurant->owner->id==$user->id ? "selected" : ""}} @endif>{{$user->name}}</option>
                                                         @endforeach
                                                     </select>
-                                                    <label for="form_control_1">{{trans('restaurants.owner')}}</label>
-                                                    <span class="help-block"></span>
+
+                                                        @endif
+
                                                 </div>
-                                                @endif 
                                                 @endrole
-                                                
+
+
+
                                                 @if($restaurant->branch_of)
                                                 <div class="form-group form-md-line-input">
 
 
                                                     <label for="form_control_1">{{trans('restaurants.branch_of')}}</label>
+                                                    @if(Auth::user()->hasRole('a'))
                                                     <a target="_blank" href="{{url('restaurants/' . $restaurant->branch_of . '/edit')}}" >{{ $restaurant->main_branch->name }}</a>
+                                                        @else
+                                                        {{ $restaurant->main_branch->name }}
+                                                    @endif
                                                 </div>
                                                 @endif
-                                                <div class="form-group form-md-line-input">
-
-                                                    <select name="category" class="form-control" style="margin-bottom: 13px;">
-                                                        @foreach($restaurant_categories as $category)
-                                                        <option value="{{$category->id}}" {{$restaurant->category==$category->id ? "selected" : ""}}>{{$category->translate('display_text')}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label for="form_control_1">{{trans('restaurants.category')}}</label>
-                                                    <span class="help-block"></span>
-                                                </div>
 
                                                 <div class="form-group form-md-line-input">
 
@@ -137,7 +194,7 @@
                                                     <label for="form_control_1">{{trans('restaurants.phones')}}</label>
                                                     <span class="help-block"></span>
                                                 </div>
-                                                
+
                                                 <div class="form-group form-md-line-input">
 
                                                     <input type="text" class="form-control" name="mobile1" value="{{ $restaurant->mobile1 }}">
@@ -145,7 +202,7 @@
                                                     <label for="form_control_1">{{trans('restaurants.mobiles')}}</label>
                                                     <span class="help-block"></span>
                                                 </div>
-                                                
+
                                                 <div class="form-group form-md-line-input">
 
                                                     <input type="text" class="form-control" name="email" value="{{ $restaurant->email }}">
@@ -163,29 +220,29 @@
                                         <div class="portlet-body form">
                                             <div class="form-body">
                                                 <div class="form-group form-md-line-input">
-                                                    @role('superadmin')
+                                                    @role(['a','superadmin'])
                                                     <input type="text" class="form-control" name="commision" value="{{ $restaurant->commision }}">
                                                     @endrole
-                                                    
+
                                                     @role('admin')
                                                     <input type="text" class="form-control" readonly="" name="commision" value="{{ $restaurant->commision }}">
                                                     @endrole
                                                     <label for="form_control_1">{{trans('restaurants.commision')}}</label>
                                                     <span class="help-block"></span>
                                                 </div>
-                                                
+
                                                 <div class="form-group form-md-line-input">
-                                                    @role('superadmin')
+                                                    @role(['a','superadmin'])
                                                     <input type="text" class="form-control" name="discount" value="{{ $restaurant->discount }}">
                                                     @endrole
-                                                    
+
                                                     @role('admin')
                                                     <input type="text" class="form-control" readonly="" name="discount" value="{{ $restaurant->discount }}">
                                                     @endrole
                                                     <label for="form_control_1">{{trans('restaurants.discount')}}</label>
                                                     <span class="help-block"></span>
                                                 </div>
-                                                
+
                                                 <div class="form-group form-md-line-input">
                                                     <label for="form_control_1">{{trans('restaurants.logo')}}</label>
                                                     <span class="help-block"></span>
@@ -230,6 +287,43 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="tab-pane fade " id="tab_classification">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="portlet light bordered">
+                                        <div class="portlet-body form">
+                                            <div class="form-body">
+
+
+
+                                                <div class="form-group form-md-checkboxes">
+                                                    <div class="md-checkbox-list">
+                                                        @foreach($restaurant_classifications_lookup as $category)
+                                                            <div class="md-checkbox">
+                                                                <input type="checkbox" id="checkbox{{$category->id}}" {{in_array($category->id, $restaurant_classifications) ? "checked" : ""}}
+                                                                                name="classification[]"
+                                                                       value="{{ $category->id }}" class="md-check">
+                                                                <label for="checkbox{{$category->id}}" >
+                                                                    <span></span>
+                                                                    <span class="check"></span>
+                                                                    <span class="box"></span> {{$category->translate('display_text')}}
+                                                                </label>
+                                                            </div>
+                                                        @endforeach
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
                         <div class="tab-pane fade " id="tab_working_details">
                               <table id="working_days_tb" class="table table-hover table-striped table-bordered">
                                                     <thead>
@@ -243,7 +337,7 @@
                                             @foreach($restaurant->working_details as $restaurantWorkday)
                                             <?php $row++; ?>
                                             <tr id="row-{{$row}}">
-                                            <td> 
+                                            <td>
                                                 <select class='form-control valid' name='day_select[]'>";
                                                     @foreach($working_days as $day)
                                                       <option value='{{$day->id}}' {{$restaurantWorkday->working_day==$day->id ? "selected" : ""}}>{{$day->translate('display_text')}}</option>
@@ -261,22 +355,22 @@
                                             </td>
                                         </tr>
                                         @endforeach
-                                        
-                                     
-                                      
+
+
+
                                     </tbody>
                                                 </table>
-                            
+
                             <a href="javascript:;" data-repeater-create="" class="btn btn-success " id="repeater-add">
                                             <i class="fa fa-plus"></i>{{trans('main.new_button')}}</a>
-                                                
+
                         </div>
-                        <div class="tab-pane fade " id="tab_branches">
+                        <div class="tab-pane fade @if($sub_menu=='branches') active in @endif " id="tab_branches">
                             <table id="data-table"
                                        class="table table-striped table-bordered ">
                                     <thead>
                                     <tr>
-                                       
+
                                         <th>#</th>
                                         <th>{{trans('restaurants.name')}}</th>
                                         <th>{{trans('restaurants.owner')}}</th>
@@ -289,29 +383,45 @@
 
                                 </table>
                         </div>
-                        
+
                         <div class="tab-pane fade " id="tab_location">
                             <input type="hidden" id="lat-span" name="latitude" value="{{$restaurant->latitude}}">
                             <input type="hidden" id="lon-span" name="longitude" value="{{$restaurant->longitude}}">
                             <div id="map" style="width: 100%; height: 350px;">
-                                
-                            
+
+
                             </div>
                             </div>
                         <div class="tab-pane fade " id="tab_reviews">
                             <table id="reviews-data-table"
-                                       class="table table-striped table-bordered ">
-                                    <thead>
-                                    <tr>
-                                       
-                                        <th>{{trans('restaurants.review_text')}}</th>
-                                        <th style="width:10%">{{trans('restaurants.review_rank')}}</th>
-                                        <th>{{trans('main.created_at')}}</th>
+                                   class="table table-striped table-bordered ">
+                                <thead>
+                                <tr>
 
-                                    </tr>
-                                    </thead>
+                                    <th>{{trans('restaurants.review_text')}}</th>
+                                    <th style="width:10%">{{trans('restaurants.review_rank')}}</th>
+                                    <th>{{trans('main.created_at')}}</th>
 
-                                </table>
+                                </tr>
+                                </thead>
+
+                            </table>
+                        </div>
+
+                        <div class="tab-pane fade " id="tab_admin_reviews">
+                            <table id="admin-reviews-data-table"
+                                   class="table table-striped table-bordered ">
+                                <thead>
+                                <tr>
+
+                                    <th>{{trans('restaurants.review_text')}}</th>
+                                    <th style="width:10%">{{trans('restaurants.review_rank')}}</th>
+                                    <th>{{trans('main.created_at')}}</th>
+
+                                </tr>
+                                </thead>
+
+                            </table>
                         </div>
 
 
@@ -341,59 +451,63 @@
 </style>
 <link href="{{url('')}}/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" />
 <link href="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css" rel="stylesheet" type="text/css" />
+<link href="{{url('')}}/assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.css" rel="stylesheet" type="text/css" />
+
 @endpush
 @push('js')
-<script>
+    <script src="{{url('')}}/assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.js" type="text/javascript"></script>
+
+    <script>
     var marker;
 function initMap() {
     var center = {lat: {{$center_lat}}, lng: {{$center_long}}};
     var marker_position = {lat: {{$marker_lat}}, lng: {{$marker_long}}};
-  
+
     var map = new google.maps.Map(document.getElementById('map'), {
       center: center,
       zoom: {{$zoom}}
     });
-  
+
     marker = new google.maps.Marker({
           position: marker_position,
           map: map,
           draggable: true
         });
-  
+
      google.maps.event.addListener(marker, 'dragend', function(marker) {
         var latLng = marker.latLng;
         document.getElementById('lat-span').value = latLng.lat();
         document.getElementById('lon-span').value = latLng.lng();
      });
-     
+
      google.maps.event.addListener(map, 'click', function(event) {
-        placeMarker(event.latLng);         
+        placeMarker(event.latLng);
   });
-  
+
   function placeMarker(location) {
             if (marker == undefined){
                 marker = new google.maps.Marker({
                     position: location,
-                    map: map, 
+                    map: map,
                     animation: google.maps.Animation.DROP,
                 });
             }
             else{
                 marker.setPosition(location);
             }
-            
+
         document.getElementById('lat-span').value = location.lat();
         document.getElementById('lon-span').value = location.lng();
-        
+
             map.setCenter(location);
 
         }
-        
+
 }
 
-  
+
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGdpn4f1QYHxrQCzInRbPTYhwdMICR_DU&libraries=places&callback=initMap" async defer></script>      
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGdpn4f1QYHxrQCzInRbPTYhwdMICR_DU&libraries=places&callback=initMap" async defer></script>
 <script src="{{url('')}}/assets/global/plugins/moment.min.js" type="text/javascript"></script>
 <script src="{{url('')}}/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
 <script src="{{url('')}}/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
@@ -413,12 +527,12 @@ function initMap() {
     <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     -->
-    
+
 
     <script src="{{url('')}}/assets/pages/scripts/components-bootstrap-switch.min.js" type="text/javascript"></script>
-    
+
 <script>
-    
+
     function delete_record(id) {
         var row = document.getElementById("row-"+id);
     row.parentNode.removeChild(row);
@@ -426,7 +540,11 @@ function initMap() {
 
 $(document).ready(function () {
 
-
+    $("input[name='review_rank']").TouchSpin({
+        min: 1,
+        max: 5,
+        step: 1
+    });
 
 var row = {{$row}};
  $( "#repeater-add" ).click(function() {
@@ -439,7 +557,7 @@ var row = {{$row}};
          <input type='text' size='3' class='form-control timepicker timepicker-24' name='start[]' \n\
             value='{{ $day->start_at }}'></td><td><input type='text' size='3' class='form-control timepicker timepicker-24' name='end[]' value='{{ $day->end_at }}'></td><td>\n\
 <a href='javascript:delete_record("+row+");' id='delete-{{$row}}'   class='btn btn-danger delete'><i class='fa fa-close'></i>{{trans('main.delete')}}</a></td></tr>";
-    
+
             $( "#working_days_tb" ).append(html);
 });
 
@@ -463,7 +581,7 @@ var row = {{$row}};
             //name: "blabla",
         },
 
-        invalidHandler: function (event, validator) { //display error alert on form submit   
+        invalidHandler: function (event, validator) { //display error alert on form submit
 
         },
         highlight: function (element) { // hightlight error inputs
@@ -475,7 +593,7 @@ var row = {{$row}};
             label.remove();
         },
         errorPlacement: function (error, element) {
-            if (element.attr("name") == "tnc") { // insert checkbox errors after the container                  
+            if (element.attr("name") == "tnc") { // insert checkbox errors after the container
                 error.insertAfter($('#register_tnc_error'));
             } else if (element.closest('.input-icon').size() === 1) {
                 error.insertAfter(element.closest('.input-icon'));
@@ -513,7 +631,7 @@ $(function () {
                 },
 
                 columns: [
-                    
+
                     {data: 'id' ,name: 'id', 'class': 'id'},
                     {data: 'name',width:"20%" ,name: 'name', 'class': 'name'},
                     {data: 'owner',width:"20%" ,name: 'owner', 'class': 'owner'},
@@ -555,35 +673,63 @@ $(function () {
                 });
 
             });
-            
-            var reviewTable = $('#reviews-data-table').DataTable({
-                processing: true,
-                serverSide: true,
-                searching: true,
-                "language": {
-                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
-                },
-                "bInfo": false,
-                ajax: {
-                    url: '{{url("/")}}/restaurants/reviewsContentListData',
-                    type: 'POST',
-                    data: {id: {{$restaurant->id}}},
-                    'headers': {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
 
-                },
+    $('#reviews-data-table').DataTable({
+        processing: true,
+        serverSide: true,
+        searching: true,
+        "language": {
+            processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
+        },
+        "bInfo": false,
+        ajax: {
+            url: '{{url("/")}}/restaurants/reviewsContentListData',
+            type: 'POST',
+            data: {id: {{$restaurant->id}}},
+            'headers': {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
 
-                columns: [
-                    
-                    {data: 'review_text' ,name: 'review_text',},
-                    {data: 'review_rank' ,width:"5%",name: 'review_rank',},
-                    {data: 'created_at', name: 'created_at'},
+        },
 
-                ]
-            });
+        columns: [
 
-            
+            {data: 'review_text' ,name: 'review_text',},
+            {data: 'review_rank' ,width:"5%",name: 'review_rank',},
+            {data: 'created_at', name: 'created_at'},
+
+        ]
+    });
+
+
+    $('#admin-reviews-data-table').DataTable({
+        processing: true,
+        serverSide: true,
+        searching: true,
+        "language": {
+            processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
+        },
+        "bInfo": false,
+        ajax: {
+            url: '{{url("/")}}/restaurants/adminReviewsContentListData',
+            type: 'POST',
+            data: {id: {{$restaurant->id}}},
+            'headers': {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+
+        },
+
+        columns: [
+
+            {data: 'review_text' ,name: 'review_text',},
+            {data: 'review_rank' ,width:"5%",name: 'review_rank',},
+            {data: 'created_at', name: 'created_at'},
+
+        ]
+    });
+
+
 
         });
 

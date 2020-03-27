@@ -6,7 +6,7 @@
                                         {{ method_field('PATCH') }}
                 <!-- Main Content -->
                 <div class="row" style="margin-top: 30px;">
-                
+
                     <div class="col-md-6">
                         <div class="portlet light bordered">
                             @if (session('status'))
@@ -33,7 +33,7 @@
 
                                 </div>
                                 <div class="portlet-body form">
-                                   
+
                                        <div class="form-body">
                                             <div class="form-group form-md-line-input">
 
@@ -56,21 +56,21 @@
                                                 <label for="form_control_1">{{trans('users.email')}}</label>
                                                 <span class="help-block"></span>
                                             </div>
-                                           
+
                                            <div class="form-group form-md-line-input">
                                                 <input type="text" class="form-control" name="phone" value="{{ $user->phone }}"
                                                        placeholder="{{trans('users.enter_phone')}}">
                                                 <label for="form_control_1">{{trans('users.phone')}}</label>
                                                 <span class="help-block"></span>
                                             </div>
-                                            
+
                                             <div class="form-group form-md-line-input">
                                                 <input type="text" class="form-control" name="mobile" value="{{ $user->mobile }}"
                                                        placeholder="{{trans('users.enter_mobile')}}">
                                                 <label for="form_control_1">{{trans('users.mobile')}}</label>
                                                 <span class="help-block"></span>
                                             </div>
-                                           
+
                                             <div class="form-group form-md-line-input">
                                                     <label class="col-md-4 control-label">{{trans('main.isActive')}}</label>
                                                     <div class="col-md-8">
@@ -81,7 +81,7 @@
                                                                 <span></span>
                                                             </label>
                                                             <label class="mt-radio">
-                                                                <input type="radio" name="isActive" 
+                                                                <input type="radio" name="isActive"
                                                                        {{$user->isActive==0 ? "checked" : ""}}
                                                                 id="optionsRadios26" value="0" >{{trans('main.not_active')}}
                                                                 <span></span>
@@ -89,19 +89,19 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            
+
                                             <div class="form-group form-md-line-input">
                                                     <label class="col-md-4 control-label">{{trans('users.news_letter')}}</label>
                                                     <div class="col-md-8">
                                                         <div class="mt-radio-inline">
                                                             <label class="mt-radio">
-                                                                <input type="radio" name="news_letter" id="optionsRadios25" 
+                                                                <input type="radio" name="news_letter" id="optionsRadios25"
                                                                        value="1" {{$user->news_letter==1 ? "checked" : ""}} >
                                                                 {{trans('users.news_letter_subscribed')}}
                                                                 <span></span>
                                                             </label>
                                                             <label class="mt-radio">
-                                                                <input type="radio" name="news_letter" id="optionsRadios26" 
+                                                                <input type="radio" name="news_letter" id="optionsRadios26"
                                                                        value="0" {{$user->news_letter==0 ? "checked" : ""}}  >{{trans('users.news_letter_unsubscribed')}}
                                                                 <span></span>
                                                             </label>
@@ -116,19 +116,29 @@
                                                 <span class="help-block"></span>
                                             </div>
 
-                                        </div>                                     
-                                   
+                                           <?php if (!\Entrust::hasRole('superadmin')) : ?>
+                                           <div class="form-actions">
+                                               <div class="row">
+                                                   <div class="col-md-offset-3 col-md-12">
+                                                       <input type="submit" class="btn btn-success" value="{{trans('users.save')}}">
+                                                   </div>
+                                               </div>
+                                           </div>
+                                           <?php endif ?>
+
+                                        </div>
+
                                 </div>
                             </div>
 
                         </div>
                     </div>
-                    
-                
-                
+
+
+                @role(['superadmin','c'])
                     <div class="col-md-6">
                         <div class="portlet light bordered">
-                           
+
                             <div class="portlet light bordered">
                                 <div class="portlet-title">
                                     <div class="caption font-red-sunglo">
@@ -138,14 +148,14 @@
 
                                 </div>
                                 <div class="portlet-body form">
-                                   
-                                        
+
+
                                         <div class="form-body">
                                         <div class="form-group form-md-checkboxes">
                                                 <div class="md-checkbox-list">
                                                     @foreach($roles as $role)
                                                         <div class="md-checkbox">
-                                                            <input type="checkbox" id="checkbox{{$role->id}}" {{in_array($role->id, $user_roles) ? "checked" : ""}} 
+                                                            <input type="checkbox" id="checkbox{{$role->id}}" {{in_array($role->id, $user_roles) ? "checked" : ""}}
                                                             name="role[]"
                                                                    value="{{ $role->id }}" class="md-check">
                                                             <label for="checkbox{{$role->id}}" >
@@ -157,7 +167,7 @@
                                                     @endforeach
 
                                                 </div>
-                                            </div>    
+                                            </div>
                                             <div class="form-actions">
                                                 <div class="row">
                                                     <div class="col-md-offset-3 col-md-12">
@@ -165,23 +175,24 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                         </div>
-                                        
-                                   
+
+
                                 </div>
                             </div>
 
                         </div>
                     </div>
-                    
-                    
-                    
+                    @endrole
+
+
+
                 </div>
 
                 <!-- END SAMPLE FORM PORTLET-->
-                
-               
+
+
 
     </form>
 @stop
@@ -203,16 +214,16 @@ $(document).ready(function () {
             rules: {
                 name: {
                     required: true
-                },            
+                },
                 email: {
                     email:true
                 },
-                
-                
-                
+
+
+
             },
-            
-            invalidHandler: function (event, validator) { //display error alert on form submit   
+
+            invalidHandler: function (event, validator) { //display error alert on form submit
 
             },
             highlight: function (element) { // hightlight error inputs
@@ -224,7 +235,7 @@ $(document).ready(function () {
                 label.remove();
             },
             errorPlacement: function (error, element) {
-                if (element.attr("name") == "tnc") { // insert checkbox errors after the container                  
+                if (element.attr("name") == "tnc") { // insert checkbox errors after the container
                     error.insertAfter($('#register_tnc_error'));
                 } else if (element.closest('.input-icon').size() === 1) {
                     error.insertAfter(element.closest('.input-icon'));
@@ -240,5 +251,5 @@ $(document).ready(function () {
 
     });
 		</script>
-                
+
 @endpush

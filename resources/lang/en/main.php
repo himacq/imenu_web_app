@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'site_title' => 'iMenu',
+    'site_title' => 'Menu',
     'incidents' => 'Events',
     'home' => 'Home',
-    'develop' => 'Ibrahim Abujalanbo',
-    'develop_address' => 'himacq@gmail.com - ابراهيم خليل ابوجلنبو',
+    'develop' => 'Menu',
+    'develop_address' => '',
     'incident_information' => 'Home event data',
     'users' => 'Users',
     'restaurant'=>'Restaurant',
@@ -32,7 +32,7 @@ return [
     'success'=>'The operation is done successfully',
     'error_msg' => "The operation is not done successfully" ,
     'success_continue'=>'The Product is added successfully,Now you can add Product`s options and ingredients',
-    
+
     'notice'=>'Notice',
     'sure_delete'=>'Are you sure to delete this record?',
     'delete'=>'delete!',
@@ -42,7 +42,7 @@ return [
     'success_delete'=>'Successfully deleted recored.',
     'error'=>'error!',
     'error_delete'=>'The record was not deleted successfully.',
-    
+
     'new_button'=>' New ',
     'name'=>'Name',
     'system'=>'System',
@@ -60,18 +60,18 @@ return [
     'update_record'=>'Update Record',
     'translations'=>'Translations',
     'logout'=>'Logout',
-    
+
     'registered_restaurants'=>'New Registrations',
     'view'=>'View',
     'category'=>'Category',
     'undefined'=>'Undefined',
     'not_found'=>'Not found Record',
-    
+
     'currency'=>'$',
-    
+
     'suspends'=>'Suspend Record successfully',
     'activate'=>'Activate Record successfully',
-    
+
     'enter_name'=>'Enter Name',
     'image'=>'Image',
     'change'=>'Change',
@@ -86,14 +86,36 @@ return [
     'maximum'=>'Maximum',
     'manage_cpanel'=>'Manage Cpanel',
     'cancle_acting'=>'Cancle !',
-    
+
     'app_review'=>'Review Application',
     'review_text'=>'Review Text',
     'review_rank'=>'Rank',
     'app_reviews'=>'Previous Reviews',
     'option_groups'=>'Option Groups',
     'messages'=>'Messages',
-    'show_all'=>'Show All'
-    
-    
+    'show_all'=>'Show All',
+
+    'payments'=>'Payments',
+    'payments_methods'=>'Payments Methods',
+    'contact_admin'=>'You can contact system administrator',
+    'yes'=>'Yes',
+    'no'=>'No',
+
+    'reports'=>'reports',
+    'payment_methods'=>'Payment Methods',
+
+    'api_url'=>'Api URL',
+
+    'restaurant_reviews'=>'Restaurants` Reviews',
+    'users_app_reviews'=>'Users` Reviews',
+    'support'=>'Support',
+    'reviews'=>'Reviews',
+    'error_acting_as'=>'Error Acting As another restaurant',
+    'error_acting_as_no_owner'=>'Error Acting As another restaurant, please specify an owner for this restaurant',
+    'most_orders'=>'Most Orders',
+    'most_ranked'=>'Most Ranked'
+
+
+
+
 ];

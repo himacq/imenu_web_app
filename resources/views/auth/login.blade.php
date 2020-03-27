@@ -32,7 +32,7 @@
         <link href="{{url('')}}/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
         <!-- END THEME GLOBAL STYLES -->
         <!-- BEGIN PAGE LEVEL STYLES -->
-        <link href="{{url('')}}/assets/pages/css/login-3.min.css" rel="stylesheet" type="text/css" />
+        <link href="{{url('')}}/assets/pages/css/login.min.css" rel="stylesheet" type="text/css" />
         <!-- END PAGE LEVEL STYLES -->
         <!-- BEGIN THEME LAYOUT STYLES -->
         <!-- END THEME LAYOUT STYLES -->
@@ -45,7 +45,7 @@
             <h2 style="font-family: Serif;color: aliceblue;">{{trans('main.site_title')}}</h3>
         </div>
         <!-- END LOGO -->
-    
+
 
         <!-- BEGIN LOGIN -->
         <div class="content">
@@ -62,7 +62,7 @@
                     <label class="control-label visible-ie8 visible-ie9">{{trans('auth.username')}}</label>
                     <div class="input-icon">
                         <i class="fa fa-user"></i>
-                        <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Username" name="username" /> 
+                        <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Username" name="username" />
                      @if ($errors->has('username'))
                       <span class="help-block">
                       <p class="alert alert-danger">{{ $errors->first('username') }}</p>
@@ -74,7 +74,7 @@
                     <label class="control-label visible-ie8 visible-ie9">{{trans('auth.password')}}</label>
                     <div class="input-icon">
                         <i class="fa fa-lock"></i>
-                        <input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="Password" name="password" /> 
+                        <input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="Password" name="password" />
 
                        @if ($errors->has('password'))
                           <span class="help-block">
@@ -90,17 +90,22 @@
                     </label>
                     <button type="submit" class="btn green pull-right"> {{trans('auth.login_button')}} </button>
                 </div>
-                
+                 <div class="create-account">
+                     <p>
+                         <a href="{{url('/register')}}"  class="uppercase">{{trans('auth.create_account')}} </a>
+                     </p>
+                 </div>
             </form>
             <!-- END LOGIN FORM -->
-            
+
+
         </div>
-    
+
         <!-- END LOGIN -->
         <!--[if lt IE 9]>
 <script src="{{url('')}}/assets/global/plugins/respond.min.js"></script>
-<script src="{{url('')}}/assets/global/plugins/excanvas.min.js"></script> 
-<script src="{{url('')}}/assets/global/plugins/ie8.fix.min.js"></script> 
+<script src="{{url('')}}/assets/global/plugins/excanvas.min.js"></script>
+<script src="{{url('')}}/assets/global/plugins/ie8.fix.min.js"></script>
 <![endif]-->
         <!-- BEGIN CORE PLUGINS -->
         <script src="{{url('')}}/assets/global/plugins/jquery.min.js" type="text/javascript"></script>

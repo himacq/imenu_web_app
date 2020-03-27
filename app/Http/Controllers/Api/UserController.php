@@ -22,17 +22,40 @@ use App\Models\Cart;
 class UserController extends ApiController
 {
     use AuthenticatesUsers;
-    
+
     public function __construct()
     {
         parent::__construct();
-    }  
+    }
     //
     // users API
     //*********************/
-    
+
+    public function review(Request $request){
+        $rules = [
+            'review_text' => 'required|min:3',
+            'review_rank' => 'required|integer',
+        ];
+
+        $validate = Validator::make($request->all(), $rules);
+        if ($validate->fails()) {
+            return $this->response(null, false,$validate->errors()->first());
+
+        }
+
+        $review = App\Models\AppReview::create([
+            'review_text' => $request->review_text,
+            'review_rank' => $request->review_rank,
+            'isActive' => 1,
+            'user_id' => $this->user->id,
+        ]);
+
+
+        return $this->response($review->toArray(), true,__('api.success'));
+    }
+
      /**
-     * 
+     *
      * @param Request $request
      * @return type
      */
@@ -43,13 +66,13 @@ class UserController extends ApiController
             'username' => 'required|unique:users',
             'password' => 'required|min:6',
         ];
-        
+
           $validate = Validator::make($request->all(), $rules);
           if ($validate->fails()) {
             return $this->response(null, false,$validate->errors()->first());
 
         }
-        
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -63,10 +86,10 @@ class UserController extends ApiController
        $user->attachRole(Role::where('name', 'user')->first());
 
        return $this->login($request);
-       
+
         return $this->response($user->toArray(), true,__('api.success'));
     }
-    
+
      /**
      * Handle a login request to the application.
      *
@@ -75,7 +98,7 @@ class UserController extends ApiController
      */
     public function login(Request $request)
     {
- 
+
         $this->validateLogin($request);
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
@@ -93,13 +116,13 @@ class UserController extends ApiController
             if (!$this->user->isActive){
                 return $this->response(null,false,__('auth.notActive'));
             }
-        
+
             if($request->header('lang')){
             $this->user->update(['language_id' => $request->header('lang')]);
             }
-            
+
             Cart::firstOrCreate(['user_id' => $this->user->id]);
-            
+
             $user = new UserResource($this->user);
             return $user->additional(['status'=>true,'message'=>__('api.success')]);
         }
@@ -108,13 +131,13 @@ class UserController extends ApiController
         // to login and redirect the user back to the login form. Of course, when this
         // user surpasses their maximum number of attempts they will get locked out.
         $this->incrementLoginAttempts($request);
-        
-        
+
+
         return $this->response(null,false,__('auth.failed'));
     }
-    
+
     /**
-     * 
+     *
      * @param Request $request
      * @return type
      */
@@ -124,9 +147,9 @@ class UserController extends ApiController
 
         return $this->response(null,true,__('api.success'));
     }
-    
+
     /**
-     * 
+     *
      * @param Request $request
      * @return type
      */
@@ -135,35 +158,35 @@ class UserController extends ApiController
         $user = new UserResource($this->user);
             return $user->additional(['status'=>true,'message'=>__('api.success')]);
     }
-    
+
     /**
-     * 
+     *
      * @param Request $request
      * @return type
      */
      public function updateUserProfile(Request $request){
-         
+
         $rules = [
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users,email,'.$this->user->id,
-            
+
         ];
-        
+
           $validate = Validator::make($request->all(), $rules);
           if ($validate->fails()) {
             return $this->response(null, false,$validate->errors()->first());
 
         }
-       
+
         $this->user->update($request->all());
-        
+
         App::setLocale($request->header('lang'));
-        
+
         return $this->response($this->user->toArray(), true,__('api.success'));
     }
-    
+
     /**
-     * 
+     *
      * @param Request $request
      * @return type
      */
@@ -171,9 +194,9 @@ class UserController extends ApiController
         $rules = [
             'latitude' => 'required',
             'longitude' => 'required',
-            
+
         ];
-        
+
           $validate = Validator::make($request->all(), $rules);
           if ($validate->fails()) {
             return $this->response(null, false,$validate->errors()->first());
@@ -183,48 +206,47 @@ class UserController extends ApiController
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
         ];
-        
+
         $this->user->update($input);
-        
+
 
         return $this->response($this->user->toArray(), true,__('api.success'));
     }
     /**
-     * 
+     *
      * @param Request $request
      * @return type
      */
-    
+
     public function updatePassword(Request $request)
     {
-        
-         
+
         $rules = [
             'old_password' => 'required',
             'new_password' => 'required',
             'password_confirm' => 'required|same:new_password'
-            
+
         ];
-        
+
           $validate = Validator::make($request->all(), $rules);
           if ($validate->fails()) {
             return $this->response(null, false,$validate->errors()->first());
 
         }
-       
+
         if (! Hash::check($request->old_password, $this->user->password)) {
             return $this->response(null, false,__('auth.password'));
         }
         $input = [
             'password' => bcrypt($request->new_password),
              ];
-        
+
         $this->user->update($input);
-        
+
         return $this->response(null, true,__('api.success'));
     }
     /**
-     * 
+     *
      * @param Request $request
      * @return type
      */
@@ -234,7 +256,7 @@ class UserController extends ApiController
             'street' => 'required|max:255',
             'city' => 'required|max:255'
         ];
-        
+
           $validate = Validator::make($request->all(), $rules);
           if ($validate->fails()) {
             return $this->response(null, false,$validate->errors()->first());
@@ -244,7 +266,7 @@ class UserController extends ApiController
        if($request->isDefault){
             UserAddress::where(['user_id'=>$this->user->id])->update(['isDefault' => 0]);
         }
-        else $isDefault = 0; 
+        else $isDefault = 0;
         $userAddress = UserAddress::create([
             'user_id' => $this->user->id,
             'city' => $request->city,
@@ -263,10 +285,10 @@ class UserController extends ApiController
 
         return $this->response($userAddress->toArray(), true,__('api.success'));
     }
-    
-    
+
+
      /**
-     * 
+     *
      * @param Request $request
      * @return type
      */
@@ -277,23 +299,23 @@ class UserController extends ApiController
             'city' => 'required|max:255',
             'id' => 'required|integer',
         ];
-        
+
           $validate = Validator::make($request->all(), $rules);
         if ($validate->fails()) {
             return $this->response(null, false,$validate->errors()->first());
 
         }
-        
+
         $address = UserAddress::where(['user_id'=>$this->user->id,'id'=>$request->id])->first();
         if (!$address) {
             return $this->response(null, false,__('api.not_found',['var'=>'address']));
         }
-        
+
          $isDefault = $request->isDefault;
        if($request->isDefault){
             UserAddress::where(['user_id'=>$this->user->id])->update(['isDefault' => 0]);
         }
-        else $isDefault = 0; 
+        else $isDefault = 0;
         $address->update([
             'city' => $request->city,
             'street' => $request->street,
@@ -306,7 +328,7 @@ class UserController extends ApiController
         return $this->response($address->toArray(), true,__('api.success'));
     }
     /**
-     * 
+     *
      * @param type $id
      */
     public function deleteAddress($id){
@@ -317,17 +339,17 @@ class UserController extends ApiController
         if (!$address) {
             return $this->response(null, false,__('api.not_found'));
         }
-        
+
         $address->delete();
-      
+
         return $this->response(null, true,__('api.success'));
-        
+
     }
-    
+
     public function listAddresses(){
       return $this->response($this->user->getAddresses, true,__('api.success'));
-     
+
       }
-    
-    
+
+
 }

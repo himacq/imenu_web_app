@@ -24,6 +24,8 @@ class ProductFavourite extends JsonResource
             'minutes_required'=>$this->minutes_required,
             'category_id'=>$this->category_id,
             'category_name'=>$this->category->translate('name'),
+            'restaurant_id'=>$this->category->restaurant_id,
+            'restaurant_name'=>$this->category->restaurant->name,
         ];
     }
 }

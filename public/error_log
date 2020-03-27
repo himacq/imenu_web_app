@@ -1,6 +1,16 @@
-[02-Feb-2020 09:46:14 UTC] PHP Warning:  require(/home1/menudeli/public_html/../vendor/autoload.php): failed to open stream: No such file or directory in /home1/menudeli/public_html/index.php on line 24
-[02-Feb-2020 09:46:14 UTC] PHP Warning:  require(/home1/menudeli/public_html/../vendor/autoload.php): failed to open stream: No such file or directory in /home1/menudeli/public_html/index.php on line 24
-[02-Feb-2020 09:46:14 UTC] PHP Fatal error:  require(): Failed opening required '/home1/menudeli/public_html/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php72/root/usr/share/pear') in /home1/menudeli/public_html/index.php on line 24
-[02-Feb-2020 09:46:54 UTC] PHP Warning:  require(/home1/menudeli/public_html/../vendor/autoload.php): failed to open stream: No such file or directory in /home1/menudeli/public_html/index.php on line 24
-[02-Feb-2020 09:46:54 UTC] PHP Warning:  require(/home1/menudeli/public_html/../vendor/autoload.php): failed to open stream: No such file or directory in /home1/menudeli/public_html/index.php on line 24
-[02-Feb-2020 09:46:54 UTC] PHP Fatal error:  require(): Failed opening required '/home1/menudeli/public_html/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php72/root/usr/share/pear') in /home1/menudeli/public_html/index.php on line 24
+[25-Mar-2020 14:39:53 UTC] PHP Fatal error:  Uncaught ReflectionException: Class view does not exist in /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Container/Container.php:788
+Stack trace:
+#0 /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Container/Container.php(788): ReflectionClass->__construct('view')
+#1 /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Container/Container.php(667): Illuminate\Container\Container->build('view')
+#2 /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Container/Container.php(615): Illuminate\Container\Container->resolve('view', Array)
+#3 /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(767): Illuminate\Container\Container->make('view', Array)
+#4 /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Container/Container.php(1227): Illuminate\Foundation\Application->make('view')
+#5 /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(176): Illuminate\Container\Container->offsetGet('view in /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 788
+[25-Mar-2020 14:39:53 UTC] PHP Fatal error:  Uncaught ReflectionException: Class view does not exist in /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Container/Container.php:788
+Stack trace:
+#0 /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Container/Container.php(788): ReflectionClass->__construct('view')
+#1 /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Container/Container.php(667): Illuminate\Container\Container->build('view')
+#2 /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Container/Container.php(615): Illuminate\Container\Container->resolve('view', Array)
+#3 /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(767): Illuminate\Container\Container->make('view', Array)
+#4 /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Container/Container.php(1227): Illuminate\Foundation\Application->make('view')
+#5 /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(176): Illuminate\Container\Container->offsetGet('view in /home1/menudeli/imenu/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 788

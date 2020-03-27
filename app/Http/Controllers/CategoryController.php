@@ -9,11 +9,11 @@ use App\Models\Category;
 
 class CategoryController extends Controller
 {
-    
+
     public function __construct()
     {
         $this->change_language();
-        $this->middleware('permission:catalog-manage');
+        $this->middleware('role:admin|superadmin');
         $this->data['menu'] = 'catalog';
         $this->data['selected'] = 'category';
         $this->data['location'] = 'categories';
@@ -21,7 +21,7 @@ class CategoryController extends Controller
         $this->data['sub_menu'] = 'category';
 
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -31,7 +31,7 @@ class CategoryController extends Controller
     {
         return view('category.index', $this->data);
     }
-    
+
     /**
      * return dataTable
      * @param Request $request
@@ -44,7 +44,7 @@ class CategoryController extends Controller
         $categories = Category::all();
        else
            $categories = Category::where(['restaurant_id'=>$this->user->restaurant_id])->get();
-       
+
           return DataTables::of($categories)
             ->setRowId(function ($model) {
                 return "row-" . $model->id;
@@ -53,9 +53,9 @@ class CategoryController extends Controller
                 $date = date('d-m-Y', strtotime($model->created_at));
                 return $date;
 
-            
+
             })
-             
+
             ->addColumn('restaurant', function ($model) {
                 return $model->restaurant->translate('name');
 
@@ -76,24 +76,25 @@ class CategoryController extends Controller
 
 
             })
-            
+
             ->addColumn('control', function ($model) {
                 $id = $model->id;
                 $html =  "<a class='btn btn-primary btn-sm' href = '" . url("categories/" . $id . "/edit") . "'><i class='fa fa-pencil' ></i ></a> ";
                 if(!count($model->products))
                   $html.= "<a class='btn btn-danger btn-sm delete' ><input type = 'hidden' class='id_hidden' value = '" . $id . "' > <i class='fa fa-remove' ></i ></a > ";
 
-                $html.='<a href="' . url("categories/" . $id ) . '"  class="btn btn-sm blue"><i class="fa fa-file-o"></i> '.__('main.copy').' </a>';
-                
+                if($this->user->hasRole('admin'))
+                    $html.='<a href="' . url("categories/" . $id ) . '"  class="btn btn-sm blue"><i class="fa fa-file-o"></i> '.__('main.copy').' </a>';
+
                 return $html;
             })
             ->rawColumns(['restaurant','control','active'])
             ->make(true);
 
     }
-    
+
     /**
-     * 
+     *
      * @param Request $request
      * @return type
      */
@@ -103,30 +104,30 @@ class CategoryController extends Controller
         $category = Category::find($request->id);
         if($this->check_user_authority($category))
            return  redirect()->route('logout');
-        
-        
+
+
         $category->update([
             'isActive' => $isActive,
         ]);
 
     }
-    
+
     /**
-     * 
+     *
      * @param type $id
      * @return type
      */
         public function check_user_authority($category){
         if( $this->user->hasRole('superadmin'))
                 return false ;
-            
-        if(($this->user->restaurant_id==$category->restaurant_id) && $this->user->can('catalog-manage'))
+
+        if(($this->user->restaurant_id==$category->restaurant_id) && $this->user->hasRole(['admin','superadmin']))
                return false;
-     
+
        return true;
-        
+
     }
-    
+
 
     /**
      * Show the form for creating a new resource.
@@ -145,36 +146,36 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {    
-        
+    {
+
         $category = Category::create([
                  'name' => $request->name,
                  'restaurant_id'=>$this->user->restaurant_id,
                 'isActive'=>$request->isActive,
              ]);
-       
+
        if($request->image){
              $file = $request->file('image');
              $filename = "image-".$category->id.".".$file->getClientOriginalExtension();
-                
+
                 //Move Uploaded File
                 $destinationPath = 'uploads/categories/';
                 $file->move($destinationPath,$filename);
-                
+
                 $category->update([
                  'image' => $filename
              ]);
-                
+
         }
         if($category){
         $this->new_translation($category->id,'ar','categories','name',$request['name_ar']);
         $this->new_translation($category->id,'tr','categories','name',$request['name_tr']);
-        
+
         }
-        
+
         return redirect()->route('categories.index')->with('status', trans('main.success'));
     }
-    
+
     /**
      * Store a copied resource in storage.
      *
@@ -182,36 +183,36 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store_copy(Request $request)
-    {    
-        
+    {
+
         $category = Category::create([
                  'name' => $request->name,
                  'restaurant_id'=>$this->user->restaurant_id,
                 'isActive'=>$request->isActive,
              ]);
-       
+
        if($request->image){
              $file = $request->file('image');
              $filename = "image-".$category->id.".".$file->getClientOriginalExtension();
                 //Move Uploaded File
                 $destinationPath = 'uploads/categories/';
                 $file->move($destinationPath,$filename);
-                
+
         }
         else
             $filename = $request->old_image;
-        
-        
+
+
         $category->update([
                  'image' => $filename
              ]);
-        
+
         if($category){
         $this->new_translation($category->id,'ar','categories','name',$request['name_ar']);
         $this->new_translation($category->id,'tr','categories','name',$request['name_tr']);
-        
+
         }
-        
+
         return redirect()->route('categories.index')->with('status', trans('main.success'));
     }
 
@@ -226,13 +227,13 @@ class CategoryController extends Controller
         $category = Category::find($id);
         if($this->check_user_authority($category))
            return  redirect()->route('logout');
-        
+
         $category->name_ar = $category->translate('name','ar');
         $category->name_tr = $category->translate('name','tr');
-        
+
         $this->data['category'] = $category;
         $this->data['copy'] = true;
-        
+
         return view('category.edit', $this->data);
     }
 
@@ -247,13 +248,13 @@ class CategoryController extends Controller
         $category = Category::find($id);
         if($this->check_user_authority($category))
            return  redirect()->route('logout');
-        
+
         $category->name_ar = $category->translate('name','ar');
         $category->name_tr = $category->translate('name','tr');
-        
+
         $this->data['category'] = $category;
         $this->data['copy'] = false;
-        
+
         return view('category.edit', $this->data);
     }
 
@@ -269,31 +270,31 @@ class CategoryController extends Controller
         $category = Category::find($id);
         if($this->check_user_authority($category))
            return  redirect()->route('logout');
-        
+
         $category->update([
                  'name' => $request->name,
                 'isActive'=>$request->isActive,
              ]);
-       
+
        if($request->image){
              $file = $request->file('image');
              $filename = "image-".$category->id.".".$file->getClientOriginalExtension();
-                
+
                 //Move Uploaded File
                 $destinationPath = 'uploads/categories/';
                 $file->move($destinationPath,$filename);
-                
+
                 $category->update([
                  'image' => $filename
              ]);
-                
+
         }
         if($category){
         $this->new_translation($category->id,'ar','categories','name',$request['name_ar']);
         $this->new_translation($category->id,'tr','categories','name',$request['name_tr']);
-        
+
         }
-        
+
         return redirect()->route('categories.index')->with('status', trans('main.success'));
     }
 
@@ -305,11 +306,11 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-         
+
         $category = Category::find($id);
         if($this->check_user_authority($category))
            return response()->json(['status'=>false]);
-        
+
         try {
             if($category->delete()){
                 $this->delete_translation($id, 'categories');

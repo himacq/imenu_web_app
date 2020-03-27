@@ -8,6 +8,7 @@ use App\Http\Requests\AddUserRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UpdateUserInfoRequest;
+use App\Models\AppReview;
 use App\Models\Permission;
 use App\Models\Rank;
 use App\Models\Role;
@@ -28,17 +29,11 @@ use App;
 class UserController extends Controller
 {
 
-    
-    
+
+
     public function __construct()
     {
-        $this->middleware(['role:admin||superadmin'])->except(['profile', 'changePassword', 'updateInfo','logout']);
-
-//        $this->middleware('permission:user_display|user_update|user_delete', ['only' => ['index']]);
-//        $this->middleware('permission:user_create', ['only' => ['create']]);
-//        $this->middleware('permission:user_update', ['only' => ['edit']]);
-//        $this->middleware('permission:user_delete', ['only' => ['destroy']]);
-
+        $this->middleware(['role:admin||superadmin||b||c'])->except(['profile', 'changePassword', 'updateInfo','logout']);
 
         $this->change_language();
         $this->data['menu'] = 'users';
@@ -49,7 +44,7 @@ class UserController extends Controller
     }
 
 
- 
+
     public function index()
     {
         $this->data['sub_menu'] = 'Display-user';
@@ -63,7 +58,7 @@ class UserController extends Controller
             $this->data['user'] = User::find(Auth::user()->id);
             return view('user.profile', $this->data);
         }
-        
+
         else return redirect('/');
     }
 
@@ -93,15 +88,24 @@ class UserController extends Controller
         $this->data['sub_menu'] = 'users-create';
         if($this->user->hasRole('superadmin'))
             $this->data['roles'] = Role::all();
+        elseif($this->user->hasRole('c'))
+            $this->data['roles'] = Role::whereIn('id',[6,7])->get();
         else
-            $this->data['roles'] = Role::where('id','>',1)->get();
+        $this->data['roles'] = Role::where('id','>',1)->get();
+
         return view('user.create', $this->data);
     }
 
     public function store(AddUserRequest $request)
     {
-        
-        
+
+        if($this->user->hasRole('c') && !$request->role){
+            return back()
+                ->withInput()
+                ->withErrors([trans('users.select_role')]);
+        }
+
+
         $user = User::create([
             'name' => $request->name,
             'password' => bcrypt($request->password),
@@ -110,37 +114,40 @@ class UserController extends Controller
             'phone' => $request->phone,
             'mobile' => $request->mobile,
             'restaurant_id'=>$this->user->restaurant_id
-    
+
         ]);
-        
-        foreach ($request->role as $key => $value) {
-            $user->attachRole($value);
+
+        if(!empty($request->role)) {
+            foreach ($request->role as $key => $value) {
+                $user->attachRole($value);
+            }
         }
-        
+
+
         return redirect()->route('users.index')->with('status', trans('main.success'));
     }
 
     /**
-     * 
+     *
      * @param type $id
      * @return type
      */
         public function check_user_authority($user2){
         if( $this->user->hasRole('superadmin'))
                 return false ;
-        
+
         $users = $this->get_all_users_restaurant($this->user->restaurant_id);
         foreach($users as $user){
             if($user2->id == $user->id)
                 return false;
         }
-        
-     
+
+
        return true;
-        
+
     }
     /**
-     * 
+     *
      * @param type $id
      * @return type
      */
@@ -148,13 +155,15 @@ class UserController extends Controller
     {
        $user = User::find($id);
 
-        if($this->check_user_authority($user))
+        if(!$this->user->hasRole('c') && $this->check_user_authority($user))
            return  redirect()->route('logout');
-        
+
         $this->data['sub_menu'] = 'users-edit';
         $this->data['user'] = $user;
         if($this->user->hasRole('superadmin'))
             $this->data['roles'] = Role::all();
+        elseif($this->user->hasRole('c'))
+            $this->data['roles'] = Role::whereIn('id',[6,7])->get();
         else
             $this->data['roles'] = Role::where('id','>',1)->get();
         $this->data['user_roles'] = $this->data['user']->roles->pluck('id', 'id')->toArray();
@@ -169,18 +178,24 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, $id)
     {
+        if($this->user->hasRole('c') && !$request->role){
+            return back()
+                ->withInput()
+                ->withErrors([trans('users.select_role')]);
+        }
+
         $user = User::find($id);
 
-        if($this->check_user_authority($user))
-           return  redirect()->route('logout');
-        
+        if(!$this->user->hasRole('c') && $this->check_user_authority($user))
+            return  redirect()->route('logout');
+
         $user->name = $request->name;
         $user->email = $request->email;
         $user->phone = $request->phone;
         $user->mobile = $request->mobile;
         $user->isActive = $request->isActive;
         $user->news_letter = $request->news_letter;
-        
+
         if ($request->password != '') $user->password = bcrypt($request->password);
         $user->username = $request->username;
 
@@ -232,12 +247,24 @@ class UserController extends Controller
         } else {
             $users = User::where('id','!=',$this->user->id);
         }
-        
+
         if($this->user->hasRole('superadmin'))
             $users_data = $users->get();
-        else 
+        else if($this->user->hasRole('b')){
+            $users_data =User::whereDoesntHave('roles', function ($query) {
+                $query->whereIn('name', ['superadmin','admin','a','b','c','c1','c2','d','e']);
+            })->get();
+
+        }
+        else if($this->user->hasRole('c')){
+            $users_data =User::whereHas('roles', function ($query) {
+                $query->whereIn('name', ['c','c1','c2']);
+            })->get();
+
+        }
+        else
             $users_data = $this->get_all_users_restaurant($this->user->restaurant_id);
-        
+
         return DataTables::of($users_data)
             ->setRowId(function ($model) {
                 return "row-" . $model->id;
@@ -258,7 +285,7 @@ class UserController extends Controller
 
 
             })
-            
+
             ->EditColumn('created_at', function ($model) {
                 $date = date('d-m-Y', strtotime($model->created_at));
                 return $date;
@@ -274,6 +301,10 @@ class UserController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function activeUser(Request $request)
     {
         $user_id = $request->id;
@@ -282,8 +313,8 @@ class UserController extends Controller
         $user = User::find($user_id);
         if($this->check_user_authority($user))
            return  redirect()->route('logout');
-        
-        
+
+
         $user->update([
             'isActive' => $isActive,
         ]);
@@ -291,5 +322,64 @@ class UserController extends Controller
 
 
     }
+
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function users_app_reviews(){
+        return view('user.users_app_reviews',$this->data);
+    }
+
+    public function reviewsContentListData(Request $request)
+    {
+
+        $reviews = AppReview::all();
+
+        return DataTables::of($reviews)
+            ->setRowId(function ($model) {
+                return "row-" . $model->id;
+            })
+            ->addColumn('status', function ($model) {
+                $activeON = "";
+                $activeOff = "";
+                $model->isActive !=0 ? $activeON = "active" : $activeOff = "active";
+                return '<div class="btn-group btnToggle" data-toggle="buttons" style="position: relative;margin:5px;">
+                              <input type="hidden" class="id_hidden" value="' . $model->id . '">
+                              <label class="btn btn-default btn-on-1 btn-xs ' . "$activeON" . '">
+                              <input   type="radio" value="1" name="multifeatured_module[module_id][status]" >ON</label>
+                              <label class="btn btn-default btn-off-1 btn-xs ' . "$activeOff" . '">
+                              <input  type="radio" value="0" name="multifeatured_module[module_id][status]">OFF</label>
+                           </div>';
+
+            })
+            ->addColumn('user', function ($model) {
+                if($model->user)
+                return '<a href="'.url('users/'.$model->user_id.'/edit').'" target="_blank">'.$model->user->name.'</a>';
+
+                return trans('main.undefined');
+            })
+
+            ->EditColumn('created_at', function ($model) {
+                $date = date('d-m-Y', strtotime($model->created_at));
+                return $date;
+
+            })
+            ->rawColumns(['status','user'])
+            ->make(true);
+
+    }
+
+    public function activeReview(Request $request)
+    {
+        $isActive = $request->active;
+
+        $review = AppReview::find($request->id);
+
+        $review->update([
+            'isActive' => $isActive,
+        ]);
+
+    }
+
 
 }

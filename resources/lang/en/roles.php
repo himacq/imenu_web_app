@@ -10,6 +10,7 @@ return [
     'enter_name'=>'Enter Role`s Name',
     'enter_display_name'=>'Enter Display Name',
     'enter_description'=>'Enter Description',
+    'enter_permissions'=>'Enter Permissions'
 ];
 
 

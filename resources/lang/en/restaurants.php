@@ -7,12 +7,12 @@ return [
     'status'=>'Status',
     'category'=>'Category',
     'owner'=>'Owner/Manager',
-    
+
     'save'=>'Save',
     'phone'=>'Phone',
     'mobile'=>'Mobile',
     'edit_restaurant'=>'Edit Restaurant',
-    
+
     'profile'=>'profile',
     'education_level'=>'Education Level',
     'city'=>'City',
@@ -24,7 +24,7 @@ return [
     'business_title'=>'Business Title',
     'id_img'=>'ID',
     'license_img'=>'License',
-    
+
     'branches'=>'Branches',
     'general_questions'=>'General Questions',
     'reject'=>'Reject',
@@ -34,7 +34,7 @@ return [
     'registered_restaurant'=>'Registered Restaurant',
     'suspends'=>'Suspend Restaurant successfully',
     'activate'=>'Activate Restaurant successfully',
-    
+
     'commision'=>'Commision',
     'discount'=>'Discount',
     'extra_info'=>'Extra Information',
@@ -53,9 +53,20 @@ return [
     'restaurant_profile'=>'Restaurant Profile',
     'branch_of'=>'Branch Of',
     'restaurant_cpanel'=>'CPanel',
-    'location'=>'Location On Map'
-    
-    
-    
-    
+    'location'=>'Location On Map',
+
+    'basic_info'=>'Basic Info',
+    'new_restaurant'=>'New Restaurant',
+
+    'suspended'=>'Restaurant Account Suspended',
+    'suspend_trail_message'=>'Restaurant Account has been suspended due to payments issue, your restaurant account will be disabled in :hours hours, please make the required payments ',
+    'suspend_after_trail_message'=>'Restaurant Account has been suspended after end the trail period ',
+
+    'admin_reviews'=>'Admin Reviews',
+    'classifications'=>'Classifications'
+
+
+
+
+
 ];

@@ -19,18 +19,17 @@ class Restaurant extends JsonResource
         dd($ranks);*/
         $ranks = 0;
         if($this->reviews){
-            if($this->reviews->count()>0)
-            $ranks = number_format($this->reviews->sum('review_rank')/$this->reviews->count(),2);
-           
+            if($this->reviews->where('isActive',1)->count()>0)
+            $ranks = number_format($this->reviews->where('isActive',1)->sum('review_rank')/$this->reviews->where('isActive',1)->count(),2);
+
         }
-        
+
         return [
             'id' => $this->id,
             'name' => $this->translate('name'),
             'logo' => url('/uploads/restaurants/logos/'.($this->logo?$this->logo:'default.png')),
             'banner' => url('/uploads/restaurants/banners/'.($this->banner?$this->banner:'default.jpg')),
-            'category' =>$this->category,
-            'category_text' => ($this->category_text?$this->category_text->translate('display_text'):null),
+            'classification' =>new ClassificationCollection($this->classifications),
             'owner_id' => $this->owner_id,
             'owner' => new OwnerResource($this->owner),
             'latitude' => $this->latitude,
@@ -45,15 +44,15 @@ class Restaurant extends JsonResource
             'branch_of_name' => ($this->main_branch?$this->main_branch->translate('name'):null),
             'branch_of' =>new Restaurant($this->main_branch),
             'rank'=>$ranks,
-            'reviews_count'=>$this->reviews->count(),
+            'reviews_count'=>$this->reviews->where('isActive',1)->count(),
             'reviews'=>$this->reviews->where('isActive',1),
             'categories'=> new CategoryCollection($this->categories->where('isActive',1)),
             'working_details'=> new WorkingDetailsCollection($this->working_details),
             'branches' =>new RestaurantBranchesCollection($this->branches)
         ];
-         
-         
+
+
     }
-    
-    
+
+
 }

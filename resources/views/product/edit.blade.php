@@ -8,7 +8,7 @@
      {{csrf_field()}}
     {{ method_field('PATCH') }}
 
- 
+
     <!-- Main Content -->
     <div class="row" style="margin-top: 30px;">
 
@@ -54,6 +54,10 @@
                             <a href="#tab_options" data-toggle="tab" aria-expanded="false"> {{trans('main.option_groups')}} </a>
                         </li>
 
+                        <li>
+                            <a href="#tab_reviews" data-toggle="tab" aria-expanded="false"> {{trans('main.reviews')}} </a>
+                        </li>
+
 
 
                     </ul>
@@ -74,7 +78,7 @@
                                                     <label for="form_control_1">{{trans('main.category')}}</label>
                                                     <span class="help-block"></span>
                                                 </div>
-                                            
+
                                             <div class="form-group form-md-line-input">
 
                                                 <input type="text" class="form-control" name="name" value="{{ $product->name }}"
@@ -82,8 +86,8 @@
                                                 <label for="form_control_1">{{trans('main.name')}}</label>
                                                 <span class="help-block"></span>
                                             </div>
-                                            
-                                            
+
+
                                             <div class="form-group form-md-line-input">
                                                 <input type="text" class="form-control" name="name_ar" value="{{ $product->name_ar }}"
                                                        placeholder="{{trans('main.enter_name')}}">
@@ -93,7 +97,7 @@
                                                 </label>
                                                 <span class="help-block"></span>
                                             </div>
-                                              
+
                                             <div class="form-group form-md-line-input">
                                                 <input type="text" class="form-control" name="name_tr" value="{{ $product->name_tr }}"
                                                        placeholder="{{trans('main.enter_name')}}">
@@ -122,12 +126,12 @@
                                                     <div class="col-md-9">
                                                         <div class="mt-radio-inline">
                                                             <label class="mt-radio">
-                                                                <input type="radio" name="isActive" id="optionsRadios25" value="1" 
+                                                                <input type="radio" name="isActive" id="optionsRadios25" value="1"
                                                                        {{$product->isActive==1 ? "checked" : ""}}>{{trans('main.active')}}
                                                                 <span></span>
                                                             </label>
                                                             <label class="mt-radio">
-                                                                <input type="radio" name="isActive" id="optionsRadios26" value="0" 
+                                                                <input type="radio" name="isActive" id="optionsRadios26" value="0"
                                                                        {{$product->isActive==0 ? "checked" : ""}}>{{trans('main.not_active')}}
                                                                 <span></span>
                                                             </label>
@@ -144,9 +148,9 @@
                                     <div class="portlet light bordered">
                                         <div class="portlet-body form">
                                             <div class="form-body">
-                                                
+
                                                 <div class="form-group form-md-line-input">
-                                                   
+
                                                     <div class="fileinput fileinput-exists" data-provides="fileinput">
                                                         <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px; line-height: 150px;">
                                                             <img src="{{ url('/uploads/products/'.($product->image?$product->image:'default.png')) }}">
@@ -178,7 +182,7 @@
                                         <tbody>
                                             <?php $row = 0; ?>
                                             @foreach($product->ingredients as $ingredient)
-                                            
+
                                             <tr id="ingrrow-{{$row}}">
 
                                             <td>
@@ -194,20 +198,20 @@
                                             <td>
                                                 <div class="mt-repeater-input mt-radio-inline">
                                                     <label class="mt-radio">
-                                                        <input type="radio" name="ingr_is_avtive[{{$row}}][]" 
+                                                        <input type="radio" name="ingr_is_avtive[{{$row}}][]"
                                                                {{$ingredient->isActive==1 ? "checked" : ""}}
                                                                value="1"> {{trans('main.isActive')}}
                                                         <span></span>
                                                     </label>
                                                     <label class="mt-radio">
-                                                        <input type="radio" name="ingr_is_avtive[{{$row}}][]" 
+                                                        <input type="radio" name="ingr_is_avtive[{{$row}}][]"
                                                                {{$ingredient->isActive==0 ? "checked" : ""}}
                                                         value="0"> {{trans('main.not_active')}}
                                                         <span></span>
                                                     </label>
                                                 </div>
-                                                
-                                              
+
+
                                             </td>
                                             <td>
                                                 <a href="javascript:delete_ingr_record({{$row}},{{ $ingredient->id }});" data-repeater-delete="" id="delete-{{$row}}" class="btn btn-danger delete">
@@ -216,15 +220,15 @@
                                         </tr>
                                         <?php $row++;?>
                                         @endforeach
-                                        
-                                     
-                                      
+
+
+
                                     </tbody>
                                                 </table>
-                            
+
                             <a href="javascript:;" data-repeater-create="" class="btn btn-success " id="repeater-add">
                                             <i class="fa fa-plus"></i>{{trans('main.new_button')}}</a>
-                                                
+
                         </div>
                         <div class="tab-pane fade " id="tab_options">
                               <table id="option_groups_tb" class="table table-hover table-striped table-bordered">
@@ -241,7 +245,7 @@
                                             <?php $row2 = 0; ?>
                                             <?php $row3 = 0; ?>
                                             @foreach($product->option_groups as $option)
-                                             
+
                                             <tr id="option-group-{{$row2}}">
 
                                             <td>
@@ -257,24 +261,24 @@
                                             <td>
                                                 <div class="mt-repeater-input mt-radio-inline">
                                                     <label class="mt-radio">
-                                                        <input type="radio" name="option_group_is_avtive[{{$row2}}][]" 
+                                                        <input type="radio" name="option_group_is_avtive[{{$row2}}][]"
                                                                {{$option->isActive==1 ? "checked" : ""}}
                                                                value="1"> {{trans('main.isActive')}}
                                                         <span></span>
                                                     </label>
                                                     <label class="mt-radio">
-                                                        <input type="radio" name="option_group_is_avtive[{{$row2}}][]" 
+                                                        <input type="radio" name="option_group_is_avtive[{{$row2}}][]"
                                                                {{$option->isActive==0 ? "checked" : ""}}
                                                         value="0"> {{trans('main.not_active')}}
                                                         <span></span>
                                                     </label>
                                                 </div>
                                             </td>
-                                            
+
                                             <td>
                                                 <input type="text" size="3" class="form-control" name="minimum[]" value="{{ $option->minimum }}">
                                             </td>
-                                            
+
                                             <td>
                                                 <input type="text" size="3" class="form-control" name="maximum[]" value="{{ $option->maximum }}">
                                             </td>
@@ -285,10 +289,10 @@
                                             <i class="fa fa-plus"></i> {{trans('main.options')}} </a>
                                             </td>
                                         </tr>
-                                        
+
                                         <tr id="options-group-{{$row2}}" class='options-group-rows'>
                                             <td colspan="7" style="background-color: #8eadc7;">
-                                                
+
                                                 <table id="options_tb-{{$row2}}" class="table table-hover table-striped table-bordered">
                                                     <thead>
                                                     <th>{{trans('main.name')}}</th>
@@ -305,7 +309,7 @@
                                                     <tr id="option-{{$row2}}-{{$row3}}">
 
                                                         <td>
-                                                            
+
                                                             <input type="hidden"  name="thisoption_group_id[]" value="{{ $opt->group_id }}">
                                                             <input type="hidden"  name="option_id[]" value="{{ $opt->id }}">
                                                             <input type="text" size="3" class="form-control option_name" onkeyup="autoCompleteName()" name="option_name[]" value="{{ $opt->name }}">
@@ -316,7 +320,7 @@
                                                         <td>
                                                             <input type="text" size="3" class="form-control option_name_tr" onkeyup="autoCompleteNameTr()" name="option_name_tr[]" value="{{ $opt->translate('name','tr') }}">
                                                         </td>
-                                                        
+
 
                                                         <td>
                                                             <input type="text" size="3" class="form-control" name="option_minutes_required[]" value="{{ $opt->minutes_required }}">
@@ -338,39 +342,55 @@
                                                                                                                 <label onclick="javascript:set_option_active('active_option-{{$opt->id}}',0);" class="btn btn-default btn-off-1 btn-xs {{$activeOff}}">
                                                                                                                 <input  type="radio" value="0" name="this_option_is_active[{{$opt->id}}][]">OFF</label>
                                                                                                              </div>
-                                                                                                       
+
                                                         </td>
                                                         <td>
                                                             <a href="javascript:delete_option_record({{$row3}},{{ $opt->id }},{{$row2}});" data-repeater-delete="" id="delete3-{{$row3}}" class="btn btn-danger delete">
                                                                     <i class="fa fa-close"></i> </a>
-                                                                    
-                                                                    
+
+
                                                         </td>
                                                     </tr>
                                                     <?php $row3++; ?>
                                                      @endforeach
-                                                     
+
                                                     </tbody>
                                                 </table>
-                                              
+
                                                <input type="hidden" id="option-row-{{$row2}}" value="{{$row3}}">
                                                  <a href="javascript:generate_option_record({{$row2}},{{$option->id}});" data-repeater-create="" class="btn btn-success " id="repeater-option-add">
                                             <i class="fa fa-plus"></i>{{trans('main.new_button')}}</a>
-                                            
+
                                             </td>
                                         </tr>
-                                        
+
                                         <?php $row2++; ?>
                                         @endforeach
-                                        
-                                     
-                                      
+
+
+
                                     </tbody>
                                                 </table>
-                            
+
                             <a href="javascript:;" data-repeater-create="" class="btn btn-success " id="repeater-option-groups-add">
                                             <i class="fa fa-plus"></i>{{trans('main.new_button')}}</a>
-                                                
+
+                        </div>
+
+                        <div class="tab-pane fade " id="tab_reviews">
+                            <table id="reviews-data-table"
+                                   class="table table-striped table-bordered ">
+                                <thead>
+                                <tr>
+
+                                    <th>{{trans('main.review_text')}}</th>
+                                    <th style="width:10%">{{trans('main.review_rank')}}</th>
+                                    <th>{{trans('main.created_at')}}</th>
+
+                                </tr>
+                                </thead>
+
+                            </table>
                         </div>
 
 
@@ -405,72 +425,107 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js" type="text/javascript"></script>
 <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
- 
+<script src="{{url('')}}/assets/global/scripts/datatable.js" type="text/javascript"></script>
+<script src="{{url('')}}/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+<script src="{{url('')}}/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js"
+        type="text/javascript"></script>
+<script src="{{url('')}}/assets/pages/scripts/table-datatables-managed.min.js" type="text/javascript"></script>
+<!--
+<script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+-->
 
     <script src="{{url('')}}/assets/pages/scripts/components-bootstrap-switch.min.js" type="text/javascript"></script>
-    
+
 <script>
-    
+
 var option_names = [] ;
 var option_names_ar = [] ;
 var option_names_tr = [] ;
-    
-             
-             
+
+
+
     function set_option_active(id,value){
         document.getElementById(id).value = value;
     }
-    
- 
-        
+
+
+
 $(document).ready(function () {
+    $('#reviews-data-table').DataTable({
+        processing: true,
+        serverSide: true,
+        searching: true,
+        "language": {
+            processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
+        },
+        "bInfo": false,
+        ajax: {
+            url: '{{url("/")}}/products/reviewsContentListData',
+            type: 'POST',
+            data: {id: {{$product->id}}},
+            'headers': {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+
+        },
+
+        columns: [
+
+            {data: 'review_text' ,name: 'review_text',},
+            {data: 'review_rank' ,width:"5%",name: 'review_rank',},
+            {data: 'created_at', name: 'created_at'},
+
+        ]
+    });
+
     $.ajax({ url:"{{url('/autoComplete')}}/option_names/en" ,
             type:'GET',
             success:function( data ) {
                 var dataList = data; // assuming list object
                 if ( typeof(data) == "string"){ // but if string
                     dataList = JSON.parse( data );
-                } 
+                }
                 $.each(dataList, function(index,result){
                     option_names.push(result.name);
                 });
             },
             error:function( result ){ console.log(["error", result]); }
      });
-     
+
      $.ajax({ url:"{{url('/autoComplete')}}/option_names/ar" ,
             type:'GET',
             success:function( data ) {
                 var dataList = data; // assuming list object
                 if ( typeof(data) == "string"){ // but if string
                     dataList = JSON.parse( data );
-                } 
+                }
                 $.each(dataList, function(index,result){
                     option_names_ar.push(result.display_text);
                 });
             },
             error:function( result ){ console.log(["error", result]); }
      });
-     
+
      $.ajax({ url:"{{url('/autoComplete')}}/option_names/tr" ,
             type:'GET',
             success:function( data ) {
                 var dataList = data; // assuming list object
                 if ( typeof(data) == "string"){ // but if string
                     dataList = JSON.parse( data );
-                } 
+                }
                 $.each(dataList, function(index,result){
                     option_names_tr.push(result.display_text);
                 });
             },
             error:function( result ){ console.log(["error", result]); }
      });
-             
+
 var row = {{$row}};
 var row2 = {{$row2}};
 $(".options-group-rows").hide();
  $( "#repeater-add" ).click(function() {
-          
+
           var html = '<tr id="ingrrow-'+row+'"> \n\
   <td><input type="hidden"  name="ingr_id[]" value="-1"><input type="text" size="8" class="form-control" name="ingr_name[]" ></td>\n\
 <td><input type="text" size="8" class="form-control" name="ingr_name_ar[]" ></td>\n\
@@ -480,14 +535,14 @@ $(".options-group-rows").hide();
 <label class="mt-radio"><input type="radio" name="ingr_is_avtive['+row+'][]"  value="0"> {{trans("main.not_active")}}<span></span>\n\
 </label></div></td>\n\
 <td><a href="javascript:delete_record('+row+');" data-repeater-delete="" id="delete" class="btn btn-danger delete"><i class="fa fa-close"></i> </a></td></tr>';
-    
+
     $( "#ingredients_tb" ).append(html);
     row++;
 });
 
 
  $( "#repeater-option-groups-add" ).click(function() {
-          
+
           var html = '<tr id="option-group-'+row2+'"> \n\
   <td><input type="hidden"  name="option_group_id[]" value="-1">\n\
 <input type="text" size="8" class="form-control" name="option_group_name[]" ></td>\n\
@@ -499,7 +554,7 @@ $(".options-group-rows").hide();
 </label></div></td>\n\<td><input type="text" size="3" class="form-control" name="minimum[]" value=""></td>\n\
 <td><input type="text" size="3" class="form-control" name="maximum[]" value=""></td>\n\
 <td><a href="javascript:delete_record2('+row2+');" data-repeater-delete="" id="delete" class="btn btn-danger delete"><i class="fa fa-close"></i> </a></td></tr>';
-    
+
     $( "#option_groups_tb" ).append(html);
     row2++;
 });
@@ -520,7 +575,7 @@ $(".options-group-rows").hide();
             //name: "blabla",
         },
 
-        invalidHandler: function (event, validator) { //display error alert on form submit   
+        invalidHandler: function (event, validator) { //display error alert on form submit
 
         },
         highlight: function (element) { // hightlight error inputs
@@ -532,7 +587,7 @@ $(".options-group-rows").hide();
             label.remove();
         },
         errorPlacement: function (error, element) {
-            if (element.attr("name") == "tnc") { // insert checkbox errors after the container                  
+            if (element.attr("name") == "tnc") { // insert checkbox errors after the container
                 error.insertAfter($('#register_tnc_error'));
             } else if (element.closest('.input-icon').size() === 1) {
                 error.insertAfter(element.closest('.input-icon'));
@@ -548,19 +603,19 @@ $(".options-group-rows").hide();
 
 });
 
-    
+
     function delete_record(id) {
         var row = document.getElementById("ingrrow-"+id);
     row.parentNode.removeChild(row);
     }
-    
+
     function delete_record2(id) {
         var row = document.getElementById("option-group-"+id);
     row.parentNode.removeChild(row);
     var row = document.getElementById("options-group-"+id);
     row.parentNode.removeChild(row);
     }
-    
+
     function delete_record3(group,id) {
         var row = document.getElementById("option-"+group+"-"+id);
     row.parentNode.removeChild(row);
@@ -586,10 +641,10 @@ $(".options-group-rows").hide();
                             }
 
                         });
-                        
-        
+
+
     }
-    
+
     function delete_option_group_record(rowid,record_id) {
        $.ajax({
                             url: "{{url('product_option_group')}}" + "/" + record_id,
@@ -655,11 +710,11 @@ class="btn btn-default btn-on-1 btn-xs active">\n\
 <label onclick="javascript:set_option_active('+"'active_option-"+rowid+"-generated'"+',0);" class="btn btn-default btn-off-1 btn-xs ">\n\
 <input  type="radio" value="0" name="this_option_is_active[][]">OFF</label></div></td>\n\
 <td><a href="javascript:delete_record3('+rowid+','+row3+');" data-repeater-delete="" id="delete3-{{$row3}}" class="btn btn-danger delete"><i class="fa fa-close"></i> </a></td></tr>';
-    
+
     $( "#options_tb-"+rowid ).append(html);
     row3++;
     $( "#option-row-"+rowid ).val(row3);
-    
+
 }
 
 function autoCompleteName(){

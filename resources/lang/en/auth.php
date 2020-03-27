@@ -23,5 +23,16 @@ return [
     'login_button'=>'Login',
     'remember_me'=>'Remember me',
     'password'=>'Password',
+    'sign_up'=>'Sign Up',
+    'enter_personal_details'=>'Enter Personal Details',
+    'name'=>'Name',
+    'email'=>'Email',
+    'phone'=>'Phone',
+    'mobile'=>'Mobile',
+    'username'=>'Username',
+    're_password'=>'Retype Password',
+    'back'=>'Back',
+    'submit'=>'Submit',
+    'create_account'=>'Create a restaurant Account'
 
 ];

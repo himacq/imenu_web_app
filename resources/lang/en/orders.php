@@ -13,6 +13,7 @@ return [
     'order_restaurant_number'=>'Order Restaurant #',
     'order_date'=>'Order DateTime',
     'payment_method'=>'Payment Method',
+    'payment_id'=>'#',
     'customer_name'=>'Customer Name',
     'customer_email'=>'Customer Email',
     'customer_phone'=>'Customer Phone',
@@ -32,7 +33,12 @@ return [
     'history'=>'History',
     'add_status'=>'Add Status',
     'created_at'=>'Created At',
-    'order_address'=>'Address'
-    
+    'order_address'=>'Address',
+    'order_restaurant_id'=>'Order Restaurant ID',
+    'user_review'=>'Review Customer',
+    'review_text'=>'Review Text',
+    'review_rank'=>'Rank',
+    'restaurant'=>'Restaurant'
+
 ];
 

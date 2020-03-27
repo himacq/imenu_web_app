@@ -30,7 +30,6 @@ class UpdateRoleRequest extends FormRequest
                 Rule::unique('roles')->ignore($this->role,'id'),
             ],
             'display_name'=> 'required',
-            'permission' => 'required'
         ];
     }
 

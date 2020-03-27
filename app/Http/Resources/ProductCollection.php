@@ -24,9 +24,11 @@ class ProductCollection extends ResourceCollection
                         'price'=>$data->price,
                         'minutes_required'=>$data->minutes_required,
                         'category_id'=>$data->category_id,
-                        'category_name'=>$data->category->translate('name')
+                        'category_name'=>$data->category->translate('name'),
+                        'restaurant_id'=>$data->category->restaurant_id,
+                        'restaurant_name'=>$data->category->restaurant->name,
                     ] ;
-                        
+
             }),
             'links' => [
                 'self' => 'link-value',

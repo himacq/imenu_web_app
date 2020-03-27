@@ -28,7 +28,7 @@
                     <span class="selected"></span>
                 </a>
             </li>
-            @permission('users-manage')
+            @role(['superadmin','b','admin','c'])
 
                     <li class="nav-item {{ (@$selected == 'users') ? 'active open' : '' }}">
                         <a href="javascript:;" class="nav-link nav-toggle">
@@ -47,7 +47,7 @@
                         </ul>
                     </li>
 
-           @endpermission
+           @endrole
 
             @role('superadmin')
            <li class="nav-item {{ (@$menu == 'system') ? 'open active' : '' }}">
@@ -67,8 +67,8 @@
                             <span class="selected"></span>
                         </a>
                     </li>
-                    
-                    
+
+
                     <li class="nav-item {{ (@$sub_menu == 'roles') ? 'open active' : '' }} ">
                         <a href="{{ url('roles') }}" class="nav-link">
                             <i class="fa fa-eye"></i>
@@ -76,21 +76,31 @@
                             <span class="selected"></span>
                         </a>
                     </li>
-                    
-                    <li class="nav-item {{ (@$sub_menu == 'permissions') ? 'open active' : '' }} ">
+
+                    <!--<li class="nav-item {{ (@$sub_menu == 'permissions') ? 'open active' : '' }} ">
                         <a href="{{ url('permissions') }}" class="nav-link">
                             <i class="fa fa-eye"></i>
                             <span class="title">{{trans('main.permissions')}}</span>
                             <span class="selected"></span>
                         </a>
+                    </li>-->
+
+                    <li class="nav-item {{ (@$sub_menu == 'payment_methods') ? 'open active' : '' }} ">
+                        <a href="{{ url('payment_methods') }}" class="nav-link">
+                            <i class="fa fa-eye"></i>
+                            <span class="title">{{trans('main.payment_methods')}}</span>
+                            <span class="selected"></span>
+                        </a>
                     </li>
 
-                   
+
 
                 </ul>
             </li>
-            
-            
+
+            @endrole
+
+            @role(['a','superadmin'])
             <li class="nav-item {{ (@$menu == 'restaurant') ? 'open active' : '' }}">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-layers"></i>
@@ -108,7 +118,7 @@
                             <span class="selected"></span>
                         </a>
                     </li>
-                    
+
                     <li class="nav-item {{ (@$sub_menu == 'Display-restaurants') ? 'open active' : '' }} ">
                         <a href="{{ url('restaurants') }}" class="nav-link">
                             <i class="fa fa-eye"></i>
@@ -117,13 +127,51 @@
                         </a>
                     </li>
 
+                    <li class="nav-item {{ (@$menu == 'reviews') ? 'open active' : '' }}">
+                    <li class="nav-item {{ (@$sub_menu == 'app_review') ? 'open active' : '' }} ">
+                        <a href="{{ url('restaurants/reviews') }}" class="nav-link">
+                            <i class="fa fa-balance-scale"></i>
+                            <span class="title">{{trans('main.restaurant_reviews')}}</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+
                 </ul>
             </li>
-            
-
             @endrole
 
-            @permission('catalog-manage')
+            @role(['admin'])
+            <li class="nav-item {{ (@$menu == 'restaurants') ? 'open active' : '' }}">
+                <a href="javascript:;" class="nav-link nav-toggle">
+                    <i class="icon-layers"></i>
+                    <span class="title">{{trans('main.restaurants')}}</span>
+                    <span class="arrow {{ (@$selected == 'restaurant') ? 'open' : '' }}"></span>
+                </a>
+                <ul class="sub-menu">
+
+
+
+                    <li class="nav-item {{ (@$sub_menu == 'restaurant_profile') ? 'open active' : '' }} ">
+                        <a href="{{ url('restaurants/profile') }}" class="nav-link">
+                            <i class="fa fa-eye"></i>
+                            <span class="title">{{trans('restaurants.restaurant_profile')}}</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item {{ (@$sub_menu == 'branches') ? 'open active' : '' }} ">
+                        <a href="{{ url('restaurants/profile/branches') }}" class="nav-link">
+                            <i class="fa fa-eye"></i>
+                            <span class="title">{{trans('restaurants.branches')}}</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+
+                </ul>
+            </li>
+            @endrole
+
+            @role(['admin','superadmin'])
             <li class="nav-item {{ (@$menu == 'catalog') ? 'open active' : '' }}">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="fa fa-tag"></i>
@@ -138,7 +186,7 @@
                             <span class="selected"></span>
                         </a>
                     </li>
-                    
+
                     <li class="nav-item {{ (@$sub_menu == 'product') ? 'open active' : '' }} ">
                         <a href="{{ url('products') }}" class="nav-link">
                             <i class="fa fa-eye"></i>
@@ -149,9 +197,9 @@
 
                 </ul>
             </li>
-            @endpermission
+            @endrole
 
-            @permission('orders-manage')
+            @role(['superadmin','admin'])
             <li class="nav-item {{ (@$menu == 'sales') ? 'open active' : '' }}">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="fa fa-shopping-cart fw"></i>
@@ -169,54 +217,173 @@
 
                 </ul>
             </li>
-            
-            @endpermission
-           
 
-            <li class="nav-item {{ (@$menu == 'messages') ? 'open active' : '' }}">
+            @endrole
+
+            @role(['superadmin','admin','c','b'])
+            <li class="nav-item {{ (@$menu == 'reports') ? 'open active' : '' }}">
                 <a href="javascript:;" class="nav-link nav-toggle">
-                    <i class="icon-envelope-open"></i>
-                    <span class="title">{{trans('main.messages')}}</span>
+                    <i class="fa fa-bar-chart"></i>
+                    <span class="title">{{trans('main.reports')}}</span>
                     <span class="arrow"></span>
                 </a>
                 <ul class="sub-menu">
-                    <li class="nav-item {{ (@$sub_menu == 'create-message') ? 'open active' : '' }} ">
-                        <a href="{{ url('messages/create') }}" class="nav-link">
-                            <i class="fa fa-edit"></i>
-                            <span class="title">{{trans('messages.create_message')}}</span>
-                            <span class="selected"></span>
+                    @role(['superadmin','c'])
+                    <li class="nav-item {{ (@$sub_menu == 'support') ? 'open active' : '' }}">
+                        <a href="javascript:;" class="nav-link nav-toggle">
+                            <i class="icon-notebook"></i>
+                            <span class="title">{{trans('main.support')}}</span>
+                            <span class="arrow"></span>
                         </a>
-                    </li>
-                    
-                    @role('superadmin')
-                     <li class="nav-item {{ (@$sub_menu == 'customer_messages') ? 'open active' : '' }} ">
-                        <a href="{{ url('customer_messages') }}" class="nav-link">
-                            <i class="fa fa-edit"></i>
-                            <span class="title">{{trans('messages.customer_messages')}}</span>
-                            <span class="selected"></span>
-                        </a>
+                        <ul class="sub-menu">
+                            <li class="nav-item {{ (@$location == 'support') ? 'open active' : '' }} ">
+                                <a href="{{ url('reports/support') }}" class="nav-link">
+                                    <i class="fa fa-print"></i>
+                                    <span class="title">{{trans('main.support')}}</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+
+
+
+                        </ul>
                     </li>
                     @endrole
-                    
-                    <li class="nav-item {{ (@$sub_menu == 'inbox-messages') ? 'open active' : '' }} ">
-                        <a href="{{ url('messages/inbox') }}" class="nav-link">
-                            <i class="fa fa-edit"></i>
-                            <span class="title">{{trans('messages.inbox')}}</span>
-                            <span class="selected"></span>
+
+                    @role(['superadmin','admin','b'])
+                    <li class="nav-item {{ (@$sub_menu == 'orders') ? 'open active' : '' }}">
+                        <a href="javascript:;" class="nav-link nav-toggle">
+                            <i class="fa fa-shopping-cart fw"></i>
+                            <span class="title">{{trans('main.orders')}}</span>
+                            <span class="arrow"></span>
                         </a>
-                    </li>
-                    
-                    <li class="nav-item {{ (@$sub_menu == 'sent-messages') ? 'open active' : '' }} ">
-                        <a href="{{ url('messages/sent') }}" class="nav-link">
-                            <i class="fa fa-edit"></i>
-                            <span class="title">{{trans('messages.sent')}}</span>
-                            <span class="selected"></span>
-                        </a>
+                        <ul class="sub-menu">
+                            @role(['superadmin','admin'])
+                            <li class="nav-item {{ (@$location == 'orders') ? 'open active' : '' }} ">
+                                <a href="{{ url('reports/orders') }}" class="nav-link">
+                                    <i class="fa fa-print"></i>
+                                    <span class="title">{{trans('main.orders')}}</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+                            @endrole
+                            @role(['superadmin','admin','b'])
+                            <li class="nav-item {{ (@$location == 'most_orders') ? 'open active' : '' }} ">
+                                <a href="{{ url('reports/most_orders') }}" class="nav-link">
+                                    <i class="fa fa-print"></i>
+                                    <span class="title">{{trans('main.most_orders')}}</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item {{ (@$location == 'most_ranked') ? 'open active' : '' }} ">
+                                <a href="{{ url('reports/most_ranked') }}" class="nav-link">
+                                    <i class="fa fa-print"></i>
+                                    <span class="title">{{trans('main.most_ranked')}}</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+                            @endrole
+
+                        </ul>
                     </li>
 
+                    @endrole
+                    @role(['superadmin','admin'])
+                    <li class="nav-item {{ (@$sub_menu == 'payments') ? 'open active' : '' }}">
+                        <a href="javascript:;" class="nav-link nav-toggle">
+                            <i class="fa fa-credit-card"></i>
+                            <span class="title">{{trans('main.payments')}}</span>
+                            <span class="arrow"></span>
+                        </a>
+                        <ul class="sub-menu">
+                            <li class="nav-item {{ (@$location == 'payments') ? 'open active' : '' }} ">
+                                <a href="{{ url('reports/payments') }}" class="nav-link">
+                                    <i class="fa fa-print"></i>
+                                    <span class="title">{{trans('main.payments')}}</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item {{ (@$location == 'payments_methods') ? 'open active' : '' }} ">
+                                <a href="{{ url('reports/payments_methods') }}" class="nav-link">
+                                    <i class="fa fa-print"></i>
+                                    <span class="title">{{trans('main.payments_methods')}}</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    @endrole
                 </ul>
             </li>
-            
+
+            @endrole
+
+            @role(['superadmin','admin','c','c2','c1'])
+            @if(!session()->get('acting_as'))
+                <li class="nav-item {{ (@$menu == 'support') ? 'open active' : '' }}">
+                    <a href="javascript:;" class="nav-link nav-toggle">
+                        <i class="icon-notebook"></i>
+                        <span class="title">{{trans('main.support')}}</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub-menu">
+                        @role(['superadmin','c','c1'])
+                        <li class="nav-item {{ (@$sub_menu == 'users_messages') ? 'open active' : '' }} ">
+                            <a href="{{ url('users_messages') }}" class="nav-link">
+                                <i class="fa fa-edit"></i>
+                                <span class="title">{{trans('messages.users_messages')}}</span>
+                                <span class="selected"></span>
+                            </a>
+                        </li>
+
+                        @endrole
+
+                        @role(['superadmin','admin','c','c2'])
+                        <li class="nav-item {{ (@$sub_menu == 'customers_messages') ? 'open active' : '' }} ">
+                            <a href="{{ url('customers_messages') }}" class="nav-link">
+                                <i class="fa fa-edit"></i>
+                                <span class="title">{{trans('messages.customers_messages')}}</span>
+                                <span class="selected"></span>
+                            </a>
+                        </li>
+                        @endrole
+
+                        <?php if (\Entrust::hasRole(['admin'])) : ?>
+
+                        <li class="nav-item {{ (@$sub_menu == 'create-message') ? 'open active' : '' }} ">
+                            <a href="{{ url('messages/create') }}" class="nav-link">
+                                <i class="fa fa-edit"></i>
+                                <span class="title">{{trans('messages.create_message')}}</span>
+                                <span class="selected"></span>
+                            </a>
+                        </li>
+
+
+                        <li class="nav-item {{ (@$sub_menu == 'sent-messages') ? 'open active' : '' }} ">
+                            <a href="{{ url('messages/sent') }}" class="nav-link">
+                                <i class="fa fa-edit"></i>
+                                <span class="title">{{trans('messages.sent')}}</span>
+                                <span class="selected"></span>
+                            </a>
+                        </li>
+                        <?php endif; ?>
+
+
+                    </ul>
+                </li>
+            @endif
+            @endrole
+
+
+
+
+
+
+
             <li class="nav-item {{ (@$menu == 'reviews') ? 'open active' : '' }}">
                     <li class="nav-item {{ (@$sub_menu == 'app_review') ? 'open active' : '' }} ">
                         <a href="{{ url('home/app_review') }}" class="nav-link">
@@ -224,10 +391,20 @@
                             <span class="title">{{trans('main.app_review')}}</span>
                             <span class="selected"></span>
                         </a>
-                    </li>
+             </li>
 
+
+
+            @role(['superadmin','b'])
+            <li class="nav-item {{ (@$menu == 'users_app_reviews') ? 'open active' : '' }}">
+            <li class="nav-item {{ (@$sub_menu == 'users_app_reviews') ? 'open active' : '' }} ">
+                <a href="{{ url('users/users_app_reviews') }}" class="nav-link">
+                    <i class="fa fa-balance-scale"></i>
+                    <span class="title">{{trans('main.users_app_reviews')}}</span>
+                    <span class="selected"></span>
+                </a>
             </li>
-            
+            @endrole
 
             <li class="nav-item start ">
                 <a href="{{ route('logout') }}" class="nav-link">

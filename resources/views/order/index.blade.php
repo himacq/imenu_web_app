@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
-    
+
             <!-- The Modal -->
 
                 <!-- END PAGE BAR --> <!-- BEGIN PAGE TITLE-->
@@ -29,20 +29,23 @@
 
                             </div>
                             <div class="portlet-body">
-                              
+
                                 <table id="data-table"
                                        class="table table-striped table-bordered ">
                                     <thead>
                                     <tr>
-                                       
+
                                         <th>{{trans('orders.order_id')}}</th>
+                                        @role('superadmin')
+                                        <th>{{trans('orders.restaurant')}}</th>
+                                        @endrole
                                         <th>{{trans('orders.customer')}}</th>
                                         <th>{{trans('orders.status')}}</th>
                                         <th>{{trans('orders.qty')}}</th>
                                         <th>{{trans('orders.sub_total')}}</th>
                                         <th>{{trans('main.created_at')}}</th>
                                         <th>{{trans('main.control')}}</th>
-                                        
+
 
                                     </tr>
                                     </thead>
@@ -53,7 +56,7 @@
                         <!-- END EXAMPLE TABLE PORTLET-->
                     </div>
                 </div>
-            
+
 @stop
 
 @push('css')
@@ -85,7 +88,7 @@
     <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     -->
-    
+
 
     <script src="{{url('')}}/assets/pages/scripts/components-bootstrap-switch.min.js" type="text/javascript"></script>
     <script>
@@ -111,8 +114,11 @@
                 },
 
                 columns: [
-                    
+
                     {data: 'id' ,name: 'order_id', 'class': 'id'},
+                    @role('superadmin')
+                    {data: 'restaurant',width:"20%" ,name: 'restaurant', 'class': 'name'},
+                     @endrole
                     {data: 'customer',width:"20%" ,name: 'customer', 'class': 'name'},
                     {data: 'status', name: 'status', 'class': 'status'},
                     {data: 'qty', name: 'qty', 'class': 'qty'},
@@ -123,7 +129,7 @@
                 ]
             });
 
-            
+
             $('#data-table').on('click', '.delete', function () {
                 var id = $(this).find('.id_hidden').val();
                 swal({

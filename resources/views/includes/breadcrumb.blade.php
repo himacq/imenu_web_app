@@ -8,10 +8,10 @@
             <a href="{{ url($location) }}">{{ $location_title }}</a>
         </li>
 
-    
+
 
     </ul>
-    
+
     @if(session()->get('acting_as'))
 <div class='row'>
             <div class="alert alert-danger" style="float: left; width:100%">
@@ -25,6 +25,16 @@
             @endif
 
 </div>
+
+@if (count($errors) > 0)
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
 
 

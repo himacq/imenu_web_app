@@ -1,19 +1,12 @@
 <?php
 
-Route::get('/map', 'MapController@index');
+Route::get('/displayReport', 'MapController@displayReport');
 
-Route::get('/maps', function(){
-    $config = array();
-    $config['center'] = 'Defence Garden, Karachi';
-    GMaps::initialize($config);
-    $map = GMaps::create_map();
 
-    echo $map['js'];
-    echo $map['html'];
-});
-
-// user routes
+// general routes
 Route::group(['middleware' => 'auth'], function () {
+
+    Route::post('home/register_restaurant','HomeController@register_restaurant');
 
     Route::get('/autoComplete/option_names/{language_id}', 'AutoCompleteController@option_names');
     Route::get('/language/{id}', 'HomeController@changeLanguage');
@@ -21,29 +14,49 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('home/app_review', 'HomeController@app_review')->name('app_reviews');
     Route::post('home/app_review', 'HomeController@store_app_review');
     Route::post('home/reviewsContentListData', 'HomeController@reviewsContentListData');
-    
+
     Route::get('users/profile', 'UserController@profile')->name('users.profile');
     Route::post('users/updateUserInfo', 'UserController@updateUserInfo')->name('users.updateUserInfo');
-    
+
+    /*************/
+
+    Route::group(['middleware' => 'role:c||superadmin||c1||c2'], function () {
+        Route::get('users_messages', 'MessageController@users_messages')->name('users_messages');
+        Route::post('messages/userMessagesContentListData', 'MessageController@userMessagesContentListData');
+
+        Route::get('customers_messages', 'MessageController@customers_messages')->name('customers_messages');
+        Route::post('messages/customerMessagesContentListData', 'MessageController@customerMessagesContentListData');
+    });
+
+    Route::group(['middleware' => 'role:c||superadmin||admin||c1||c2'], function () {
+        Route::get('customers_messages', 'MessageController@customers_messages')->name('customers_messages');
+        Route::post('messages/customerMessagesContentListData', 'MessageController@customerMessagesContentListData');
+        Route::get('messages/user_message_details/{id}', 'MessageController@user_message_details')->name('user_message_details');
+        Route::post('messages/user_message_store_reply/{id}', 'MessageController@user_message_store_reply')->name('user_message_store_reply');
+
+        Route::get('messages/customer_message_details/{id}', 'MessageController@customer_message_details')->name('customer_message_details');
+        Route::post('messages/customer_message_store_reply/{id}', 'MessageController@customer_message_store_reply')->name('customer_message_store_reply');
+    });
+
     Route::get('messages/inbox', 'MessageController@inbox');
     Route::post('messages/inboxContentListData', 'MessageController@inboxContentListData');
-    Route::get('messages/details/{id}', 'MessageController@details')->name('details');
+
     Route::get('messages/sent', 'MessageController@sent')->name('messages.sent');
     Route::post('messages/sentContentListData', 'MessageController@sentContentListData');
-    
-    
-    Route::post('messages/store_reply/{id}', 'MessageController@store_reply')->name('store_reply');
-    Route::resource('messages', 'MessageController');
 
+
+    Route::resource('messages', 'MessageController');
+    /***********/
     Route::get('logout', function () {
         \Illuminate\Support\Facades\Auth::logout();
         return back();
     });
 
 });
-
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('acting_as_cancle', 'HomeController@acting_as_cancle');
 // manage categories and products
-Route::group(['middleware' => 'permission:catalog-manage'], function () {
+Route::group(['middleware' => 'role:superadmin||admin'], function () {
     /**
      * categories
      */
@@ -51,7 +64,7 @@ Route::group(['middleware' => 'permission:catalog-manage'], function () {
     Route::post('categories/store_copy', 'CategoryController@store_copy')->name('categories.store_copy');
     Route::get('category_activate', 'CategoryController@activeCategory');
     Route::resource('categories', 'CategoryController');
-    
+
     /**
      * products
      */
@@ -61,63 +74,107 @@ Route::group(['middleware' => 'permission:catalog-manage'], function () {
     Route::delete('product_ingredient/{id}', 'ProductController@destroy_ingredient');
     Route::delete('product_option_group/{id}', 'ProductController@destroy_option_group');
     Route::delete('product_option/{id}', 'ProductController@destroy_option');
+    Route::post('products/reviewsContentListData', 'ProductController@reviewsContentListData');
     Route::resource('products', 'ProductController');
 });
 
+// manage reports
+    Route::group(['middleware' => 'role:admin||superadmin||b'], function () {
+        Route::get('reports/most_orders', 'ReportController@most_orders');
+        Route::post('reports/most_orders', 'ReportController@most_orders');
+
+        Route::get('reports/most_ranked', 'ReportController@most_ranked');
+        Route::post('reports/most_ranked', 'ReportController@most_ranked');
+
+    });
+
+    Route::group(['middleware' => 'role:admin||superadmin||c'], function () {
+        Route::get('reports/support', 'ReportController@support');
+        Route::post('reports/support', 'ReportController@support');
+
+    });
+
+    Route::group(['middleware' => 'role:admin||superadmin'], function () {
+        Route::get('reports/orders', 'ReportController@orders');
+        Route::post('reports/orders', 'ReportController@orders');
+
+        Route::get('reports/payments', 'ReportController@payments');
+        Route::post('reports/payments', 'ReportController@payments');
+
+        Route::get('reports/payments_methods', 'ReportController@payments_methods');
+        Route::post('reports/payments_methods', 'ReportController@payments_methods');
+    });
+
+
 // manage orders
-Route::group(['middleware' => 'permission:orders-manage'], function () {
+Route::group(['middleware' => 'role:admin||superadmin'], function () {
+    Route::get('orders/print/{id}', 'OrderController@print');
     Route::post('orders/contentListData', 'OrderController@contentListData');
     Route::post('orders/review_customer/{id}', 'OrderController@review_customer')->name('orders.review_customer');
     Route::resource('orders', 'OrderController');
 });
 
 // manage users
-Route::group(['middleware' => 'permission:users-manage'], function () {
+Route::group(['middleware' => 'role:admin||b||superadmin||c'], function () {
     Route::post('user/contentListData{status?}', 'UserController@contentListData');
     Route::get('user_activate', 'UserController@activeUser');
+
+    Route::group(['middleware' => 'role:b||superadmin'], function () {
+        Route::get('active_review', 'UserController@activeReview');
+        Route::post('user/reviewsContentListData', 'UserController@reviewsContentListData');
+        Route::get('users/users_app_reviews', 'UserController@users_app_reviews');
+    });
+
     Route::resource('users', 'UserController');
+
+
 });
 
-// restaurant managment 
-Route::group(['middleware' => 'role:admin||superadmin'], function () {
-    Route::get('restaurants/profile', 'RestaurantController@profile')->name('restaurants.profile');
+
+// restaurant managment
+Route::group(['middleware' => 'role:admin||a||superadmin'], function () {
+    Route::get('restaurants/reviews', 'RestaurantController@reviews');
+    Route::post('restaurants/restaurantReviewsContentListData', 'RestaurantController@restaurantReviewsContentListData');
+    Route::get('restaurants/profile/{branches?}', 'RestaurantController@profile')->name('restaurants.profile');
     Route::post('restaurants/childContentListData', 'RestaurantController@childContentListData');
     Route::post('restaurants/reviewsContentListData', 'RestaurantController@reviewsContentListData');
+    Route::post('restaurants/admin_review/{id}', 'RestaurantController@admin_review');
+    Route::post('restaurants/adminReviewsContentListData', 'RestaurantController@adminReviewsContentListData');
     Route::get('restaurant_activate', 'RestaurantController@activeRestaurant');
     Route::get('acting_as/{id}', 'HomeController@acting_as');
-    Route::get('acting_as_cancle', 'HomeController@acting_as_cancle');
-    
-    
-    Route::resource('restaurants', 'RestaurantController');
-});
 
-// system managment - lookup,roles,permissions,restaurant
-Route::group(['middleware' => 'role:superadmin'], function () {
-    
-    Route::get('lookup/level/{id}', 'LookupController@level');
-    Route::post('lookup/{id}', 'LookupController@store');
-    Route::resource('lookup', 'LookupController');
-    
-    Route::post('roles/contentListData', 'RoleController@contentListData');
-    Route::resource('roles', 'RoleController');
-    
-    Route::post('permissions/contentListData', 'PermissionController@contentListData');
-    Route::resource('permissions', 'PermissionController');
-    
-    
+
     Route::post('status-registered-restaurant/{id}', 'RestaurantController@registeredRestaurantStatus');
     Route::get('registered-restaurant/{id}', 'RestaurantController@registeredRestaurantView');
     Route::get('registered-restaurants', 'RestaurantController@registeredRestaurants')->name('restaurant.registered');
     Route::post('restaurants/registeredContentListData/{status?}', 'RestaurantController@registeredContentListData');
     Route::post('restaurants/contentListData/{status?}', 'RestaurantController@contentListData');
-    
-    
-    Route::get('customer_messages', 'MessageController@customer_messages')->name('customer_messages');
-    Route::post('messages/customerMessagesContentListData', 'MessageController@customerMessagesContentListData');
-    
+
+    Route::resource('restaurants', 'RestaurantController');
 });
 
+// system managment - lookup,roles,permissions,restaurant, payment_methods
+Route::group(['middleware' => 'role:superadmin'], function () {
 
+    Route::get('lookup/level/{id}', 'LookupController@level');
+    Route::post('lookup/{id}', 'LookupController@store');
+    Route::resource('lookup', 'LookupController');
+
+    Route::post('roles/contentListData', 'RoleController@contentListData');
+    Route::resource('roles', 'RoleController');
+
+    Route::post('permissions/contentListData', 'PermissionController@contentListData');
+    Route::resource('permissions', 'PermissionController');
+
+
+
+    Route::get('payment_methods_activate', 'PaymentMethodController@activeMethod');
+    Route::post('payment_methods/contentListData', 'PaymentMethodController@contentListData');
+    Route::resource('payment_methods', 'PaymentMethodController');
+
+});
+
+});
 
 Auth::routes();
 

@@ -4,7 +4,7 @@
  <form id='form-user' action="{{ route('users.store') }}" method="post" role="form">
                 <!-- Main Content -->
                 <div class="row" style="margin-top: 30px;">
-                
+
                     <div class="col-md-6">
                         <div class="portlet light bordered">
                             @if (session('status'))
@@ -31,7 +31,7 @@
 
                                 </div>
                                 <div class="portlet-body form">
-                                   
+
                                         {{csrf_field()}}
                                         <div class="form-body">
                                             <div class="form-group form-md-line-input">
@@ -59,7 +59,7 @@
                                                 <label for="form_control_1">{{trans('users.phone')}}</label>
                                                 <span class="help-block"></span>
                                             </div>
-                                            
+
                                             <div class="form-group form-md-line-input">
                                                 <input type="text" class="form-control" name="mobile" value="{{ old('mobile') }}"
                                                        placeholder="{{trans('users.enter_mobile')}}">
@@ -68,12 +68,12 @@
                                             </div>
 
                                             <div class="form-group form-md-line-input">
-                                                <input type="password" class="form-control" 
+                                                <input type="password" class="form-control"
                                                        placeholder="{{trans('users.enter_password')}} " name="password" id="">
                                                 <label for="form_control_1">{{trans('users.password')}}</label>
                                                 <span class="help-block"></span>
                                             </div>
-                                            
+
                                              <div class="form-group form-md-line-input">
                                                     <label class="col-md-3 control-label">{{trans('main.isActive')}}</label>
                                                     <div class="col-md-9">
@@ -89,7 +89,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            
+
                                             <div class="form-group form-md-line-input">
                                                     <label class="col-md-4 control-label">{{trans('users.news_letter')}}</label>
                                                     <div class="col-md-8">
@@ -105,20 +105,31 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                            <?php if (!\Entrust::hasRole('superadmin')) : ?>
+                                            <div class="form-actions">
+                                                <div class="row">
+                                                    <div class="col-md-offset-3 col-md-12">
+                                                        <input type="submit" class="btn btn-success" value="{{trans('users.save')}}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <?php endif ?>
                                         </div>
-                                        
-                                   
+
+
                                 </div>
                             </div>
 
                         </div>
                     </div>
-                    
-                
-                
+
+
+
+                    @role(['superadmin','c'])
                     <div class="col-md-6">
                         <div class="portlet light bordered">
-                           
+
                             <div class="portlet light bordered">
                                 <div class="portlet-title">
                                     <div class="caption font-red-sunglo">
@@ -128,8 +139,8 @@
 
                                 </div>
                                 <div class="portlet-body form">
-                                   
-                                        
+
+
                                         <div class="form-body">
                                            <div class="form-group form-md-checkboxes">
                                                 <label>{{trans('users.roles')}}</label>
@@ -148,7 +159,7 @@
 
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="form-actions">
                                                 <div class="row">
                                                     <div class="col-md-offset-3 col-md-12">
@@ -156,23 +167,24 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                         </div>
-                                        
-                                   
+
+
                                 </div>
                             </div>
 
                         </div>
                     </div>
-                    
-                    
-                    
+
+                    @endrole
+
+
                 </div>
 
                 <!-- END SAMPLE FORM PORTLET-->
-                
-               
+
+
 
     </form>
 @stop
@@ -202,19 +214,19 @@ $(document).ready(function () {
                     minlength: 6,
                     required: true
                 },
-                                
+
                 email: {
                     email:true
                 },
-                
-                
-                
+
+
+
             },
             messages: {
 		//name: "blabla",
             },
-            
-            invalidHandler: function (event, validator) { //display error alert on form submit   
+
+            invalidHandler: function (event, validator) { //display error alert on form submit
 
             },
             highlight: function (element) { // hightlight error inputs
@@ -226,7 +238,7 @@ $(document).ready(function () {
                 label.remove();
             },
             errorPlacement: function (error, element) {
-                if (element.attr("name") == "tnc") { // insert checkbox errors after the container                  
+                if (element.attr("name") == "tnc") { // insert checkbox errors after the container
                     error.insertAfter($('#register_tnc_error'));
                 } else if (element.closest('.input-icon').size() === 1) {
                     error.insertAfter(element.closest('.input-icon'));
@@ -242,5 +254,5 @@ $(document).ready(function () {
 
     });
 		</script>
-                
+
 @endpush

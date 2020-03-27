@@ -9,12 +9,14 @@ return [
     'title'=>'Title',
     'message'=>'Message',
     'enter_message_title'=>'Enter Message Title',
-    'customer_messages'=>'Customer Messages',
+    'customers_messages'=>'Customer Messages',
+    'users_messages'=>'Restaurant Messages',
     'system_admin'=>'System Admin',
     'receiver'=>'Receiver',
     'sender'=>'Sender',
     'replies'=>'Replies',
     'restaurants'=>'Restaurants',
     'type'=>'Type',
-    'users'=>'Users'
+    'users'=>'Users',
+    'details'=>'Details',
 ];

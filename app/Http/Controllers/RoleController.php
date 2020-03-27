@@ -42,7 +42,7 @@ class RoleController extends Controller
 
     public function contentListData(Request $request)
     {
-        
+
         $roles = Role::all();
           return DataTables::of($roles)
             ->setRowId(function ($model) {
@@ -68,7 +68,7 @@ class RoleController extends Controller
             ->make(true);
 
     }
-    
+
     /**
      * Show the form for creating a new resource.
      *
@@ -89,11 +89,11 @@ class RoleController extends Controller
      */
     public function store(AddRoleRequest $request)
     {
-        if(!$request->permission){
+        /*if(!$request->permission){
             return back()
             ->withInput()
             ->withErrors(['permission.required',trans('roles.enter_permissions')]);
-        }
+        }*/
         $role = Role::create([
             'name'=>$request->name,
             'display_name'=>$request->display_name,
@@ -102,13 +102,16 @@ class RoleController extends Controller
         if($role){
         $this->new_translation($role->id,'ar','roles','display_name',$request['display_name_ar']);
         $this->new_translation($role->id,'ar','roles','description',$request['description_ar']);
-        
+
         $this->new_translation($role->id,'tr','roles','display_name',$request['display_name_tr']);
         $this->new_translation($role->id,'tr','roles','description',$request['description_tr']);
-        
-        foreach($request->permission as $key=>$value) {
-            $role->attachPermission($value);
-        }
+
+
+            if($request->permission) {
+                foreach ($request->permission as $key => $value) {
+                    $role->attachPermission($value);
+                }
+            }
         }
         return redirect()->route('roles.index')->with('status',trans('main.success'));
     }
@@ -126,14 +129,14 @@ class RoleController extends Controller
         $role = Role::find($id);
         $this->data['permissions'] = Permission::all();
         $this->data['role_permissions'] = $role->rolePermissions->pluck('permission_id')->toArray();
-        
+
         $role->display_name_ar = $role->translate('display_name','ar');
         $role->description_ar = $role->translate('description','ar');
         $role->display_name_tr = $role->translate('display_name','tr');
         $role->description_tr = $role->translate('description','tr');
-        
+
         $this->data['role'] = $role;
-        
+
         return view('role.edit', $this->data);
     }
     /**
@@ -145,12 +148,12 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, $id)
     {
-         if(!$request->permission){
+        /* if(!$request->permission){
             return back()
             ->withInput()
             ->withErrors(['permission.required',trans('roles.enter_permissions')]);
-        }
-        
+        }*/
+
         $role = Role::find($id);
         $role->name = $request->name;
         $role->display_name = $request->display_name;
@@ -160,16 +163,18 @@ class RoleController extends Controller
         if($role){
         $this->new_translation($role->id,'ar','roles','display_name',$request['display_name_ar']);
         $this->new_translation($role->id,'ar','roles','description',$request['description_ar']);
-        
+
         $this->new_translation($role->id,'tr','roles','display_name',$request['display_name_tr']);
         $this->new_translation($role->id,'tr','roles','description',$request['description_tr']);
-        
-        
+
+
         $role->detachPermissions($role->rolePermissions);
-        
-        foreach($request->permission as $key=>$value) {
-            $role->attachPermission($value);
-        }
+
+            if($request->permission) {
+                foreach ($request->permission as $key => $value) {
+                    $role->attachPermission($value);
+                }
+            }
         }
         return redirect()->route('roles.index')->with('status',trans('main.success'));
     }
@@ -184,12 +189,12 @@ class RoleController extends Controller
     {
         $role = Role::find($id);
         if($role->name == 'superadmin')  return response()->json(['status' => false]);
-        
+
         if($role->delete()){
             $this->delete_translation($id, 'roles');
         }
         return response()->json(['status' => true]);
     }
 
-    
+
 }

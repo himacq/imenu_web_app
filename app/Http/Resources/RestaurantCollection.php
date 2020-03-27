@@ -21,14 +21,13 @@ class RestaurantCollection extends ResourceCollection
                     if($data->reviews->count())
                     $ranks = number_format($data->reviews->sum('review_rank')/$data->reviews->count(),2);
                 }
-        
+
                 return [
                     'id' => $data->id,
                     'name' => $data->translate('name'),
                     'logo' => url('/uploads/restaurants/logos/'.($data->logo?$data->logo:'default.png')),
                     'banner' => url('/uploads/restaurants/banners/'.($data->banner?$data->banner:'default.jpg')),
-                    'category' => $data->category,
-                    'category_text' => ($data->category_text?$data->category_text->translate('display_text'):null),
+                    'classification' =>new ClassificationCollection($data->classifications),
                     'owner_id' => $data->owner_id,
                     'owner_name' => ($data->owner?$data->owner->name:null),
                     'latitude' => $data->latitude,
@@ -47,16 +46,16 @@ class RestaurantCollection extends ResourceCollection
                     'reviews_count'=>$data->reviews->count(),
                     'rank' => $ranks,
                     'distance'=> number_format($data->distance,2),
-                    
+
 
                 ];
-                        
+
             }),
             'links' => [
                 'self' => 'link-value',
             ],
         ];
     }
-    
-    
+
+
 }

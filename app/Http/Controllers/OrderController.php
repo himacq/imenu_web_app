@@ -17,14 +17,14 @@ class OrderController extends Controller
     public function __construct()
     {
         $this->change_language();
-        $this->middleware('permission:orders-manage');
+        $this->middleware('role:admin||superadmin');
         $this->data['menu'] = 'sales';
         $this->data['selected'] = 'orders';
         $this->data['location'] = 'orders';
         $this->data['location_title'] = __('main.orders');
 
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -35,7 +35,7 @@ class OrderController extends Controller
         $this->data['sub_menu'] = 'orders';
         return view('order.index', $this->data);
     }
-    
+
     /**
      * return dataTable
      * @param Request $request
@@ -48,7 +48,7 @@ class OrderController extends Controller
            $orders = OrderRestaurant::all();
        else
         $orders = OrderRestaurant::where(['restaurant_id'=>$this->user->restaurant_id])->get();
-        
+
           return DataTables::of($orders)
             ->setRowId(function ($model) {
                 return "row-" . $model->id;
@@ -57,13 +57,17 @@ class OrderController extends Controller
                 $date = date('d-m-Y', strtotime($model->created_at));
                 return $date;
 
-            
-            })
-             
-            ->addColumn('customer', function ($model) {
-                return $model->order->customer->name;
 
             })
+
+              ->addColumn('customer', function ($model) {
+                  return $model->order->customer->name;
+
+              })
+              ->addColumn('restaurant', function ($model) {
+                  return $model->restaurant->name;
+
+              })
             ->addColumn('status', function ($model) {
                 if($model->status->count() > 0){
                 if($model->status->last()->status_text->translate('display_text'))
@@ -76,17 +80,17 @@ class OrderController extends Controller
                 return $model->products->sum('qty');
 
             })
-            
+
             ->addColumn('control', function ($model) {
                 $id = $model->id;
                 return '<a href="' . url("orders/" . $id . "/edit") . '" class="btn btn-sm btn-circle btn-default btn-editable"><i class="fa fa-search"></i> '.__('main.view').'</a>';
 
             })
-            ->rawColumns(['customer','control','status','qty'])
+            ->rawColumns(['customer','control','status','qty','restaurant'])
             ->make(true);
 
     }
-    
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -98,34 +102,48 @@ class OrderController extends Controller
         if($this->user->hasRole('superadmin'))
             $this->data['order'] = OrderRestaurant::where(['id'=>$id])->first();
         else
-           $this->data['order'] = OrderRestaurant::where(['id'=>$id,'restaurant_id'=>$this->user->restaurant_id])->first();
-        
+            $this->data['order'] = OrderRestaurant::where(['id'=>$id,'restaurant_id'=>$this->user->restaurant_id])->first();
+
         if(!$this->data['order'])
-           return redirect()->route('orders.index')->with('status',trans('main.not_found'));
+            return redirect()->route('orders.index')->with('status',trans('main.not_found'));
 
         $this->data['order_status'] = Lookup::where(
-                ['parent_id'=>\Config::get('settings.order_status')])->get();
-        
-        
+            ['parent_id'=>\Config::get('settings.order_status')])->get();
+
+
         return view('order.edit', $this->data);
     }
+
+    public function print($id)
+    {
+        if($this->user->hasRole('superadmin'))
+            $this->data['order'] = OrderRestaurant::where(['id'=>$id])->first();
+        else
+            $this->data['order'] = OrderRestaurant::where(['id'=>$id,'restaurant_id'=>$this->user->restaurant_id])->first();
+
+        if(!$this->data['order'])
+            return redirect()->route('orders.index')->with('status',trans('main.not_found'));
+
+
+        return view('order.print', $this->data);
+    }
     /**
-     * 
+     *
      * @param Request $request
      * @param type $id
      * @return type
      */
-    
+
     public function update(Request $request,$id){
         OrderRestaurantStatus::create([
             'order_restaurant_id'=>$id,
             'status'=>$request->order_status
         ]);
-        
+
         return redirect()->route('orders.edit',$id)->with('status', trans('main.success'));
     }
     /**
-     * 
+     *
      * @param Request $request
      * @param type $id
      * @return type
@@ -139,7 +157,7 @@ class OrderController extends Controller
              'review_rank'=>$request->review_rank,
              'isActive'=>1
         ]);
-        
+
         return redirect()->route('orders.edit',$id)->with('status', trans('main.success'));
     }
 }

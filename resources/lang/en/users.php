@@ -22,8 +22,10 @@ return [
     'mobile'=>'Mobile',
     'password'=>'Password',
     'roles'=>'User`s Roles',
-    'edit_user'=>'Edit User'
-    
-    
-    
+    'edit_user'=>'Edit User',
+    'user_roles'=>'User`s roles',
+    'select_role'=>'select User`s Role'
+
+
+
 ];

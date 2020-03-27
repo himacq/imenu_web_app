@@ -21,26 +21,27 @@
      * shoppingApi public Services
      */
     Route::get('/restaurant/registration_questions','Api\RestaurantController@listQuestions');
-    
+
     Route::post('/restaurants','Api\RestaurantController@listRestaurants');
     Route::post('/withinMaxDistance','Api\RestaurantController@withinMaxDistance');
     Route::get('/restaurant/{id}','Api\RestaurantController@Restaurant');
     Route::get('/restaurant_categories','Api\RestaurantController@restaurant_categories');
-    
-    
+
+
     Route::get('/categories/{restaurant_id?}','Api\CategoryController@listCategories');
     Route::get('/category/{id}','Api\CategoryController@Category');
-    
+
     Route::get('/products/{category_id?}','Api\ProductController@listProducts');
     Route::get('/product/{id}','Api\ProductController@Product');
     Route::get('/paymentMethods','Api\PaymentController@paymentMethods');
-    
+
 Route::group(['middleware' => 'auth:api'], function () {
-    
+
     /**
      * CoreApi services
      */
     Route::post('/restaurant/register','Api\RestaurantController@register');
+    Route::post('/restaurant/review', 'Api\RestaurantController@review');
     Route::post('/user/logout' , 'Api\UserController@logout');
     Route::get('/user/profile' , 'Api\UserController@userProfile');
     Route::post('/user/update' , 'Api\UserController@updateUserProfile');
@@ -50,26 +51,29 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::delete('/user/address/{id}', 'Api\UserController@deleteAddress');
     Route::get('/user/addresses', 'Api\UserController@listAddresses');
     Route::post('/user/location', 'Api\UserController@updateLocation');
-    
+    Route::post('/user/review', 'Api\UserController@review');
+
+    Route::post('/product/review', 'Api\ProductController@review');
+
     /**
      * shoppingApi Services
      */
     Route::post('/favourite', 'Api\FavouriteController@createFavourite');
     Route::delete('/favourite/{id}', 'Api\FavouriteController@deleteFavourite');
     Route::get('/favourites', 'Api\FavouriteController@listFavourites');
-    
+
     Route::post('/cart', 'Api\CartController@addToCart');
     Route::post('/cart_update', 'Api\CartController@updateItemCart');
     Route::post('/cartOption', 'Api\CartController@addOptionToCartDetails');
     Route::get('/cart', 'Api\CartController@getCart');
     Route::delete('/cart/{id}', 'Api\CartController@removeItemCart');
     Route::get('/cart/empty', 'Api\CartController@emptyCart');
-    
+
     Route::post('/delivered_order', 'Api\OrderController@delivered_order');
     Route::post('/order', 'Api\OrderController@createOrder');
     Route::get('/order/{id}', 'Api\OrderController@order');
     Route::get('/orders', 'Api\OrderController@listOrders');
-    
+
     Route::post('/messages/send_message_restaurant','Api\MessageController@send_message_restaurant');
     Route::post('/messages/send_message_admin','Api\MessageController@send_message_admin');
     Route::post('/messages/reply','Api\MessageController@reply');
@@ -77,7 +81,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/messages/inbox','Api\MessageController@inbox');
     Route::get('/messages/unread','Api\MessageController@unread');
     Route::get('/messages/details/{id}','Api\MessageController@details');
-    
+
 
 });
 /*

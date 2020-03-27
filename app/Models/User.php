@@ -17,14 +17,14 @@ class User extends Authenticatable
      *
      * @var array
      */
-    
+
     protected $fillable = [
         'name', 'email', 'password', 'isActive','username','phone','mobile','restaurant_id','api_token',
         'language_id','latitude','longitude','news_letter'
     ];
-    
+
     protected $nullable = ['latitude','longitude'];
-    
+
 
     /**
      * The attributes that should be hidden for arrays.
@@ -35,7 +35,7 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-     
+
     public function app_reviews(){
         return $this->hasMany('App\Models\AppReview','user_id','id');
     }
@@ -43,7 +43,7 @@ class User extends Authenticatable
     public function roles() {
         return $this->belongsToMany('App\Models\Role');
     }
-    
+
     public function restaurant() {
         return $this->belongsTo('App\Models\Restaurant','restaurant_id','id');
     }
@@ -52,7 +52,7 @@ class User extends Authenticatable
     public function getAddresses(){
         return $this->hasMany('App\Models\UserAddress','user_id','id');
     }
-    
+
     public function getFavourites(){
         return $this->hasMany('App\Models\Favourite','user_id','id');
     }
@@ -70,5 +70,9 @@ class User extends Authenticatable
     public function deleteToken() {
         $this->api_token = null;
         $this->save();
+    }
+
+    public function restaurant_registration(){
+        return $this->hasOne('App\Models\RestaurantRegistration','user_id','id');
     }
 }

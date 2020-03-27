@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\PaymentMethod;
+use App\Models\UserAddress;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\ApiController;
@@ -17,7 +19,7 @@ use App\Http\Resources\Order as OrderResource;
 use App\Http\Resources\OrderCollection;
 
 class OrderController extends ApiController
-{  
+{
     public function __construct()
     {
         parent::__construct();
@@ -28,7 +30,7 @@ class OrderController extends ApiController
     public function createOrder(Request $request){
         $cart = $this->user->getCart;
         $notEmptyCart = $cart->cartRestaurants;
-        
+
         if(!count($notEmptyCart)){
              return $this->response(null, false,__('api.not_found'));
         }
@@ -36,13 +38,22 @@ class OrderController extends ApiController
             'payment_id' => 'required|integer',
             'address_id' => 'required|integer',
         ];
-        
+
           $validate = Validator::make($request->all(), $rules);
           if ($validate->fails()) {
             return $this->response(null, false,$validate->errors()->first());
 
         }
-        
+
+        $payment_method = PaymentMethod::find($request->payment_id);
+        if(!$payment_method){
+            return $this->response(null, false,__('api.not_found'));
+        }
+
+        $address = UserAddress::find($request->address_id);
+        if(!$address){
+            return $this->response(null, false,__('api.not_found'));
+        }
         // create the order
         /*********************************/
         $order = Order::create([
@@ -51,10 +62,10 @@ class OrderController extends ApiController
             'grand_total'   => $cart->grand_total,
             'address_id'   => $request->address_id
         ]);
-        
+
         if(!$order)
             return $this->response(null, false,__('api.not_found'));
-        
+
 
         // create order restaurant records
         /*****************************************************************/
@@ -64,12 +75,12 @@ class OrderController extends ApiController
                 'restaurant_id'=>$restaurant['restaurant_id'],
                 'sub_total' =>$restaurant['sub_total']
                 ]);
-            
+
             $order_status = OrderRestaurantStatus::Create([
                 'order_restaurant_id'=>$order_restaurant->id,
                 'status' => \Config::get('settings.new_order_status')
                 ]);
-            
+
             // create order details for each restaurant
             $cartDetails = CartDetail::where(['cart_restaurant_id'=>$restaurant['id']])->get();
             foreach($cartDetails as $detail){
@@ -79,8 +90,8 @@ class OrderController extends ApiController
                     'qty'   => $detail->qty,
                     'price' => $detail->price
                 ]);
-                
-            //create order detail option for each item    
+
+            //create order detail option for each item
             $product_detail_options = CartDetailOption::where(['cart_details_id'=>$detail->id])->get();
                 foreach($product_detail_options as $option){
                     OrderDetailOption::create([
@@ -92,26 +103,26 @@ class OrderController extends ApiController
                 }
 
                 }
-        
+
         }
-        
+
         $order = new OrderResource($order);
 
         $cartObj = new CartController();
         $cartObj->emptyCart();
-        
+
         return $order->additional(['status'=>true,'message'=>__('api.success')]);
     }
     /**
      * get order details
      */
     public function order($id){
-   
+
         $orderData = Order::where(['id'=>$id,'user_id'=>$this->user->id])->first();
         if (!$orderData) {
             return $this->response(null, false,__('api.not_found'));
         }
-        
+
         $order = new OrderResource($orderData);
         return $order->additional(['status'=>true,'message'=>__('api.success')]);
 
@@ -120,37 +131,37 @@ class OrderController extends ApiController
      * list orders api services
      */
     public function listOrders(){
-        
+
         $orders = new OrderCollection(
                 Order::where(['user_id'=>$this->user->id])->paginate(\Config::get('settings.per_page'))
                 );
-        
+
         return $orders->additional(['status'=>true,'message'=>__('api.success')]);
-        
+
     }
-    
+
     /**
      * receive order and review the restaurant
      */
-    
+
     public function delivered_order(Request $request){
         $orderData = Order::where(['id'=>$request->order_id,'user_id'=>$this->user->id])->first();
         if (!$orderData) {
             return $this->response(null, false,__('api.not_found'));
         }
-        
+
         foreach ($request->restaurants as $restaurant_review){
             $order_restaurant = OrderRestaurant::where(
                     ['order_id'=>$request->order_id,'restaurant_id'=>$restaurant_review['restaurant_id']
                     ])->first();
-            
+
             OrderRestaurantStatus::firstOrCreate(
                     [
                         'order_restaurant_id'=>$order_restaurant->id,
                         'status' => \Config::get('settings.delivered_order_status')
                     ]);
-            
-            
+
+
              RestaurantReview::create(
                     [
                         'user_id'=>$this->user->id,
@@ -159,7 +170,7 @@ class OrderController extends ApiController
                         'review_rank'=>$restaurant_review['review_rank'],
                         'isActive'=>1
                     ]);
-            
+
         }
         return $this->response(null, true,__('api.success'));
     }

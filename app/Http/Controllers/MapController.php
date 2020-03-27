@@ -2,91 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use FarhanWazir\GoogleMaps\GMaps;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
+use PdfReport;
+use ExcelReport;
+use App\Models\User;
+
 class MapController extends Controller
 {
 
-    protected $gmap;
-
-    public function __construct(GMaps $gmap){
-        $this->gmap = $gmap;
-    }
-
-    public function index(){
-
-
-       
-        $config = array();
-        $config['map_height'] = "100%";
-        $config['zoom'] = "12";
-        $config['center'] = '-33.863276, 151.207977';
-        $config['onboundschanged'] = 'if (!centreGot) {
-            var mapCentre = map.getCenter();
-            marker_0.setOptions({
-                position: new google.maps.LatLng(-33.863276, 151.207977)
-            });
-        }
-        centreGot = true;';
-
-        $this->gmap->initialize($config); // Initialize Map with custom configuration
-
-        // set up the marker ready for positioning
-        $marker = array();
-        $marker['draggable'] = true;
-        $marker['ondragend'] = '
-        iw_'. $this->gmap->map_name .'.close();
-        reverseGeocode(event.latLng, function(status, result, mark){
-            if(status == 200){
-                iw_'. $this->gmap->map_name .'.setContent(result);
-                iw_'. $this->gmap->map_name .'.open('. $this->gmap->map_name .', mark);
-            }
-        }, this);
-        ';
-        $this->gmap->add_marker($marker);
-
-        $map = $this->gmap->create_map(); // This object will render javascript files and map view; you can call JS by $map['js'] and map view by $map['html']
-
-        return view('map', ['map' => $map]);
-    }
     
-    
-     public function index_org(){
 
+  
+    public function displayReport()
+{
+    $fromDate = '2020-01-01';
+    $toDate = '2020-04-01';
+    $sortBy = 'name';
 
-       
-        $config = array();
-        $config['map_height'] = "100%";
-        $config['center'] = 'Clifton, Karachi';
-        $config['onboundschanged'] = 'if (!centreGot) {
-            var mapCentre = map.getCenter();
-            marker_0.setOptions({
-                position: new google.maps.LatLng(mapCentre.lat(), mapCentre.lng())
-            });
+    $title = 'Registered User Report'; // Report title
+
+    $meta = [ // For displaying filters description on header
+        'Registered on' => $fromDate . ' To ' . $toDate,
+        'Sort By' => $sortBy
+    ];
+
+    $queryBuilder = User::select(['name', 'email', 'created_at']) // Do some querying..
+                        ->whereBetween('created_at', [$fromDate, $toDate])
+                        ->orderBy($sortBy);
+
+    $columns = [ // Set Column to be displayed
+        'Name' => 'name',
+        'Created At', // if no column_name specified, this will automatically seach for snake_case of column name (will be registered_at) column from query result
+        'Email' => 'email',
+        'Status' => function($result) { // You can do if statement or any action do you want inside this closure
+            return ($result->isActive==1) ? 'Active' : 'Not Active';
         }
-        centreGot = true;';
+    ];
 
-        $this->gmap->initialize($config); // Initialize Map with custom configuration
+    // Generate Report with flexibility to manipulate column class even manipulate column value (using Carbon, etc).
+    return PdfReport::of($title, $meta, $queryBuilder, $columns)
+                    ->editColumn('Created At', [ // Change column class or manipulate its data for displaying to report
+                        'displayAs' => function($result) {
+                            return $result->created_at->format('d M Y');
+                        },
+                        'class' => 'left'
+                    ])
+                    ->editColumns(['Email', 'Status'], [ // Mass edit column
+                        'class' => 'right bold'
+                    ])
+                    ->limit(20) // Limit record to be showed
+                    ->stream(); // other available method: download('filename') to download pdf / make() that will producing DomPDF / SnappyPdf instance so you could do any other DomPDF / snappyPdf method such as stream() or download()
+}
 
-        // set up the marker ready for positioning
-        $marker = array();
-        $marker['draggable'] = true;
-        $marker['ondragend'] = '
-        iw_'. $this->gmap->map_name .'.close();
-        reverseGeocode(event.latLng, function(status, result, mark){
-            if(status == 200){
-                iw_'. $this->gmap->map_name .'.setContent(result);
-                iw_'. $this->gmap->map_name .'.open('. $this->gmap->map_name .', mark);
-            }
-        }, this);
-        ';
-        $this->gmap->add_marker($marker);
-
-        $map = $this->gmap->create_map(); // This object will render javascript files and map view; you can call JS by $map['js'] and map view by $map['html']
-
-        return view('map', ['map' => $map]);
-    }
 }

@@ -6,12 +6,14 @@ use App\Http\Controllers\Api\ApiController;
 use App\Models\Restaurant;
 use App\Models\Lookup;
 use App\Models\RegistrationsQuestion;
+use App\Models\RestaurantClassification;
 use App\Models\RestaurantRegistration;
 use App\Models\RegistrationsQuestionsAnswer;
 
 use App\Http\Resources\Restaurant as RestaurantResource;
 use App\Http\Resources\RestaurantCollection ;
 use App\Http\Resources\RegistrationsQuestionCollection ;
+use App\Models\RestaurantReview;
 use Illuminate\Http\Request;
 use App\Http\Resources\LookupCollection;
 use DB;
@@ -19,12 +21,46 @@ use DB;
 use Illuminate\Support\Facades\Validator;
 
 class RestaurantController extends ApiController
-{  
+{
     public function __construct()
     {
         parent::__construct();
     }
-    
+
+    /**
+     * @param Request $request
+     * @return \App\Http\Controllers\type
+     */
+    public function review(Request $request){
+        $rules = [
+            'review_text' => 'required|min:3',
+            'review_rank' => 'required|integer',
+            'restaurant_id'=>'required'
+        ];
+
+        $validate = Validator::make($request->all(), $rules);
+        if ($validate->fails()) {
+            return $this->response(null, false,$validate->errors()->first());
+
+        }
+
+        $restaurant = Restaurant::find($request->restaurant_id);
+        if(!$restaurant)
+            return $this->response(null, false,__('api.not_found'));
+
+
+        $review = RestaurantReview::create([
+            'review_text' => $request->review_text,
+            'review_rank' => $request->review_rank,
+            'isActive' => 1,
+            'user_id' => $this->user->id,
+            'restaurant_id'=>$restaurant->id
+        ]);
+
+
+        return $this->response($review->toArray(), true,__('api.success'));
+    }
+
     /**
      * categories of restaurants
      */
@@ -36,7 +72,7 @@ class RestaurantController extends ApiController
     /**
      * restaurants api services
      */
-    
+
     public function withinMaxDistance(Request $request) {
 
         $restaurants = Restaurant::selectRaw('*, ( 111.045 * acos( cos( radians( ? ) ) * cos( radians( latitude ) )'
@@ -46,50 +82,65 @@ class RestaurantController extends ApiController
                     ->having('distance', '<', $request->distance)
                     ->orderBy('distance')
                     ->get();
-        
+
     return $restaurants;
     }
 
+    /**
+     * @param Request $request
+     * @return RestaurantCollection
+     */
     public function listRestaurants(Request $request){
-       $order = ($request->order?$request->order:"ASC");
-       
+
+
+        $order = ($request->order?$request->order:"ASC");
+        $sort = ($request->sort?$request->sort:"name");
+
         if($request->latitude && $request->longitude){
-             $restaurants = Restaurant::selectRaw('*, ( 111.045 * acos( cos( radians( ? ) ) * cos( radians( latitude ) )'
+             $restaurants = Restaurant::selectRaw('distinct restaurant_id as id,name,logo,banner,owner_id,isActive, ( 111.045 * acos( cos( radians( ? ) ) * cos( radians( latitude ) )'
                 . ' * cos( radians( longitude ) - radians( ? ) ) + sin( radians( ? ) )'
                 . ' * sin( radians( latitude ) ) ) ) AS distance '
                 , [$request->latitude, $request->longitude, $request->latitude])
+
                     ->having('distance', '<', $request->distance)
                     ->having('isActive','=',1);
-                    //->paginate(\Config::get('settings.per_page'))
-           if($request->category)
-                $restaurants = $restaurants->having('category','=',$request->category);
-           
-          
-           if($request->sort)
-                    $restaurants = $restaurants->orderBy($request->sort,$order);
-           
-               $restaurants = $restaurants->simplePaginate(\Config::get('settings.per_page'));//(\Config::get('settings.per_page'));
+
+             if($request->classification)
+                 $restaurants->join('restaurant_classifications', function ($join) use ($request){
+                     $join->on('restaurant_classifications.restaurant_id', '=', 'restaurants.id')
+                         ->whereIn('restaurant_classifications.classification_id',$request->classification);
+                 });
+
+
+             $restaurants->orderBy($sort,$order);
+
+            $restaurants = $restaurants->simplePaginate(\Config::get('settings.per_page'));
+
+           $restaurants = new RestaurantCollection($restaurants);
+           //return $restaurants;
+            return $restaurants->additional(['status'=>true,'message'=>__('api.success')]);
+
         }
         else{
             $filter = ['isActive'=>1];
-       
-            if($request->category)
-               $filter['category'] =$request->category;
+            $restaurants = Restaurant::where($filter);
 
-               $restaurants = Restaurant::where($filter);
-               if($request->sort)
-                    $restaurants = $restaurants->orderBy($request->sort,$order);
-               
-               $restaurants = $restaurants->paginate(\Config::get('settings.per_page'));
+            if($request->classification)
+                $restaurants->whereHas('classifications', function ($query) use ($request) {
+                    $query->whereIn('classification_id', $request->classification);
+                });
+
         }
-        $restaurants = new RestaurantCollection($restaurants);
 
-         
+
+        $restaurants = $restaurants->paginate(\Config::get('settings.per_page'));
+
+        $restaurants = new RestaurantCollection($restaurants);
         return $restaurants->additional(['status'=>true,'message'=>__('api.success')]);
-        
+
     }
-    
-    
+
+
     /**
      * get restaurant details
      */
@@ -100,10 +151,10 @@ class RestaurantController extends ApiController
             $restaurant = new RestaurantResource($restaurant);
             return $restaurant->additional(['status'=>true,'message'=>__('api.success')]);
 
-            
+
     }
-    
-    
+
+
     /**
      * get registration questions
      */
@@ -112,11 +163,11 @@ class RestaurantController extends ApiController
         return $questions->additional(['status'=>true,'message'=>__('api.success')]);
 
     }
-    
+
     /**
      * register a restaurant
      */
-    
+
     public function register(Request $request){
         $rules = [
             'name' => 'required|max:255',
@@ -134,15 +185,15 @@ class RestaurantController extends ApiController
             'business_title' => 'required',
             'branches_count' => 'required',
         ];
-        
+
           $validate = Validator::make($request->all(), $rules);
           if ($validate->fails()) {
             return $this->response(null, false,$validate->errors()->first());
 
         }
+
         $id_img = $this->storeImage($request->id_img,'/uploads/restaurants/ids/',$request->name);
         $license_img = $this->storeImage($request->license_img,'/uploads/restaurants/license/',$request->name);
-        
 
         $restaurant = RestaurantRegistration::create([
             'user_id' => $this->user->id,
@@ -163,7 +214,7 @@ class RestaurantController extends ApiController
             'branches' => json_encode($request->branches),
             'status'=>\Config::get('settings.restaurant_review_status')
         ]);
-        
+
         if(is_array($request->general_questions)){
                 foreach($request->general_questions as $answers){
                     foreach($answers as $key=>$value){
@@ -173,7 +224,7 @@ class RestaurantController extends ApiController
                         "answer"=>$value
                     ]);
                     }
-                }                
+                }
         }
 
         return $this->response($restaurant->toArray(), true,__('api.success'));

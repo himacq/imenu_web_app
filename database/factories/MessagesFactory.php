@@ -3,8 +3,11 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 use Faker\Generator as Faker;
 
-use App\Models\Message;
-use App\Models\MessageReply;
+use App\Models\UserMessage;
+use App\Models\UserMessageReply;
+
+use App\Models\CustomerMessage;
+use App\Models\CustomerMessageReply;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,28 +20,53 @@ use App\Models\MessageReply;
 |
 */
 
-$factory->define(Message::class, function (Faker $faker) {
+$factory->define(UserMessage::class, function (Faker $faker) {
     return [
-	            'message_type' => random_int(1, 3),
-	            'sender_id' => random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
-                    'receiver_id'=> random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
-	            'title' => $faker->title,
-                    'message' =>$faker->text,
-                    'isSeen' =>$faker->boolean,
-                    'created_at' => \Carbon\Carbon::now(),
-                    'updated_at' => \Carbon\Carbon::now()
-	        ];
+        'message_type' => random_int(1, 3),
+        'sender_id' => random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
+        'receiver_id'=> random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
+        'title' => $faker->title,
+        'message' =>$faker->text,
+        'isSeen' =>$faker->boolean,
+        'created_at' => \Carbon\Carbon::now(),
+        'updated_at' => \Carbon\Carbon::now()
+    ];
 });
 
-$factory->define(MessageReply::class, function (Faker $faker) {
+$factory->define(UserMessageReply::class, function (Faker $faker) {
     return [
-	            'message_id' => random_int(\DB::table('Messages')->min('id'), \DB::table('Messages')->max('id')),
-                    'sender_id'=> random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
-                    'message' =>$faker->text,
-                    'isSeen' =>$faker->boolean,
-                    'created_at' => \Carbon\Carbon::now(),
-                    'updated_at' => \Carbon\Carbon::now()
-	        ];
+        'message_id' => random_int(\DB::table('user_messages')->min('id'), \DB::table('user_messages')->max('id')),
+        'sender_id'=> random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
+        'message' =>$faker->text,
+        'isSeen' =>$faker->boolean,
+        'created_at' => \Carbon\Carbon::now(),
+        'updated_at' => \Carbon\Carbon::now()
+    ];
+});
+
+
+$factory->define(CustomerMessage::class, function (Faker $faker) {
+    return [
+        'message_type' => random_int(1, 3),
+        'sender_id' => random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
+        'receiver_id'=> random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
+        'title' => $faker->title,
+        'message' =>$faker->text,
+        'isSeen' =>$faker->boolean,
+        'created_at' => \Carbon\Carbon::now(),
+        'updated_at' => \Carbon\Carbon::now()
+    ];
+});
+
+$factory->define(CustomerMessageReply::class, function (Faker $faker) {
+    return [
+        'message_id' => random_int(\DB::table('customer_messages')->min('id'), \DB::table('customer_messages')->max('id')),
+        'sender_id'=> random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
+        'message' =>$faker->text,
+        'isSeen' =>$faker->boolean,
+        'created_at' => \Carbon\Carbon::now(),
+        'updated_at' => \Carbon\Carbon::now()
+    ];
 });
 
 

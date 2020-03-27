@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
-    
+
             <!-- The Modal -->
 
                 <!-- END PAGE BAR --> <!-- BEGIN PAGE TITLE-->
@@ -31,7 +31,20 @@
                             <div class="portlet-body">
                                 <div class="table-toolbar">
                                     <div class="row">
-                                       
+
+                                        <div class="col-md-2">
+                                        <div class="table-toolbar">
+
+                                                    <div class="btn-group">
+                                                        <a href="{{ route('restaurants.create') }}" id="sample_editable_1_new"
+
+                                                           class="btn sbold green">{{trans('main.new_button')}}
+                                                            <i class="fa fa-plus"></i>
+                                                        </a>
+
+                                            </div>
+                                        </div>
+                                        </div>
                                         <div class="col-md-2">
                                             <select id="statusFilter" class="form-control" style="margin-bottom: 13px;">
                                                 <option value="">{{trans('main.all_status')}}</option>
@@ -42,15 +55,14 @@
                                         <div class="col-md-8"></div>
                                     </div>
                                 </div>
-                                
+
                                  <table id="data-table"
                                        class="table table-striped table-bordered ">
                                     <thead>
                                     <tr>
-                                       
+
                                         <th>#</th>
                                         <th>{{trans('restaurants.name')}}</th>
-                                        <th>{{trans('restaurants.category')}}</th>
                                         <th>{{trans('restaurants.owner')}}</th>
                                         <th>{{trans('main.status')}}</th>
                                         <th>{{trans('main.created_at')}}</th>
@@ -65,7 +77,7 @@
                         <!-- END EXAMPLE TABLE PORTLET-->
                     </div>
                 </div>
-            
+
 @stop
 
 @push('css')
@@ -74,7 +86,7 @@
           rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
     <link rel="stylesheet" href="{{asset('css/slideShowImage.css')}}">
-   
+
 @endpush
 @push('js')
     <script src="{{url('')}}/assets/global/scripts/datatable.js" type="text/javascript"></script>
@@ -86,7 +98,7 @@
     <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     -->
-    
+
 
     <script src="{{url('')}}/assets/pages/scripts/components-bootstrap-switch.min.js" type="text/javascript"></script>
     <script>
@@ -112,10 +124,9 @@
                 },
 
                 columns: [
-                    
+
                     {data: 'id' ,name: 'id', 'class': 'id'},
                     {data: 'name',width:"20%" ,name: 'name', 'class': 'name'},
-                    {data: 'category', name: 'category', 'class': 'category'},
                     {data: 'owner', name: 'owner', 'class': 'owner'},
                     {data: 'active', name: 'active', orderable: false, "searchable": false},
                     {data: 'created_at', name: 'created_at'},
