@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -9,6 +9,7 @@ return [
     'per_page'=>10,
     'order_status'=>5,
     'new_order_status'=>6,
+    'payment_order_status'=>7,
     'delivered_order_status'=>9,
     'restaurant_status_accepted'=>2,
     'restaurant_categories'=>10,
@@ -19,6 +20,6 @@ return [
     'restaurant_reject_status'=>3,
     'working_days'=>19,
     'commision'=>2.5,
-    'discount'=>3.5,
-    
+    'discount'=>50,
+
 ];

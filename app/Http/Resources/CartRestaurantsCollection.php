@@ -15,17 +15,17 @@ class CartRestaurantsCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-               
+
         return  $this->collection->transform(function ($data) {
              $products = new CartDetailsCollection($data->products);
                 return [
-                            'restaurant_id'=>$data->id,
+                            'restaurant_id'=>$data->restaurant_id,
                             'sub_total'=>$data->sub_total,
                             'restaurant_name'=>$data->restaurant->translate('name'),
                             'items'=>$products
-                       
+
                     ] ;
-                        
+
             });
     }
 }

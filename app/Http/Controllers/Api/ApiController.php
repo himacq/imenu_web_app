@@ -31,6 +31,8 @@ class ApiController extends Controller
 
 
         $fullPath = base_path().'/../public_html' . $store_in . $file_name;
+        //$fullPath = public_path() . $store_in . $file_name;
+
         $path = $store_in . $file_name;
 
         File::put($fullPath, $imgContent);

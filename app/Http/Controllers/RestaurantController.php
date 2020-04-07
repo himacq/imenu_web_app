@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\AdminRestaurantReview;
 use App\Models\AppReview;
+use App\Models\PaymentMethod;
 use App\Models\RestaurantClassification;
+use App\Models\RestaurantPaymentMethod;
 use Illuminate\Http\Request;
 use FarhanWazir\GoogleMaps\GMaps;
 
@@ -20,7 +22,6 @@ use phpDocumentor\Reflection\Types\Null_;
 
 class RestaurantController extends Controller
 {
-    protected $gmap;
 
     public function __construct()
     {
@@ -95,6 +96,25 @@ class RestaurantController extends Controller
         $this->data['restaurant'] = RestaurantRegistration::find($id);
         $this->data['status'] = Lookup::where(['parent_id'=>\Config::get('settings.restaurant_status')])->get();
         $this->data['branches'] = json_decode($this->data['restaurant']->branches);
+
+        /*********************/
+        // google map generation
+        if($this->data['restaurant']->latitude && $this->data['restaurant']->longitude){
+            $this->data['center_lat'] = $this->data['restaurant']->latitude;
+            $this->data['center_long'] = $this->data['restaurant']->longitude;
+
+            $this->data['marker_lat'] = $this->data['restaurant']->latitude;
+            $this->data['marker_long'] = $this->data['restaurant']->longitude;
+            $this->data['zoom'] = 15;
+        }
+        else {
+            $this->data['center_lat'] = "38.9637";
+            $this->data['center_long'] = "35.2433";
+            $this->data['marker_lat'] = "38.9637";
+            $this->data['marker_long'] = "35.2433";
+            $this->data['zoom'] = 5;
+        }
+
         return view('restaurant.registeredView', $this->data);
     }
 
@@ -121,7 +141,10 @@ class RestaurantController extends Controller
                  'isActive'=>0,
                  'name'=>$restaurant_registered->name,
                  'commision'=>$request->commision,
-                 'discount'=>$request->discount
+                 'discount'=>$request->discount,
+                 'distance'=>$request->distance,
+                 'latitude'=>$request->latitude,
+                 'longitude'=>$request->longitude
              ]);
 
              if($restaurant){
@@ -542,6 +565,7 @@ class RestaurantController extends Controller
                 ['parent_id'=>\Config::get('settings.restaurant_categories')])->get();
         $this->data['working_days'] = Lookup::where(
                 ['parent_id'=>\Config::get('settings.working_days')])->get();
+        $this->data['payment_methods'] = PaymentMethod::where(['isActive'=>1])->get();
 
         /*********************/
         // google map generation
@@ -563,6 +587,7 @@ class RestaurantController extends Controller
 
 
         $this->data['restaurant_classifications'] = $this->data['restaurant']->classifications->pluck('classification_id')->toArray();
+        $this->data['restaurant_payment_methods'] = $this->data['restaurant']->payment_methods->pluck('payment_id')->toArray();
 
         return view('restaurant.edit', $this->data);
     }
@@ -586,6 +611,8 @@ class RestaurantController extends Controller
 
         $this->data['restaurant'] = Restaurant::find($this->user->restaurant_id);
 
+
+        $this->data['payment_methods'] = PaymentMethod::where(['isActive'=>1])->get();
 
         $this->data['restaurant_classifications_lookup'] = Lookup::where(
             ['parent_id'=>\Config::get('settings.restaurant_categories')])->get();
@@ -615,7 +642,7 @@ class RestaurantController extends Controller
         }
 
         $this->data['restaurant_classifications'] = $this->data['restaurant']->classifications->pluck('classification_id')->toArray();
-
+        $this->data['restaurant_payment_methods'] = $this->data['restaurant']->payment_methods->pluck('payment_id')->toArray();
         return view('restaurant.edit', $this->data);
     }
 
@@ -703,6 +730,16 @@ class RestaurantController extends Controller
                 RestaurantClassification::Create([
                     'restaurant_id' => $restaurant->id,
                     'classification_id'=>$request->classification[$i],
+                ]);
+            }
+        }
+
+        $restaurant->payment_methods()->delete();
+        if($request->payment_methods){
+            for($i=0; $i<count($request->payment_methods); $i++){
+                RestaurantPaymentMethod::Create([
+                    'restaurant_id' => $restaurant->id,
+                    'payment_id'=>$request->payment_methods[$i],
                 ]);
             }
         }

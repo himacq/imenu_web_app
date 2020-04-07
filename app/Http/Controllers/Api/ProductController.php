@@ -56,22 +56,33 @@ class ProductController extends ApiController
      * get products' list
      */
 
-    public function listProducts($category_id = null){
+    public function listProducts(Request $request){
 
-        if($category_id)
-         $products = new ProductCollection(
-                 Product::where(['category_id'=>$category_id,'isActive'=>1])
-                    ->orderBy('created_at', 'desc')
-                    ->paginate(\Config::get('settings.per_page'))
-                 );
-        else
-          $products = new ProductCollection(
-                  Product::where(['isActive'=>1])
-                    ->orderBy('created_at', 'desc')
-                    ->paginate(\Config::get('settings.per_page'))
-                  );
+        $order = ($request->order?$request->order:"ASC");
+        $sort = ($request->sort?$request->sort:"name");
 
-        return $products->additional(['status'=>true,'message'=>__('api.success')]);
+        $filter = array();
+        $filter['isActive'] = 1;
+        if($request->category_id)
+            $filter['category_id'] = $request->category_id;
+
+        if($request->restaurant_id){
+            $products = Product::where($filter)->whereHas('category', function ($query) use ($request) {
+                    $query->where(['restaurant_id'=> $request->restaurant_id]);
+                });
+
+        }
+        else{
+            $products = Product::where($filter);
+        }
+
+        $products->orderBy($sort,$order);
+
+        $products = $products->paginate(\Config::get('settings.per_page'));
+
+        $productsCollection = new ProductCollection($products);
+
+        return $productsCollection->additional(['status'=>true,'message'=>__('api.success')]);
     }
 
     /**

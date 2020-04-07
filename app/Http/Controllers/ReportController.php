@@ -185,7 +185,7 @@ class ReportController extends Controller
     public function payments_methods(Request $request){
         $this->data['selected'] = 'payments_methods';
         $this->data['location'] = 'payments_methods';
-        $this->data['location_title'] = __('main.payments_methods');
+        $this->data['location_title'] = __('main.payment_methods');
         $this->data['sub_menu'] = 'payments';
 
         $this->data['from'] = date('Y-m-d ');
@@ -201,17 +201,15 @@ class ReportController extends Controller
 
 
         if($this->user->hasRole('superadmin'))
-            $this->data['reportData'] = Order::groupBy('payment_id')
-                ->selectRaw('payment_id, sum(grand_total) as grand_total')
+            $this->data['reportData'] = OrderRestaurant::groupBy('payment_id')
+                ->selectRaw('payment_id, sum(sub_total) as sub_total')
                 ->whereBetween('created_at',[$from,$to ])
                 ->get();
         else
-            $this->data['reportData'] = Order::groupBy('payment_id')
-                ->selectRaw('payment_id, sum(grand_total) as grand_total')
+            $this->data['reportData'] = OrderRestaurant::groupBy('payment_id')
+                ->selectRaw('payment_id, sum(sub_total) as sub_total')
                 ->whereBetween('created_at',[$from,$to ])
-                ->whereHas('orderRestaurants', function ($query)  {
-                    $query->where(['restaurant_id'=>$this->user->restaurant_id]);
-                })
+                ->where(['restaurant_id'=>$this->user->restaurant_id])
                 ->get();
 
         return view('report.payments_methods',$this->data);

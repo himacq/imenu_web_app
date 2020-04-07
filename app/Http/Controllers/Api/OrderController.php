@@ -28,39 +28,20 @@ class OrderController extends ApiController
      * create and confirm order
      */
     public function createOrder(Request $request){
+
         $cart = $this->user->getCart;
         $notEmptyCart = $cart->cartRestaurants;
 
         if(!count($notEmptyCart)){
              return $this->response(null, false,__('api.not_found'));
         }
-        $rules = [
-            'payment_id' => 'required|integer',
-            'address_id' => 'required|integer',
-        ];
 
-          $validate = Validator::make($request->all(), $rules);
-          if ($validate->fails()) {
-            return $this->response(null, false,$validate->errors()->first());
 
-        }
-
-        $payment_method = PaymentMethod::find($request->payment_id);
-        if(!$payment_method){
-            return $this->response(null, false,__('api.not_found'));
-        }
-
-        $address = UserAddress::find($request->address_id);
-        if(!$address){
-            return $this->response(null, false,__('api.not_found'));
-        }
         // create the order
         /*********************************/
         $order = Order::create([
-            'payment_id' => $request->payment_id,
             'user_id'   => $this->user->id,
             'grand_total'   => $cart->grand_total,
-            'address_id'   => $request->address_id
         ]);
 
         if(!$order)
@@ -75,6 +56,7 @@ class OrderController extends ApiController
                 'restaurant_id'=>$restaurant['restaurant_id'],
                 'sub_total' =>$restaurant['sub_total']
                 ]);
+
 
             $order_status = OrderRestaurantStatus::Create([
                 'order_restaurant_id'=>$order_restaurant->id,
@@ -104,6 +86,17 @@ class OrderController extends ApiController
 
                 }
 
+        }
+
+        /***********************************************************/
+        foreach($request->order_restaurants as $record){
+             $orderRestaurant = OrderRestaurant::where([
+                'restaurant_id'=>$record['restaurant_id'],
+                'order_id'=>$order->id
+            ])->first();
+
+             if($orderRestaurant)
+            $orderRestaurant->update(['payment_id'=>$record['payment_id'],'address_id'=>$record['address_id']]);
         }
 
         $order = new OrderResource($order);

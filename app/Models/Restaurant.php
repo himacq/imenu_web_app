@@ -8,10 +8,14 @@ class Restaurant extends BaseModel
 
     protected $fillable = ['email','mobile2','mobile1','phone3','phone2','phone1','extra_info'
         ,'longitude','latitude','branch_of','owner_id','verification_code'
-        ,'isActive','banner','logo','name','commision','discount'];
+        ,'isActive','banner','logo','name','commision','discount','distance'];
 
     public function classifications(){
         return $this->hasMany('App\Models\RestaurantClassification','restaurant_id','id');
+    }
+
+    public function payment_methods(){
+        return $this->hasMany('App\Models\RestaurantPaymentMethod','restaurant_id','id');
     }
     public function owner() {
             return $this->belongsTo('App\Models\User','owner_id','id');

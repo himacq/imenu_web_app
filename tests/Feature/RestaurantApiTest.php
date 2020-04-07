@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\RestaurantRegistration;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -73,6 +74,57 @@ class RestaurantApiTest extends TestCase
         $response->assertStatus(200);
         $response->assertJson(['status'=>true]);
 
+    }
+
+    /**
+     * @test
+     */
+    public function restaurant_registration()
+    {
+        $this->withoutExceptionHandling();
+        $this->user_authenticated();
+
+        $response = $this->post('/api/restaurant/register',
+            [
+                'name'=>'hima',
+                "id_img"=>"jpeg,/9j/4AAQSkZJRgABAgEAYABgAAD/4Q8HRXhpZgAATU0AKgAAAAgABgEyAAIAAAAUAAAAVkdGAAMAAAABAAMAAEdJAAMAAAABADIAAJydAAEAAAAOAAAAAOocAAcAAAf0AAAAAIdpAAQAAAABAAAAagAAANQyMD",
+	            "license_img"=>"jpeg,/9j/4AAQSkZJRgABAgEAYABgAAD/4Q8HRXhpZgAATU0AKgAAAAgABgEyAAIAAAAUAAAAVkdGAAMAAAABAAMAAEdJAAMAAAABADIAAJydAAEAAAAOAAAAAOocAAcAAAf0AAAAAIdpAAQAAAABAAAAagAAANQyMD",
+	            "education_level"=>"Master",
+	            "city"=>"Kuruçeşme ",
+	            "locality"=>"Kuruçeşme ",
+	            "address"=>"Kuruçeşme  462",
+                "duty"=>"fast food",
+                "starting"=>"today",
+                "ending"=>"morgen",
+                "latitude"=>"41.25289566687463",
+                "longitude"=>"39.5626922952659",
+                "distance"=>25,
+	            "email"=>"sdsd@dfdf.com",
+	            "phone"=>22366533,
+	            "business_title"=>"sdsdsd",
+	            "branches_count"=>"5",
+	            "branches"=>[
+		            ["name"=>"Istanbul","address"=>"dssfsfs"],
+		            ["name"=>"Ankara","address"=>"dffff"]
+		                ],
+
+                "general_questions"=>[
+                    ["1"=>"yes"],
+                    ["2"=>"yes"],
+                    ["3"=>"yes"],
+                    ["4"=>"yes"],
+                    ["5"=>"yes"],
+                    ["6"=>"yes"],
+                    ["7"=>"yes"],
+                    ["8"=>"yes"],
+                    ["9"=>"yes"],
+                    ["10"=>"yes"]
+                        ]
+            ]);
+
+        $this->assertCount(1,RestaurantRegistration::all());
+        $response->assertStatus(200);
+        $response->assertJson(['status'=>true]);
     }
 
 

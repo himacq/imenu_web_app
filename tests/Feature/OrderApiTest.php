@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class OrderApiTest extends TestCase
 {
-        protected $product, $product_option, $cart_details,$order,$payment_method,$user_address;
+        protected $product, $product_option, $cart_details,$order,$payment_method,$user_address,$order_restaurant;
 
     /*     * ******************************************************************************** */
 
@@ -28,41 +28,48 @@ class OrderApiTest extends TestCase
         $cart_restaurant = factory('App\Models\CartRestaurant')->create();
         $this->cart_details = factory('App\Models\CartDetail')->create();
         $cart_detail_options = factory('App\Models\CartDetailOption')->create();
-        
+
         $this->payment_method = factory('App\Models\PaymentMethod')->create();
         $this->user_address = factory('App\Models\UserAddress')->create();
         $this->order = factory('App\Models\Order')->create();
-        $order_restaurant = factory('App\Models\OrderRestaurant')->create();
+        $this->order_restaurant = factory('App\Models\OrderRestaurant')->create();
         $order_details = factory('App\Models\OrderDetail')->create();
         $order_details_options = factory('App\Models\OrderDetailOption')->create();
     }
-    
+
     /**
      * @test
      */
-    
+
     public function create_order(){
         $this->create_fake_data();
-        
+
         $response = $this->post('api/order',
-                ['payment_id'=>$this->payment_method->id,'address_id'=>$this->user_address->id],
+                [
+	"order_restaurants"=> [
+		["payment_id"=>$this->payment_method->id,
+        "address_id"=>$this->user_address->id,
+        "restaurant_id"=>$this->order_restaurant->id]
+		]
+
+],
                 ['api_token'=>$this->user->api_token]
                 );
-        
+
         $response->assertStatus(201);
         $response->assertJson(['status'=>true]);
     }
-    
+
     /**
      * @test
      */
-    
+
     public function receive_order(){
         $this->create_fake_data();
-        
+
         $restaurant1 = factory('App\Models\OrderRestaurant')->create();
         $restaurant2 = factory('App\Models\OrderRestaurant')->create();
-        
+
         $response = $this->post('api/delivered_order',
                 ['order_id'=>$this->order->id,'restaurants'=>
                     [
@@ -80,33 +87,33 @@ class OrderApiTest extends TestCase
                     ],
                 ['api_token'=>$this->user->api_token]
                 );
-        
+
         $response->assertStatus(200);
         $response->assertJson(['status'=>true]);
     }
-    
+
     /**
      * @test
      */
-    
+
     public function get_order(){
         $this->create_fake_data();
         $response = $this->get('api/order/'.$this->order->id,[],['api_token'=>$this->user->api_token]);
-        
+
         $response->assertStatus(200);
         $response->assertJson(['status'=>true]);
     }
-    
-    
+
+
     /**
      * @test
      */
-    
+
     public function get_order_collection(){
         $this->create_fake_data();
-        
+
         $response = $this->get('api/orders',[],['api_token'=>$this->user->api_token]);
-        
+
         $response->assertStatus(200);
         $response->assertJson(['status'=>true]);
     }

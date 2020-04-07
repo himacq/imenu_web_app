@@ -76,7 +76,7 @@
                                                     </div>
                                                     <div class="row static-info">
                                                         <div class="col-md-5 name"> {{trans('orders.payment_method')}}</div>
-                                                        <div class="col-md-7 value"> {{$order->order->payment_method->translate('name')}} </div>
+                                                        <div class="col-md-7 value"> {{$order->payment_method->translate('name')}} </div>
                                                     </div>
                                                     <div class="row static-info">
                                                         <div class="col-md-5 name"> {{trans('orders.customer_name')}} </div>
@@ -98,35 +98,35 @@
                                                 <td class="text">
                                                     <div class="row static-info">
                                                         <div class="col-md-5 name"> {{trans('orders.address_type')}} </div>
-                                                        <div class="col-md-7 value"> {{$order->order->address->address_type}} </div>
+                                                        <div class="col-md-7 value"> {{$order->address->address_type}} </div>
                                                     </div>
                                                     <div class="row static-info">
                                                         <div class="col-md-5 name"> {{trans('orders.street')}} </div>
-                                                        <div class="col-md-7 value"> {{$order->order->address->street}} </div>
+                                                        <div class="col-md-7 value"> {{$order->address->street}} </div>
                                                     </div>
                                                     <div class="row static-info">
                                                         <div class="col-md-5 name"> {{trans('orders.city')}} </div>
-                                                        <div class="col-md-7 value"> {{$order->order->address->city}} </div>
+                                                        <div class="col-md-7 value"> {{$order->address->city}} </div>
                                                     </div>
                                                     <div class="row static-info">
                                                         <div class="col-md-5 name"> {{trans('orders.house_no')}} </div>
-                                                        <div class="col-md-7 value"> {{$order->order->address->house_no}} </div>
+                                                        <div class="col-md-7 value"> {{$order->address->house_no}} </div>
                                                     </div>
                                                     <div class="row static-info">
                                                         <div class="col-md-5 name"> {{trans('orders.house_name')}} </div>
-                                                        <div class="col-md-7 value"> {{$order->order->address->house_name}} </div>
+                                                        <div class="col-md-7 value"> {{$order->address->house_name}} </div>
                                                     </div>
                                                     <div class="row static-info">
                                                         <div class="col-md-5 name"> {{trans('orders.floor_no')}} </div>
-                                                        <div class="col-md-7 value"> {{$order->order->address->floor_no}} </div>
+                                                        <div class="col-md-7 value"> {{$order->address->floor_no}} </div>
                                                     </div>
                                                     <div class="row static-info">
                                                         <div class="col-md-5 name"> {{trans('orders.apartment_no')}} </div>
-                                                        <div class="col-md-7 value"> {{$order->order->address->apartment_no}} </div>
+                                                        <div class="col-md-7 value"> {{$order->address->apartment_no}} </div>
                                                     </div>
                                                     <div class="row static-info">
                                                         <div class="col-md-5 name"> {{trans('orders.governorate')}} </div>
-                                                        <div class="col-md-7 value"> {{$order->order->address->governorate}} </div>
+                                                        <div class="col-md-7 value"> {{$order->address->governorate}} </div>
                                                     </div>
 
                                                 </td>

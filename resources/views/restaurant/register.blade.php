@@ -50,6 +50,10 @@
                         </li>
 
                         <li>
+                            <a href="#tab_location" data-toggle="tab" aria-expanded="false"> {{trans('restaurants.location')}} </a>
+                        </li>
+
+                        <li>
                             <a href="#tab_questions" data-toggle="tab" aria-expanded="false"> {{trans('restaurants.general_questions')}} </a>
                         </li>
 
@@ -162,6 +166,13 @@
 
                                                 <div class="form-group form-md-line-input">
 
+                                                    <input type="text" class="form-control" name="distance" value="{{ old('distance') }}">
+                                                    <label for="form_control_1">{{trans('restaurants.distance')}}</label>
+                                                    <span class="help-block"></span>
+                                                </div>
+
+                                                <div class="form-group form-md-line-input">
+
                                                     <label for="form_control_1">{{trans('restaurants.id_img')}}</label>
                                                     <span class="help-block"></span>
                                                     <div class="fileinput fileinput-exists" data-provides="fileinput">
@@ -219,6 +230,14 @@
                                             <i class="fa fa-plus"></i>{{trans('main.new_button')}}</a>
 
                         </div>
+                        <div class="tab-pane fade " id="tab_location">
+                            <input type="hidden" id="lat-span" name="latitude" value="{{$marker_lat}}">
+                            <input type="hidden" id="lon-span" name="longitude" value="{{$marker_long}}">
+                            <div id="map" style="width: 100%; height: 350px;">
+
+
+                            </div>
+                        </div>
                         <div class="tab-pane fade " id="tab_questions">
                               <table id="option_groups_tb" class="table table-hover table-striped table-bordered">
                                                     <thead>
@@ -236,19 +255,9 @@
                                             <td>
                                                 <input type="hidden"  name="question_id[]" value="{{ $question->id }}">
 
-                                                <div class="mt-repeater-input mt-radio-inline">
-                                                    <label class="mt-radio">
-                                                        <input type="radio" checked name="question_answer[{{$question->id}}][]"   value="1">
-                                                        {{trans('main.yes')}}
-                                                        <span></span>
-                                                    </label>
-                                                    <label class="mt-radio">
-                                                        <input type="radio" name="question_answer[{{$question->id}}][]" value="0">
-                                                        {{trans('main.no')}}
-                                                        <span></span>
-                                                    </label>
-                                                </div>
-                                            </td>
+                                                    <input type="text" class="form-control" name="question_answer[{{$question->id}}][]" >
+
+                                                </td>
 
 
                                         </tr>
@@ -284,6 +293,12 @@
 @stop
 
 @push('css')
+    <style>
+        #map_canvas{
+            position: relative !important;
+        }
+
+    </style>
 <style>
   .modal-dialog {
     width: 90%;
@@ -294,7 +309,60 @@
 <link href="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css" rel="stylesheet" type="text/css" />
 @endpush
 @push('js')
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        var marker;
+        function initMap() {
+            var center = {lat: {{$center_lat}}, lng: {{$center_long}}};
+            var marker_position = {lat: {{$marker_lat}}, lng: {{$marker_long}}};
+
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: center,
+                zoom: {{$zoom}}
+            });
+
+            marker = new google.maps.Marker({
+                position: marker_position,
+                map: map,
+                draggable: true
+            });
+
+            google.maps.event.addListener(marker, 'dragend', function(marker) {
+                var latLng = marker.latLng;
+                document.getElementById('lat-span').value = latLng.lat();
+                document.getElementById('lon-span').value = latLng.lng();
+            });
+
+            google.maps.event.addListener(map, 'click', function(event) {
+                placeMarker(event.latLng);
+            });
+
+            function placeMarker(location) {
+                if (marker == undefined){
+                    marker = new google.maps.Marker({
+                        position: location,
+                        map: map,
+                        animation: google.maps.Animation.DROP,
+                    });
+                }
+                else{
+                    marker.setPosition(location);
+                }
+
+                document.getElementById('lat-span').value = location.lat();
+                document.getElementById('lon-span').value = location.lng();
+
+                map.setCenter(location);
+
+            }
+
+        }
+
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGdpn4f1QYHxrQCzInRbPTYhwdMICR_DU&libraries=places&callback=initMap" async defer></script>
+
+
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js" type="text/javascript"></script>
 <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 

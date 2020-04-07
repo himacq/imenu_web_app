@@ -162,13 +162,13 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-        
+
 
 
         /*
          * Package Service Providers...
          */
-        
+
         Yajra\DataTables\DataTablesServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
         /*
@@ -179,9 +179,12 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        
+
         Jimmyjs\ReportGenerator\ServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+
+        Barryvdh\TranslationManager\ManagerServiceProvider::class,
+
 
 
 
@@ -241,7 +244,7 @@ return [
         'PdfReport' => Jimmyjs\ReportGenerator\Facades\PdfReportFacade::class,
         'ExcelReport' => Jimmyjs\ReportGenerator\Facades\ExcelReportFacade::class,
         'CSVReport' => Jimmyjs\ReportGenerator\Facades\CSVReportFacade::class,
-        
+
         'PDF' => Barryvdh\DomPDF\Facade::class,
 
 

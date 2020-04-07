@@ -97,13 +97,20 @@ class RestaurantController extends ApiController
         $sort = ($request->sort?$request->sort:"name");
 
         if($request->latitude && $request->longitude){
-             $restaurants = Restaurant::selectRaw('distinct restaurant_id as id,name,logo,banner,owner_id,isActive, ( 111.045 * acos( cos( radians( ? ) ) * cos( radians( latitude ) )'
+            /* $restaurants = Restaurant::selectRaw('distinct restaurants.*, ( 111.045 * acos( cos( radians( ? ) ) * cos( radians( latitude ) )'
                 . ' * cos( radians( longitude ) - radians( ? ) ) + sin( radians( ? ) )'
                 . ' * sin( radians( latitude ) ) ) ) AS distance '
                 , [$request->latitude, $request->longitude, $request->latitude])
-
                     ->having('distance', '<', $request->distance)
-                    ->having('isActive','=',1);
+                    ->having('isActive','=',1);*/
+
+            $restaurants = Restaurant::selectRaw(
+                'distinct restaurants.*, '
+                .'(6371 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) '
+                .'+ sin( radians(?) ) * sin( radians( latitude ) ) ) ) as distance '
+                , [$request->latitude, $request->longitude, $request->latitude])
+                ->having('distance', '<', $request->distance)
+                ->having('isActive','=',1);
 
              if($request->classification)
                  $restaurants->join('restaurant_classifications', function ($join) use ($request){
@@ -129,6 +136,8 @@ class RestaurantController extends ApiController
                 $restaurants->whereHas('classifications', function ($query) use ($request) {
                     $query->whereIn('classification_id', $request->classification);
                 });
+
+            $restaurants->orderBy($sort,$order);
 
         }
 
@@ -182,6 +191,9 @@ class RestaurantController extends ApiController
             'ending' => 'required',
             'email' => 'required',
             'phone' => 'required',
+            'latitude' => 'required',
+            'longitude' => 'required',
+            'distance' => 'required',
             'business_title' => 'required',
             'branches_count' => 'required',
         ];
@@ -209,6 +221,9 @@ class RestaurantController extends ApiController
             'ending' => $request->ending,
             'email' => $request->email,
             'phone' => $request->phone,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'distance' => $request->distance,
             'business_title' => $request->business_title,
             'branches_count' => $request->branches_count,
             'branches' => json_encode($request->branches),

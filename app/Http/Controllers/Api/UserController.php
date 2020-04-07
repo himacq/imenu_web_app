@@ -81,6 +81,8 @@ class UserController extends ApiController
             'isActive' => 1,
             'phone' => $request->phone,
             'mobile' => $request->mobile,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude
         ]);
 
        $user->attachRole(Role::where('name', 'user')->first());

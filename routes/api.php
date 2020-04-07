@@ -31,9 +31,9 @@
     Route::get('/categories/{restaurant_id?}','Api\CategoryController@listCategories');
     Route::get('/category/{id}','Api\CategoryController@Category');
 
-    Route::get('/products/{category_id?}','Api\ProductController@listProducts');
+    Route::post('/products','Api\ProductController@listProducts');
     Route::get('/product/{id}','Api\ProductController@Product');
-    Route::get('/paymentMethods','Api\PaymentController@paymentMethods');
+    Route::get('/paymentMethods/{id}','Api\PaymentController@paymentMethods');
 
 Route::group(['middleware' => 'auth:api'], function () {
 

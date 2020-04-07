@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RestaurantBilling;
+use App\Models\UserAddress;
 use Illuminate\Http\Request;
 
 use App\Models\OrderDetail;
@@ -135,12 +137,97 @@ class OrderController extends Controller
      */
 
     public function update(Request $request,$id){
+
+        if($request->order_status==\Config::get('settings.payment_order_status')) {
+            $order_restaurant = OrderRestaurant::find($id);
+
+
+            $order_distance = $this->distance(
+                $order_restaurant->restaurant->latitude,
+                $order_restaurant->restaurant->longitude,
+                $order_restaurant->address->latitude,
+                $order_restaurant->address->longitude,
+                "K"
+            );
+            $distance_exceeded = false;
+            // online payment to the application account
+            if($order_restaurant->payment_id==1){
+
+                if($order_distance>$order_restaurant->restaurant->distance){
+                    // apply discount on commision
+                    $commision = $order_restaurant->restaurant->commision*$order_restaurant->restaurant->discount/100;
+                    $distance_exceeded = true;
+                }
+                else{
+                    $commision = $order_restaurant->restaurant->commision;
+                }
+
+                $debit = 0;
+                $credit = $order_restaurant->sub_total -
+                    ($order_restaurant->sub_total*$commision/100);
+            }
+            else{
+                // cash on delivery to the restaurant account
+                if($order_distance>$order_restaurant->restaurant->distance){
+                    // apply discount on commision
+                    $commision = $order_restaurant->restaurant->commision*$order_restaurant->restaurant->discount/100;
+                    $distance_exceeded = true;
+                }
+                else{
+                    $commision = $order_restaurant->restaurant->commision;
+                }
+
+                $credit = 0;
+                $debit =($order_restaurant->sub_total*$commision/100);
+            }
+
+
+        }
+
+
         OrderRestaurantStatus::create([
             'order_restaurant_id'=>$id,
             'status'=>$request->order_status
         ]);
 
+        RestaurantBilling::create([
+            'restaurant_id'=>$order_restaurant->restaurant_id,
+            'payment_id'=>$order_restaurant->payment_id,
+            'sub_total'=>$order_restaurant->sub_total,
+            'order_id'=>$order_restaurant->order_id,
+            'order_restaurant_id'=>$order_restaurant->id,
+            'commision'=>$order_restaurant->restaurant->commision,
+            'discount'=>$order_restaurant->restaurant->discount,
+            'restaurant_distance'=>$order_restaurant->restaurant->distance,
+            'order_distance'=>$order_distance,
+            'distance_exceeded'=>$distance_exceeded,
+            'credit'=>$credit,
+            'debit'=>$debit
+        ]);
+
         return redirect()->route('orders.edit',$id)->with('status', trans('main.success'));
+    }
+
+    private function distance($lat1, $lon1, $lat2, $lon2, $unit) {
+        if (($lat1 == $lat2) && ($lon1 == $lon2)) {
+            return 0;
+        }
+        else {
+            $theta = $lon1 - $lon2;
+            $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+            $dist = acos($dist);
+            $dist = rad2deg($dist);
+            $miles = $dist * 60 * 1.1515;
+            $unit = strtoupper($unit);
+
+            if ($unit == "K") {
+                return round($miles * 1.609344,2);
+            } else if ($unit == "N") {
+                return ($miles * 0.8684);
+            } else {
+                return $miles;
+            }
+        }
     }
     /**
      *

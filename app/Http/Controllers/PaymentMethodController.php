@@ -71,7 +71,7 @@ class PaymentMethodController extends Controller
             ->addColumn('control', function ($model) {
                 $id = $model->id;
                 $html =  "<a class='btn btn-primary btn-sm' href = '" . url("payment_methods/" . $id . "/edit") . "'><i class='fa fa-pencil' ></i ></a> ";
-                if(!count($model->orders))
+                if(!count($model->restaurants))
                     $html.= "<a class='btn btn-danger btn-sm delete' ><input type = 'hidden' class='id_hidden' value = '" . $id . "' > <i class='fa fa-remove' ></i ></a > ";
 
                 return $html;

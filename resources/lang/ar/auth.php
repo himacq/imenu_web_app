@@ -23,5 +23,16 @@ return [
     'login_button'=>'دخول',
     'remember_me'=>'تذكرني',
     'password'=>'كلمة المرور',
+    'sign_up'=>'تسجيل جديد',
+    'enter_personal_details'=>'ادخل بياناتك',
+    'name'=>'الاسم',
+    'email'=>'البريد الالكرتوني',
+    'phone'=>'رقم الهاتف',
+    'mobile'=>'رقم المحمول',
+    'username'=>'اسم المستخدم',
+    're_password'=>'اعادة كلمة المرور',
+    'back'=>'للخلف',
+    'submit'=>'ارسال',
+    'create_account'=>'انشاء حساب مطعم'
 
 ];

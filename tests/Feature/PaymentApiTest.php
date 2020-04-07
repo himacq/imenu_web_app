@@ -13,10 +13,12 @@ class PaymentApiTest extends TestCase
      */
     public function get_payment_methods(){
         $this->withoutExceptionHandling();
-        
+
+        $restaurant = factory('App\Models\Restaurant')->create();
         factory('App\Models\PaymentMethod',3)->create();
-        
-        $response = $this->get('api/paymentMethods');
+        factory('App\Models\RestaurantPaymentMethod',3)->create();
+
+        $response = $this->get('api/paymentMethods/'.$restaurant->id);
         $response->assertStatus(200);
         $response->assertJson(['status'=>true]);
     }

@@ -15,16 +15,20 @@ class RestaurantQuestionsAnswers extends Migration
     {
         schema::create('registrations_questions_answers',function(Blueprint $table){
             $table->increments('id');
+            $table->integer('registration_id')->unsigned();
             $table->integer('question_id')->unsigned();
             $table->string('answer');
 
             $table->timestamps();
-  
+
         });
-        
+
         Schema::table('registrations_questions_answers', function($table) {
                 $table->foreign('question_id')->references('id')->on('registrations_questions')
                         ->onUpdate('cascade')->onDelete('cascade');
+
+                $table->foreign('registration_id')->references('id')->on('restaurant_registrations')
+                    ->onUpdate('cascade')->onDelete('cascade');
                 });
     }
 

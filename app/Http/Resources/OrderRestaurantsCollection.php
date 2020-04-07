@@ -15,7 +15,7 @@ class OrderRestaurantsCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-       
+
         return  $this->collection->transform(function ($data) {
              $products = new OrderDetailsCollection($data->products);
                 return [
@@ -23,11 +23,15 @@ class OrderRestaurantsCollection extends ResourceCollection
                             'restaurant_id'=>$data->restaurant_id,
                             'sub_total'=>$data->sub_total,
                             'restaurant_name'=>$data->restaurant->translate('name'),
+                            'payment_method_id'=>$data->payment_id,
+                            'payment_method_name'=>($data->payment_id?$data->payment_method->translate('name'):trans('main.undefined')),
+                            'address_id'=>$data->address_id,
+                            'address'=>$data->address,
                             'status'=>new OrderStatusCollection($data->status),
                             'products'=>$products
-                       
+
                     ] ;
-                        
+
             });
     }
 }

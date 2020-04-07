@@ -109,7 +109,7 @@
                                 <tr>
                                     <td>{{$data->payment_id}}</td>
                                     <td>{{$data->payment_method->translate('name')}}</td>
-                                    <td>${{$data->grand_total}}</td>
+                                    <td>${{$data->sub_total}}</td>
                                 </tr>
 
 

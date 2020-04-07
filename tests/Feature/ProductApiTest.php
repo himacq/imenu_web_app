@@ -24,7 +24,13 @@ class ProductApiTest extends TestCase
          $category = factory('App\Models\Category',10)->create();
          $products = factory('App\Models\Product',10)->create();
 
-         $response = $this->get('api/products');
+         $response = $this->post('api/products',
+             [
+                "sort"=>"price",
+                "order"=>"asc",
+                "restaurant_id"=>4,
+                "category_id"=>3
+             ]);
 
          $response->assertStatus(200);
          $response->assertJson(['status'=>true]);

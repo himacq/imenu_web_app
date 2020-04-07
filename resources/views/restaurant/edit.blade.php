@@ -102,6 +102,10 @@
                         <li>
                             <a href="#tab_classification" data-toggle="tab" aria-expanded="true"> {{trans('restaurants.classifications')}} </a>
                         </li>
+
+                        <li>
+                            <a href="#tab_payment" data-toggle="tab" aria-expanded="true"> {{trans('restaurants.payment_methods')}} </a>
+                        </li>
                         <li>
                             <a href="#tab_working_details" data-toggle="tab" aria-expanded="false"> {{trans('restaurants.working_details')}} </a>
                         </li>
@@ -244,6 +248,18 @@
                                                 </div>
 
                                                 <div class="form-group form-md-line-input">
+                                                    @role(['a','superadmin'])
+                                                    <input type="text" class="form-control" name="distance" value="{{ $restaurant->distance }}">
+                                                    @endrole
+
+                                                    @role('admin')
+                                                    <input type="text" class="form-control" readonly="" name="distance" value="{{ $restaurant->distance }}">
+                                                    @endrole
+                                                    <label for="form_control_1">{{trans('restaurants.distance')}}</label>
+                                                    <span class="help-block"></span>
+                                                </div>
+
+                                                <div class="form-group form-md-line-input">
                                                     <label for="form_control_1">{{trans('restaurants.logo')}}</label>
                                                     <span class="help-block"></span>
 
@@ -302,12 +318,46 @@
                                                         @foreach($restaurant_classifications_lookup as $category)
                                                             <div class="md-checkbox">
                                                                 <input type="checkbox" id="checkbox{{$category->id}}" {{in_array($category->id, $restaurant_classifications) ? "checked" : ""}}
-                                                                                name="classification[]"
+                                                                name="classification[]"
                                                                        value="{{ $category->id }}" class="md-check">
                                                                 <label for="checkbox{{$category->id}}" >
                                                                     <span></span>
                                                                     <span class="check"></span>
                                                                     <span class="box"></span> {{$category->translate('display_text')}}
+                                                                </label>
+                                                            </div>
+                                                        @endforeach
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade " id="tab_payment">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="portlet light bordered">
+                                        <div class="portlet-body form">
+                                            <div class="form-body">
+
+                                                <div class="form-group form-md-checkboxes">
+                                                    <div class="md-checkbox-list">
+                                                        @foreach($payment_methods as $method)
+                                                            <div class="md-checkbox">
+                                                                <input type="checkbox" id="checkbox{{$method->id}}" {{in_array($method->id, $restaurant_payment_methods) ? "checked" : ""}}
+                                                                name="payment_methods[]"
+                                                                       value="{{ $method->id }}" class="md-check">
+                                                                <label for="checkbox{{$method->id}}" >
+                                                                    <span></span>
+                                                                    <span class="check"></span>
+                                                                    <span class="box"></span> {{$method->translate('name')}}
                                                                 </label>
                                                             </div>
                                                         @endforeach

@@ -68,6 +68,14 @@
                         </a>
                     </li>
 
+                    <li class="nav-item {{ (@$sub_menu == 'translations') ? 'open active' : '' }} ">
+                        <a href="{{ url('translations') }}" target="_blank" class="nav-link">
+                            <i class="fa fa-eye"></i>
+                            <span class="title">{{trans('main.translations')}}</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+
 
                     <li class="nav-item {{ (@$sub_menu == 'roles') ? 'open active' : '' }} ">
                         <a href="{{ url('roles') }}" class="nav-link">
@@ -308,7 +316,7 @@
                             <li class="nav-item {{ (@$location == 'payments_methods') ? 'open active' : '' }} ">
                                 <a href="{{ url('reports/payments_methods') }}" class="nav-link">
                                     <i class="fa fa-print"></i>
-                                    <span class="title">{{trans('main.payments_methods')}}</span>
+                                    <span class="title">{{trans('main.payment_methods')}}</span>
                                     <span class="selected"></span>
                                 </a>
                             </li>

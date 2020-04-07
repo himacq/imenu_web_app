@@ -33,6 +33,8 @@
     });
 
 
+
+
     /**
      * Fake Categories
      */
@@ -182,6 +184,14 @@
 
     });
 
+
+$factory->define(App\Models\RestaurantPaymentMethod::class,function (Faker $faker){
+    return [
+        'payment_id'=>random_int(\DB::table('payment_methods')->min('id'), \DB::table('payment_methods')->max('id')),
+        'restaurant_id'=>random_int(\DB::table('restaurants')->min('id'), \DB::table('restaurants')->max('id'))
+    ];
+
+});
     /**
      * Fake User address
      */
@@ -205,8 +215,6 @@
         return [
             'user_id' => random_int(\DB::table('users')->min('id'), \DB::table('users')->max('id')),
             'grand_total'=>random_int(10,100),
-            'address_id'=>random_int(\DB::table('user_addresses')->min('id'), \DB::table('user_addresses')->max('id')),
-            'payment_id'=>random_int(\DB::table('payment_methods')->min('id'), \DB::table('payment_methods')->max('id'))
         ];
 
     });
@@ -215,14 +223,18 @@
      * Fake order Details
      */
 
-    $factory->define(App\Models\OrderRestaurant::class,function (Faker $faker){
-        return [
-            'order_id' => random_int(\DB::table('orders')->min('id'), \DB::table('orders')->max('id')),
-            'restaurant_id'=>random_int(\DB::table('restaurants')->min('id'), \DB::table('restaurants')->max('id')),
-            'sub_total'=>$faker->numberBetween(1, 10),
-        ];
+$factory->define(App\Models\OrderRestaurant::class,function (Faker $faker){
+    return [
+        'order_id' => random_int(\DB::table('orders')->min('id'), \DB::table('orders')->max('id')),
+        'restaurant_id'=>random_int(\DB::table('restaurants')->min('id'), \DB::table('restaurants')->max('id')),
+        'sub_total'=>$faker->numberBetween(1, 10),
+        'address_id'=>random_int(\DB::table('user_addresses')->min('id'), \DB::table('user_addresses')->max('id')),
+        'payment_id'=>random_int(\DB::table('payment_methods')->min('id'), \DB::table('payment_methods')->max('id'))
+    ];
 
-    });
+});
+
+
 
     /**
      * Fake order Details

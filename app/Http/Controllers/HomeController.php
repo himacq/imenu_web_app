@@ -109,9 +109,36 @@ class HomeController extends Controller
                 $this->data['restaurant'] = $this->user->restaurant_registration;
                 $this->data['status'] = Lookup::where(['parent_id'=>\Config::get('settings.restaurant_status')])->get();
                 $this->data['branches'] = json_decode($this->data['restaurant']->branches);
+                // google map generation
+                if($this->data['restaurant']->latitude && $this->data['restaurant']->longitude){
+                    $this->data['center_lat'] = $this->data['restaurant']->latitude;
+                    $this->data['center_long'] = $this->data['restaurant']->longitude;
+
+                    $this->data['marker_lat'] = $this->data['restaurant']->latitude;
+                    $this->data['marker_long'] = $this->data['restaurant']->longitude;
+                    $this->data['zoom'] = 15;
+                }
+                else {
+                    $this->data['center_lat'] = "38.9637";
+                    $this->data['center_long'] = "35.2433";
+                    $this->data['marker_lat'] = "38.9637";
+                    $this->data['marker_long'] = "35.2433";
+                    $this->data['zoom'] = 5;
+                }
+
                 return view('restaurant.register_response', $this->data);
             }
             $this->data['questions'] = RegistrationsQuestion::all();
+
+            /*********************/
+            // google map generation
+                $this->data['center_lat'] = "38.9637";
+                $this->data['center_long'] = "35.2433";
+                $this->data['marker_lat'] = "38.9637";
+                $this->data['marker_long'] = "35.2433";
+                $this->data['zoom'] = 5;
+
+
             return view('restaurant.register', $this->data);
         }
 
@@ -148,8 +175,10 @@ class HomeController extends Controller
         }
 
         $branches = array();
-        for($i=0;$i<count($request->branch_name);$i++){
-            $branches[] = ['name'=>$request->branch_name[$i] , 'address'=>$request->branch_address[$i]];
+        if(is_array($request->branch_name)) {
+            for ($i = 0; $i < count($request->branch_name); $i++) {
+                $branches[] = ['name' => $request->branch_name[$i], 'address' => $request->branch_address[$i]];
+            }
         }
 
         $restaurant = RestaurantRegistration::create([
@@ -166,6 +195,9 @@ class HomeController extends Controller
             'ending' => $request->ending,
             'email' => $request->email,
             'phone' => $request->phone,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'distance' => $request->distance,
             'business_title' => $request->business_title,
             'branches_count' => count($branches),
             'branches' => json_encode($branches),
