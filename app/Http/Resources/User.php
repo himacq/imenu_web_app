@@ -13,21 +13,21 @@ class User extends JsonResource
      * @return array
      */
     public function toArray($request)
-    {     
+    {
         $cart_items = 0;
-        
+
         // count cart items
         if($this->getCart->cartRestaurants){
             $restaurants = $this->getCart->cartRestaurants;
             foreach ($restaurants as $restaurant){
                 $products = $restaurant->products;
-                
+
                 $cart_items+=$products->sum('qty');
             }
-            
+
         }
-            
-        
+
+
         return [
             'id'=>$this->id,
             'name'=>$this->name,
@@ -44,6 +44,9 @@ class User extends JsonResource
             'api_token'=>$this->api_token,
             'cart_items'=>$cart_items,
             'favourites'=>$this->getFavourites->count(),
+            'address_type' => $this->address_type,
+            'description' => $this->description,
+            'formated_address' => $this->formated_address
         ];
     }
 }

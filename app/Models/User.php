@@ -20,7 +20,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'email', 'password', 'isActive','username','phone','mobile','restaurant_id','api_token',
-        'language_id','latitude','longitude','news_letter'
+        'language_id','latitude','longitude','news_letter','formated_address','description','address_type'
     ];
 
     protected $nullable = ['latitude','longitude'];

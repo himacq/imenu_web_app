@@ -100,6 +100,17 @@
                                                         <div class="col-md-5 name"> {{trans('orders.address_type')}} </div>
                                                         <div class="col-md-7 value"> {{$order->address->address_type}} </div>
                                                     </div>
+
+                                                    <div class="row static-info">
+                                                        <div class="col-md-5 name"> {{trans('orders.description')}} </div>
+                                                        <div class="col-md-7 value"> {{$order->address->description}} </div>
+                                                    </div>
+
+                                                    <div class="row static-info">
+                                                        <div class="col-md-5 name"> {{trans('orders.formated_address')}} </div>
+                                                        <div class="col-md-7 value"> {{$order->address->formated_address}} </div>
+                                                    </div>
+
                                                     <div class="row static-info">
                                                         <div class="col-md-5 name"> {{trans('orders.street')}} </div>
                                                         <div class="col-md-7 value"> {{$order->address->street}} </div>

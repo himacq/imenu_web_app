@@ -82,7 +82,10 @@ class UserController extends ApiController
             'phone' => $request->phone,
             'mobile' => $request->mobile,
             'latitude' => $request->latitude,
-            'longitude' => $request->longitude
+            'longitude' => $request->longitude,
+            'address_type' => $request->address_type,
+            'description' => $request->description,
+            'formated_address' => $request->formated_address
         ]);
 
        $user->attachRole(Role::where('name', 'user')->first());
@@ -277,7 +280,9 @@ class UserController extends ApiController
             'governorate' => $request->governorate,
             'zip_code' => $request->zip_code,
             'isDefault' => $isDefault,
-            'address_type'=> $request->address_type,
+            'address_type' => $request->address_type,
+            'description' => $request->description,
+            'formated_address' => $request->formated_address,
             'house_name'=> $request->house_name,
             'floor_no'=> $request->floor_no,
             'apartment_no'=> $request->apartment_no,
@@ -325,6 +330,14 @@ class UserController extends ApiController
             'governorate' => $request->governorate,
             'zip_code' => $request->zip_code,
             'isDefault' => $isDefault,
+            'address_type' => $request->address_type,
+            'description' => $request->description,
+            'formated_address' => $request->formated_address,
+            'house_name'=> $request->house_name,
+            'floor_no'=> $request->floor_no,
+            'apartment_no'=> $request->apartment_no,
+            'latitude'=> $request->latitude,
+            'longitude'=> $request->longitude
         ]);
 
         return $this->response($address->toArray(), true,__('api.success'));

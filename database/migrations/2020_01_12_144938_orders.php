@@ -34,8 +34,6 @@ class Orders extends Migration
              $table->foreign('user_id')->references('id')->on('users')
                      ->onUpdate('cascade')->onDelete('cascade');
 
-             $table->foreign('address_type')->references('id')->on('lookup')
-                     ->onUpdate('cascade')->onDelete('cascade');
         });
 
         schema::create('payment_methods',function(Blueprint $table){
