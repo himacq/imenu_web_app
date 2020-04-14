@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\OrderDetailsOptionCollection;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use App\Http\Resources\ProductFavourite as ProductFavouriteResource;
-use App\Http\Resources\OrderDetailsOptionCollection;
 
 class OrderDetailsCollection extends ResourceCollection
 {
@@ -22,9 +22,10 @@ class OrderDetailsCollection extends ResourceCollection
                         'price'=>$data->price,
                         'qty'=>$data->qty,
                         'product'=> new ProductFavouriteResource($data->product),
-                        'options'=>new OrderDetailsOptionCollection($data->options)
+                    'options'=>new OrderDetailsOptionCollection($data->options),
+                    'ingredients'=>new OrderDetailsIngredientCollection($data->ingredients)
                     ] ;
-                        
+
             });
     }
 }

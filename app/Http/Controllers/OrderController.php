@@ -49,7 +49,7 @@ class OrderController extends Controller
        if($this->user->hasRole('superadmin'))
            $orders = OrderRestaurant::all();
        else
-        $orders = OrderRestaurant::where(['restaurant_id'=>$this->user->restaurant_id])->get();
+        $orders = OrderRestaurant::where(['restaurant_id'=>$this->user->restaurant_id])->orderby('id','desc')->get();
 
           return DataTables::of($orders)
             ->setRowId(function ($model) {
@@ -141,6 +141,28 @@ class OrderController extends Controller
         if($request->order_status==\Config::get('settings.payment_order_status')) {
             $order_restaurant = OrderRestaurant::find($id);
 
+            $exist = OrderRestaurantStatus::where([
+                'order_restaurant_id'=>$order_restaurant->id,
+                'status'=>\Config::get('settings.payment_order_status'
+                )])->first();
+            if($exist)
+                return redirect()->route('orders.edit',$id)->with('status', trans('orders.payment_received'));
+
+            if($order_restaurant->restaurant->branch_of==NULL){
+                $restaurant_id = $order_restaurant->restaurant_id;
+                $branch_id = NULL;
+                $restaurant_commision = $order_restaurant->restaurant->commision;
+                $discount = $order_restaurant->restaurant->discount;
+                $distance = $order_restaurant->restaurant->distance;
+            }
+            else{
+                $restaurant_id = $order_restaurant->restaurant->branch_of;
+                $branch_id = $order_restaurant->restaurant_id;
+                $restaurant_commision = $order_restaurant->restaurant->main_branch->commision;
+                $discount = $order_restaurant->restaurant->main_branch->discount;
+                $distance = $order_restaurant->restaurant->main_branch->distance;
+            }
+
 
             $order_distance = $this->distance(
                 $order_restaurant->restaurant->latitude,
@@ -153,13 +175,13 @@ class OrderController extends Controller
             // online payment to the application account
             if($order_restaurant->payment_id==1){
 
-                if($order_distance>$order_restaurant->restaurant->distance){
+                if($order_distance>$distance){
                     // apply discount on commision
-                    $commision = $order_restaurant->restaurant->commision*$order_restaurant->restaurant->discount/100;
+                    $commision = $restaurant_commision*$discount/100;
                     $distance_exceeded = true;
                 }
                 else{
-                    $commision = $order_restaurant->restaurant->commision;
+                    $commision = $restaurant_commision;
                 }
 
                 $debit = 0;
@@ -168,19 +190,36 @@ class OrderController extends Controller
             }
             else{
                 // cash on delivery to the restaurant account
-                if($order_distance>$order_restaurant->restaurant->distance){
+                if($order_distance>$distance){
                     // apply discount on commision
-                    $commision = $order_restaurant->restaurant->commision*$order_restaurant->restaurant->discount/100;
+                    $commision = $restaurant_commision*$discount/100;
                     $distance_exceeded = true;
                 }
                 else{
-                    $commision = $order_restaurant->restaurant->commision;
+                    $commision = $restaurant_commision;
                 }
 
                 $credit = 0;
                 $debit =($order_restaurant->sub_total*$commision/100);
             }
 
+
+
+            RestaurantBilling::create([
+                'restaurant_id'=>$restaurant_id,
+                'branch_id'=>$branch_id,
+                'payment_id'=>$order_restaurant->payment_id,
+                'sub_total'=>$order_restaurant->sub_total,
+                'order_id'=>$order_restaurant->order_id,
+                'order_restaurant_id'=>$order_restaurant->id,
+                'commision'=>$restaurant_commision,
+                'discount'=>$discount,
+                'restaurant_distance'=>$distance,
+                'order_distance'=>$order_distance,
+                'distance_exceeded'=>$distance_exceeded,
+                'credit'=>$credit,
+                'debit'=>$debit
+            ]);
 
         }
 
@@ -190,20 +229,7 @@ class OrderController extends Controller
             'status'=>$request->order_status
         ]);
 
-        RestaurantBilling::create([
-            'restaurant_id'=>$order_restaurant->restaurant_id,
-            'payment_id'=>$order_restaurant->payment_id,
-            'sub_total'=>$order_restaurant->sub_total,
-            'order_id'=>$order_restaurant->order_id,
-            'order_restaurant_id'=>$order_restaurant->id,
-            'commision'=>$order_restaurant->restaurant->commision,
-            'discount'=>$order_restaurant->restaurant->discount,
-            'restaurant_distance'=>$order_restaurant->restaurant->distance,
-            'order_distance'=>$order_distance,
-            'distance_exceeded'=>$distance_exceeded,
-            'credit'=>$credit,
-            'debit'=>$debit
-        ]);
+
 
         return redirect()->route('orders.edit',$id)->with('status', trans('main.success'));
     }

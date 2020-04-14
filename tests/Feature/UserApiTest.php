@@ -76,21 +76,7 @@ class UserApiTest extends TestCase
         $response->assertJson(['status'=>true]);
 
     }
-    /**
-     * @test
-     */
-    public function user_location_update(){
-        $this->withoutExceptionHandling();
 
-        $this->user_authenticated();
-
-        $response = $this->post('/api/user/location',['latitude'=>'sdsdsd52366',
-            'longitude'=>'sdsdsd025665']);
-
-        $response->assertStatus(200);
-        $response->assertJson(['status'=>true]);
-
-    }
 
     /**
      * @test

@@ -4,7 +4,7 @@
  <form id='form-data' action="{{ route('products.store') }}" method="post" enctype="multipart/form-data">
                 <!-- Main Content -->
                 <div class="row" style="margin-top: 30px;">
-                
+
                     <div class="col-md-6">
                         <div class="portlet light bordered">
                             @if (session('status'))
@@ -31,7 +31,7 @@
 
                                 </div>
                                 <div class="portlet-body form">
-                                   
+
                                         {{csrf_field()}}
                                         <div class="form-body">
                                             <div class="form-group form-md-line-input">
@@ -44,7 +44,7 @@
                                                     <label for="form_control_1">{{trans('restaurants.category')}}</label>
                                                     <span class="help-block"></span>
                                                 </div>
-                                            
+
                                             <div class="form-group form-md-line-input">
 
                                                 <input type="text" class="form-control" name="name" value="{{ old('name') }}"
@@ -52,8 +52,8 @@
                                                 <label for="form_control_1">{{trans('main.name')}}</label>
                                                 <span class="help-block"></span>
                                             </div>
-                                            
-                                            
+
+
                                             <div class="form-group form-md-line-input">
                                                 <input type="text" class="form-control" name="name_ar" value="{{ old('name_ar') }}"
                                                        placeholder="{{trans('main.enter_name')}}">
@@ -63,7 +63,7 @@
                                                 </label>
                                                 <span class="help-block"></span>
                                             </div>
-                                              
+
                                             <div class="form-group form-md-line-input">
                                                 <input type="text" class="form-control" name="name_tr" value="{{ old('name_tr') }}"
                                                        placeholder="{{trans('main.enter_name')}}">
@@ -103,25 +103,32 @@
                                                     </div>
                                                 </div>
                                         </div>
-                                       
+
                                 </div>
                             </div>
 
                         </div>
                     </div>
-                    
-                
-                
+
+
+
                     <div class="col-md-6">
                         <div class="portlet light bordered">
-                           
+
                             <div class="portlet light bordered">
                                 <div class="portlet-body form">
-                                   
+
                                         <div class="form-body">
-                                              
+                                            <div class="form-group form-md-line-input">
+
+                                                <textarea  class="form-control" name="description"  rows="5"></textarea>
+                                                <label for="form_control_1">{{trans('main.description')}}</label>
+                                                <span class="help-block"></span>
+                                            </div>
+
+
                                                 <div class="form-group form-md-line-input">
-                                                    
+
                                                     <div class="fileinput fileinput-exists" data-provides="fileinput">
                                                         <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px; line-height: 150px;">
                                                             <img src="{{ url('/uploads/products/default.png') }}">
@@ -144,23 +151,23 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                         </div>
-                                        
-                                   
+
+
                                 </div>
                             </div>
 
                         </div>
                     </div>
-                    
-                    
-                    
+
+
+
                 </div>
 
                 <!-- END SAMPLE FORM PORTLET-->
-                
-               
+
+
 
     </form>
 @stop
@@ -191,12 +198,12 @@ $(document).ready(function () {
                 minutes_required:{
                     required: true
                 }
-                
-                
-                
+
+
+
             },
-            
-            invalidHandler: function (event, validator) { //display error alert on form submit   
+
+            invalidHandler: function (event, validator) { //display error alert on form submit
 
             },
             highlight: function (element) { // hightlight error inputs
@@ -208,7 +215,7 @@ $(document).ready(function () {
                 label.remove();
             },
             errorPlacement: function (error, element) {
-                if (element.attr("name") == "tnc") { // insert checkbox errors after the container                  
+                if (element.attr("name") == "tnc") { // insert checkbox errors after the container
                     error.insertAfter($('#register_tnc_error'));
                 } else if (element.closest('.input-icon').size() === 1) {
                     error.insertAfter(element.closest('.input-icon'));
@@ -224,5 +231,5 @@ $(document).ready(function () {
 
     });
 		</script>
-                
+
 @endpush

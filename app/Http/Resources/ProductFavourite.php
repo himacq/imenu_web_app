@@ -21,6 +21,7 @@ class ProductFavourite extends JsonResource
             'image'=> url('/uploads/products/'.($this->image?$this->image:'default.jpg')),
             'isActive'=>$this->isActive,
             'price'=>$this->price,
+            'description'=>$this->description,
             'minutes_required'=>$this->minutes_required,
             'category_id'=>$this->category_id,
             'category_name'=>$this->category->translate('name'),

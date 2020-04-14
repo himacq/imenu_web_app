@@ -50,7 +50,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/user/updateAddress' , 'Api\UserController@updateAddress');
     Route::delete('/user/address/{id}', 'Api\UserController@deleteAddress');
     Route::get('/user/addresses', 'Api\UserController@listAddresses');
-    Route::post('/user/location', 'Api\UserController@updateLocation');
     Route::post('/user/review', 'Api\UserController@review');
 
     Route::post('/product/review', 'Api\ProductController@review');
@@ -61,6 +60,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/favourite', 'Api\FavouriteController@createFavourite');
     Route::delete('/favourite/{id}', 'Api\FavouriteController@deleteFavourite');
     Route::get('/favourites', 'Api\FavouriteController@listFavourites');
+
+    Route::post('/favourite_restaurant', 'Api\FavouriteController@createFavouriteRestaurant');
+    Route::delete('/favourite_restaurant/{id}', 'Api\FavouriteController@deleteFavouriteRestaurant');
+    Route::get('/favourite_restaurants', 'Api\FavouriteController@listFavouriteRestaurants');
 
     Route::post('/cart', 'Api\CartController@addToCart');
     Route::post('/cart_update', 'Api\CartController@updateItemCart');

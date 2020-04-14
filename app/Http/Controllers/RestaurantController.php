@@ -555,11 +555,11 @@ class RestaurantController extends Controller
                 || $this->user->hasRole(['a','superadmin'])))
             return  redirect()->route('logout');
 
-        //$this->data['users'] = $this->get_all_users_restaurant($this->user->restaurant_id);
-        $this->data['users'] = User::where(['isActive'=>1,'restaurant_id'=>Null])
+        $this->data['users'] = $this->get_all_users_restaurant($this->user->restaurant_id);
+        /*$this->data['users'] = User::where(['isActive'=>1,'restaurant_id'=>Null])
             ->whereDoesntHave('roles', function ($query) {
                 $query->whereIn('name', ['superadmin','admin','a','b','c','c1','c2','d','e']);
-            })->get();
+            })->get();*/
 
         $this->data['restaurant_classifications_lookup'] = Lookup::where(
                 ['parent_id'=>\Config::get('settings.restaurant_categories')])->get();

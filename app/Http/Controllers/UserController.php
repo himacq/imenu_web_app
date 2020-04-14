@@ -33,7 +33,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['role:admin||superadmin||b||c'])->except(['profile', 'changePassword', 'updateInfo','logout']);
+        $this->middleware(['role:admin||superadmin||b||c||d'])->except(['profile', 'changePassword', 'updateInfo','logout']);
 
         $this->change_language();
         $this->data['menu'] = 'users';
@@ -89,7 +89,9 @@ class UserController extends Controller
         if($this->user->hasRole('superadmin'))
             $this->data['roles'] = Role::all();
         elseif($this->user->hasRole('c'))
-            $this->data['roles'] = Role::whereIn('id',[6,7])->get();
+            $this->data['roles'] = Role::whereIn('name',['c1','c2'])->get();
+        elseif($this->user->hasRole('d'))
+            $this->data['roles'] = Role::where('name','=','d')->get();
         else
         $this->data['roles'] = Role::where('id','>',1)->get();
 
@@ -99,7 +101,7 @@ class UserController extends Controller
     public function store(AddUserRequest $request)
     {
 
-        if($this->user->hasRole('c') && !$request->role){
+        if($this->user->hasRole(['c','d']) && !$request->role){
             return back()
                 ->withInput()
                 ->withErrors([trans('users.select_role')]);
@@ -155,7 +157,10 @@ class UserController extends Controller
     {
        $user = User::find($id);
 
-        if(!$this->user->hasRole('c') && $this->check_user_authority($user))
+       if(!$user)
+           return redirect()->route('users.index')->with('status', trans('main.not_found'));
+
+        if(!$this->user->hasRole(['c','d']) && $this->check_user_authority($user))
            return  redirect()->route('logout');
 
         $this->data['sub_menu'] = 'users-edit';
@@ -163,9 +168,12 @@ class UserController extends Controller
         if($this->user->hasRole('superadmin'))
             $this->data['roles'] = Role::all();
         elseif($this->user->hasRole('c'))
-            $this->data['roles'] = Role::whereIn('id',[6,7])->get();
+            $this->data['roles'] = Role::whereIn('name',['c1','c2'])->get();
+        elseif($this->user->hasRole('d'))
+            $this->data['roles'] = Role::where('name','=','d')->get();
         else
             $this->data['roles'] = Role::where('id','>',1)->get();
+
         $this->data['user_roles'] = $this->data['user']->roles->pluck('id', 'id')->toArray();
         return view('user.edit', $this->data);
     }
@@ -178,7 +186,7 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, $id)
     {
-        if($this->user->hasRole('c') && !$request->role){
+        if($this->user->hasRole(['c','d']) && !$request->role){
             return back()
                 ->withInput()
                 ->withErrors([trans('users.select_role')]);
@@ -186,7 +194,7 @@ class UserController extends Controller
 
         $user = User::find($id);
 
-        if(!$this->user->hasRole('c') && $this->check_user_authority($user))
+        if(!$this->user->hasRole(['c','d']) && $this->check_user_authority($user))
             return  redirect()->route('logout');
 
         $user->name = $request->name;
@@ -259,6 +267,12 @@ class UserController extends Controller
         else if($this->user->hasRole('c')){
             $users_data =User::whereHas('roles', function ($query) {
                 $query->whereIn('name', ['c','c1','c2']);
+            })->get();
+
+        }
+        else if($this->user->hasRole('d')){
+            $users_data =User::whereHas('roles', function ($query) {
+                $query->whereIn('name', ['d']);
             })->get();
 
         }

@@ -28,6 +28,7 @@ class Product extends JsonResource
             'image'=> url('/uploads/products/'.($this->image?$this->image:'default.jpg')),
             'isActive'=>$this->isActive,
             'price'=>$this->price,
+            'description'=>$this->description,
             'minutes_required'=>$this->minutes_required,
             'rank'=>$ranks,
             'reviews_count'=>$this->reviews->where('isActive',1)->count(),

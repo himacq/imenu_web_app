@@ -28,7 +28,7 @@
                     <span class="selected"></span>
                 </a>
             </li>
-            @role(['superadmin','b','admin','c'])
+            @role(['superadmin','b','admin','c','d'])
 
                     <li class="nav-item {{ (@$selected == 'users') ? 'active open' : '' }}">
                         <a href="javascript:;" class="nav-link nav-toggle">
@@ -228,7 +228,7 @@
 
             @endrole
 
-            @role(['superadmin','admin','c','b'])
+            @role(['superadmin','admin','c','b','d'])
             <li class="nav-item {{ (@$menu == 'reports') ? 'open active' : '' }}">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="fa fa-bar-chart"></i>
@@ -236,6 +236,44 @@
                     <span class="arrow"></span>
                 </a>
                 <ul class="sub-menu">
+
+                    @role(['superadmin'])
+                    <li class="nav-item {{ (@$sub_menu == 'statistics') ? 'open active' : '' }}">
+                        <a href="javascript:;" class="nav-link nav-toggle">
+                            <i class="icon-bar-chart"></i>
+                            <span class="title">{{trans('main.statistics')}}</span>
+                            <span class="arrow"></span>
+                        </a>
+                        <ul class="sub-menu">
+                            <li class="nav-item {{ (@$location == 'restaurants') ? 'open active' : '' }} ">
+                                <a href="{{ url('reports/restaurants_statistics') }}" class="nav-link">
+                                    <i class="fa fa-print"></i>
+                                    <span class="title">{{trans('main.restaurants')}}</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item {{ (@$location == 'customers') ? 'open active' : '' }} ">
+                                <a href="{{ url('reports/customers_statistics') }}" class="nav-link">
+                                    <i class="fa fa-print"></i>
+                                    <span class="title">{{trans('main.customers')}}</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item {{ (@$location == 'users') ? 'open active' : '' }} ">
+                                <a href="{{ url('reports/users_statistics') }}" class="nav-link">
+                                    <i class="fa fa-print"></i>
+                                    <span class="title">{{trans('main.users')}}</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+                        </ul>
+
+                    </li>
+                    @endrole
+
+
                     @role(['superadmin','c'])
                     <li class="nav-item {{ (@$sub_menu == 'support') ? 'open active' : '' }}">
                         <a href="javascript:;" class="nav-link nav-toggle">
@@ -257,6 +295,8 @@
                         </ul>
                     </li>
                     @endrole
+
+
 
                     @role(['superadmin','admin','b'])
                     <li class="nav-item {{ (@$sub_menu == 'orders') ? 'open active' : '' }}">
@@ -297,7 +337,10 @@
                     </li>
 
                     @endrole
-                    @role(['superadmin','admin'])
+
+                    @if(\Entrust::hasRole(['superadmin','d']) ||
+                                (\Entrust::hasRole(['admin']) && $user->restaurant->branch_of==null) )
+
                     <li class="nav-item {{ (@$sub_menu == 'payments') ? 'open active' : '' }}">
                         <a href="javascript:;" class="nav-link nav-toggle">
                             <i class="fa fa-credit-card"></i>
@@ -321,10 +364,65 @@
                                 </a>
                             </li>
 
+                            <li class="nav-item {{ (@$location == 'payments_geo') ? 'open active' : '' }} ">
+                                <a href="{{ url('reports/payments_geo') }}" class="nav-link">
+                                    <i class="fa fa-print"></i>
+                                    <span class="title">{{trans('main.payments_geo')}}</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+
                         </ul>
                     </li>
 
-                    @endrole
+                    <li class="nav-item {{ (@$sub_menu == 'financial') ? 'open active' : '' }}">
+                        <a href="javascript:;" class="nav-link nav-toggle">
+                            <i class="fa fa-credit-card"></i>
+                            <span class="title">{{trans('main.financial')}}</span>
+                            <span class="arrow"></span>
+                        </a>
+                        <ul class="sub-menu">
+                            <li class="nav-item {{ (@$location == 'financial') ? 'open active' : '' }} ">
+                                <a href="{{ url('reports/financial') }}" class="nav-link">
+                                    <i class="fa fa-print"></i>
+                                    <span class="title">{{trans('main.financial')}}</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+
+                            @role(['superadmin','d'])
+                            <li class="nav-item {{ (@$location == 'financial_paid') ? 'open active' : '' }} ">
+                                <a href="{{ url('reports/financial_paid') }}" class="nav-link">
+                                    <i class="fa fa-print"></i>
+                                    <span class="title">{{trans('main.financial_paid')}}</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item {{ (@$location == 'financial_not_paid') ? 'open active' : '' }} ">
+                                <a href="{{ url('reports/financial_not_paid') }}" class="nav-link">
+                                    <i class="fa fa-print"></i>
+                                    <span class="title">{{trans('main.financial_not_paid')}}</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+
+
+                            @endrole
+
+                            <li class="nav-item {{ (@$location == 'financial_bills') ? 'open active' : '' }} ">
+                                <a href="{{ url('reports/financial_bills') }}" class="nav-link">
+                                    <i class="fa fa-print"></i>
+                                    <span class="title">{{trans('main.financial_bills')}}</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+
+
+                        </ul>
+                    </li>
+
+                        @endif
                 </ul>
             </li>
 

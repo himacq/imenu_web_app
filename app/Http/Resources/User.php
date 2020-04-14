@@ -38,15 +38,10 @@ class User extends JsonResource
             'mobile'=>$this->mobile,
             'language_id'=>$this->language_id,
             'restaurant_id'=>$this->restaurant_id,
-            'latitude'=>$this->latitude,
-            'longitude'=>$this->longitude,
             'news_letter'=>$this->news_letter,
             'api_token'=>$this->api_token,
             'cart_items'=>$cart_items,
             'favourites'=>$this->getFavourites->count(),
-            'address_type' => $this->address_type,
-            'description' => $this->description,
-            'formated_address' => $this->formated_address
         ];
     }
 }

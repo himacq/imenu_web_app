@@ -39,4 +39,6 @@ return array (
   'review_text' => 'Review Text',
   'review_rank' => 'Rank',
   'restaurant' => 'Restaurant',
+    'ingredients'=>'Ingredients',
+    'options'=>'Options'
 );

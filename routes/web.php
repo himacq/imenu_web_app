@@ -8,6 +8,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('home/register_restaurant','HomeController@register_restaurant');
 
+    Route::get('/autoComplete/option_group_name/{language_id}', 'AutoCompleteController@option_group_names');
     Route::get('/autoComplete/option_names/{language_id}', 'AutoCompleteController@option_names');
     Route::get('/language/{id}', 'HomeController@changeLanguage');
     Route::get('/', 'HomeController@index');
@@ -88,21 +89,50 @@ Route::group(['middleware' => 'role:superadmin||admin'], function () {
 
     });
 
+    Route::group(['middleware' => 'role:superadmin'], function () {
+        Route::get('reports/restaurants_statistics', 'ReportController@restaurants_statistics');
+        Route::get('reports/customers_statistics', 'ReportController@customers_statistics');
+        Route::get('reports/users_statistics', 'ReportController@users_statistics');
+
+    });
+
     Route::group(['middleware' => 'role:admin||superadmin||c'], function () {
         Route::get('reports/support', 'ReportController@support');
         Route::post('reports/support', 'ReportController@support');
 
     });
 
-    Route::group(['middleware' => 'role:admin||superadmin'], function () {
+    Route::group(['middleware' => 'role:admin||superadmin||d'], function () {
+        Route::group(['middleware' => 'role:admin||superadmin'], function () {
         Route::get('reports/orders', 'ReportController@orders');
         Route::post('reports/orders', 'ReportController@orders');
+
+        });
 
         Route::get('reports/payments', 'ReportController@payments');
         Route::post('reports/payments', 'ReportController@payments');
 
         Route::get('reports/payments_methods', 'ReportController@payments_methods');
         Route::post('reports/payments_methods', 'ReportController@payments_methods');
+
+        Route::get('reports/payments_geo', 'ReportController@payments_geo');
+        Route::post('reports/payments_geo', 'ReportController@payments_geo');
+
+        Route::get('reports/financial', 'ReportController@financial');
+        Route::post('reports/financial_print', 'ReportController@financial_print');
+
+        Route::get('reports/financial_bills', 'ReportController@financial_bills');
+        Route::post('reports/financial_bills_print', 'ReportController@financial_bills_print');
+
+        Route::group(['middleware' => 'role:superadmin||d'], function () {
+            Route::get('reports/financial_paid', 'ReportController@financial_paid');
+            Route::post('reports/financial_paid_print', 'ReportController@financial_paid_print');
+
+            Route::get('reports/financial_not_paid', 'ReportController@financial_not_paid');
+            Route::post('reports/financial_not_paid_print', 'ReportController@financial_not_paid_print');
+
+
+        });
     });
 
 
@@ -115,7 +145,7 @@ Route::group(['middleware' => 'role:admin||superadmin'], function () {
 });
 
 // manage users
-Route::group(['middleware' => 'role:admin||b||superadmin||c'], function () {
+Route::group(['middleware' => 'role:admin||b||superadmin||c||d'], function () {
     Route::post('user/contentListData{status?}', 'UserController@contentListData');
     Route::get('user_activate', 'UserController@activeUser');
 

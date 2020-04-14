@@ -22,6 +22,7 @@ class ProductCollection extends ResourceCollection
                         'image'=> url('/uploads/products/'.($data->image?$data->image:'default.jpg')),
                         'isActive'=>$data->isActive,
                         'price'=>$data->price,
+                        'description'=>$data->description,
                         'minutes_required'=>$data->minutes_required,
                         'category_id'=>$data->category_id,
                         'category_name'=>$data->category->translate('name'),

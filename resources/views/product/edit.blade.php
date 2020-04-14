@@ -43,14 +43,14 @@
                 </div>
                 <div class="portlet-body">
                     <ul class="nav nav-tabs">
-                        <li class="active">
+                        <li @if(!session('option_group_copied'))class="active" @endif>
                             <a href="#tab_product" data-toggle="tab" aria-expanded="true"> {{trans('main.product')}} </a>
                         </li>
                         <li>
                             <a href="#tab_ingredients" data-toggle="tab" aria-expanded="false"> {{trans('main.ingredients')}} </a>
                         </li>
 
-                        <li>
+                        <li @if(session('option_group_copied'))class="active" @endif>
                             <a href="#tab_options" data-toggle="tab" aria-expanded="false"> {{trans('main.option_groups')}} </a>
                         </li>
 
@@ -62,7 +62,7 @@
 
                     </ul>
                     <div class="tab-content">
-                        <div class="tab-pane fade active in" id="tab_product">
+                        <div class="tab-pane fade @if(!session('option_group_copied'))  active in @endif " id="tab_product">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="portlet light bordered">
@@ -151,6 +151,13 @@
 
                                                 <div class="form-group form-md-line-input">
 
+                                                    <textarea  class="form-control" name="description"  rows="5">{{$product->description}}</textarea>
+                                                    <label for="form_control_1">{{trans('main.description')}}</label>
+                                                    <span class="help-block"></span>
+                                                </div>
+
+                                                <div class="form-group form-md-line-input">
+
                                                     <div class="fileinput fileinput-exists" data-provides="fileinput">
                                                         <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px; line-height: 150px;">
                                                             <img src="{{ url('/uploads/products/'.($product->image?$product->image:'default.png')) }}">
@@ -230,7 +237,7 @@
                                             <i class="fa fa-plus"></i>{{trans('main.new_button')}}</a>
 
                         </div>
-                        <div class="tab-pane fade " id="tab_options">
+                        <div class="tab-pane fade @if(session('option_group_copied'))  active in @endif " id="tab_options">
                               <table id="option_groups_tb" class="table table-hover table-striped table-bordered">
                                                     <thead>
                                                     <th>{{trans('main.name')}}</th>
@@ -545,7 +552,8 @@ $(".options-group-rows").hide();
 
           var html = '<tr id="option-group-'+row2+'"> \n\
   <td><input type="hidden"  name="option_group_id[]" value="-1">\n\
-<input type="text" size="8" class="form-control" name="option_group_name[]" ></td>\n\
+<input type="text" size="8" class="form-control option_group_name" onkeyup="autoCompleteOptionGroupName()"  name="option_group_name[]" >\
+<input type="hidden" name="option_group_copied" id="option_group_copied" value="0"></td>\n\
 <td><input type="text" size="8" class="form-control" name="option_group_name_ar[]" ></td>\n\
 <td><input type="text" size="8" class="form-control" name="option_group_name_tr[]" ></td>\n\
 <td> <div class="mt-repeater-input mt-radio-inline"><label class="mt-radio">\n\
@@ -715,6 +723,18 @@ class="btn btn-default btn-on-1 btn-xs active">\n\
     row3++;
     $( "#option-row-"+rowid ).val(row3);
 
+}
+
+function autoCompleteOptionGroupName(){
+
+    $( ".option_group_name" ).autocomplete({
+        source: "<?php echo e(url('/autoComplete')); ?>/option_group_name/en",
+        minLength: 2,
+        select: function( event, ui ) {
+            $("#option_group_copied").val(ui.item.value);
+            $("#form-data").submit();
+        }
+    });
 }
 
 function autoCompleteName(){

@@ -197,7 +197,7 @@ class Controller extends BaseController {
             $restaurant_array[] = $restaurant->id;
         }
 
-        return User::whereIn('restaurant_id',$restaurant_array)->get();
+        return User::whereNotIn('id',[$this->user->id])->whereIn('restaurant_id',$restaurant_array)->get();
     }
 
 }

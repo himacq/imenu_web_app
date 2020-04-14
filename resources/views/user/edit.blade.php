@@ -116,7 +116,7 @@
                                                 <span class="help-block"></span>
                                             </div>
 
-                                           <?php if (!\Entrust::hasRole('superadmin')) : ?>
+                                           <?php if (!\Entrust::hasRole(['superadmin','c','d'])) : ?>
                                            <div class="form-actions">
                                                <div class="row">
                                                    <div class="col-md-offset-3 col-md-12">
@@ -135,7 +135,7 @@
                     </div>
 
 
-                @role(['superadmin','c'])
+                @role(['superadmin','c','d'])
                     <div class="col-md-6">
                         <div class="portlet light bordered">
 

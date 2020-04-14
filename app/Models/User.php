@@ -20,7 +20,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'email', 'password', 'isActive','username','phone','mobile','restaurant_id','api_token',
-        'language_id','latitude','longitude','news_letter','formated_address','description','address_type'
+        'language_id','news_letter','login_count'
     ];
 
     protected $nullable = ['latitude','longitude'];
@@ -53,8 +53,16 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\UserAddress','user_id','id');
     }
 
+    public function orders(){
+        return $this->hasMany('App\Models\Order','user_id','id');
+    }
+
     public function getFavourites(){
         return $this->hasMany('App\Models\Favourite','user_id','id');
+    }
+
+    public function getFavouriteRestaurants(){
+        return $this->hasMany('App\Models\FavouriteRestaurant','user_id','id');
     }
 
     public function getCart(){
@@ -74,5 +82,9 @@ class User extends Authenticatable
 
     public function restaurant_registration(){
         return $this->hasOne('App\Models\RestaurantRegistration','user_id','id');
+    }
+
+    public function reviews(){
+        return $this->hasMany('App\Models\UserReview','user_id','id')->where('isActive',1);
     }
 }

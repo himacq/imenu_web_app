@@ -148,6 +148,8 @@
                                             <thead>
                                             <tr>
                                                 <td class="text">{{trans('orders.product')}}</td>
+                                                <td class="text">{{trans('orders.options')}}</td>
+                                                <td class="text">{{trans('orders.ingredients')}}</td>
                                                 <td class="text">{{trans('orders.qty')}}</td>
                                                 <td class="text">{{trans('orders.price')}}</td>
                                                 <td class="text">{{trans('orders.sub_total')}}</td>
@@ -164,13 +166,25 @@
                                                         <a target="_blank" href="{{ url('products/'.$product->product->id.'/edit') }}">{{$product->product->translate('name')}}</a>
                                                         <br>
                                                         &nbsp;<small> - {{trans('orders.minutes_required')}} : {{$product->product->minutes_required}}</small>
+
+                                                    </td>
+                                                    <td class="text">
                                                         @if($product->options)
                                                             @foreach($product->options as $option)
                                                                 <?php
                                                                 $total += $option->price * $option->qty;
                                                                 ?>
+                                                                &nbsp;<small>{{$option->option->translate('name')}} ({{$option->price}}{{trans('main.currency')}})</small>
+                                                                    <br>
+                                                            @endforeach
+                                                        @endif
+                                                    </td>
+
+                                                    <td class="text">
+                                                        @if($product->ingredients)
+                                                            @foreach($product->ingredients as $ingredient)
+                                                                &nbsp;<small>{{$ingredient->ingredient->translate('name')}}</small>
                                                                 <br>
-                                                                &nbsp;<small> + {{$option->qty}} {{$option->option->translate('name')}} ({{$option->price}}{{trans('main.currency')}})</small>
                                                             @endforeach
                                                         @endif
                                                     </td>
@@ -180,7 +194,7 @@
                                                 </tr>
                                             @endforeach
                                             <tr>
-                                                <td colspan="3" class="text-right">{{trans('orders.sub_total')}}</td>
+                                                <td colspan="5" class="text-right">{{trans('orders.sub_total')}}</td>
                                                 <td class="text">{{$order->sub_total}}{{trans('main.currency')}}</td>
                                             </tr>
                                             </tbody>

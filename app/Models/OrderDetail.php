@@ -16,6 +16,10 @@ class OrderDetail extends Model
         return $this->hasMany('App\Models\OrderDetailOption','order_details_id','id');
     }
 
+    public function ingredients(){
+        return $this->hasMany('App\Models\OrderDetailIngredient','order_details_id','id');
+    }
+
     public function order_restaurant(){
         return $this->belongsTo('App\Models\OrderRestaurant','order_restaurant_id','id');
     }

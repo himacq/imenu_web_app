@@ -13,11 +13,6 @@ class AlterUsersAddress extends Migration
      */
     public function up()
     {
-        Schema::table('users', function($table) {
-            $table->string('formated_address')->nullable();
-            $table->string('description')->nullable();
-            $table->string('address_type')->nullable();
-        });
 
         Schema::table('user_addresses', function($table) {
             $table->string('formated_address')->nullable();

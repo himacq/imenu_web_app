@@ -12,7 +12,35 @@ return [
     'restaurant'=>'Restaurant',
     'product'=>'Product',
     'category'=>'Category',
-    'ranks'=>'Ranks'
+    'ranks'=>'Ranks',
+    'financial'=>'Financial Report',
+    'credit'=>'Credit',
+    'debit'=>'Debit',
+    'distance_exceeded'=>'Dist.Exc',
+    'all'=>'All',
+    'bill_no'=>'Bill#',
+    'financial_not_paid'=>'not paid',
+    'financial_paid'=>'Paid',
+    'bill_counts'=>'Bills',
+    'not_paid_amount'=>'Not Paid Amount',
+    'paid_amount'=>'Paid Amount',
+    'paid'=>'Paid',
+    'financial_bills'=>'Bills',
+    'paid_at'=>'Paid At',
+    'restaurants'=>'Restaurants',
+    'name'=>'Name',
+    'status'=>'Status',
+    'owner'=>'Owner',
+    'rank'=>'Rank',
+    'id'=>'ID',
+    'payments'=>'Payments',
+    'roles'=>'Roles',
+    'logins'=>'Login Counts',
+    'distance'=>'Distance',
+    'count'=>'Count',
+    'distance_not_exceeded'=>'Not Exceeded',
+
+
 
 
 ];

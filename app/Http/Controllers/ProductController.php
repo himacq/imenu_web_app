@@ -158,7 +158,8 @@ class ProductController extends Controller
             'isActive'=>$request->isActive,
             'minutes_required'=>$request->minutes_required,
             'price'=>$request->price,
-            'category_id'=>$request->category_id
+            'category_id'=>$request->category_id,
+            'description'=>$request->description,
 
              ]);
 
@@ -205,7 +206,8 @@ class ProductController extends Controller
             'isActive'=>$request->isActive,
             'minutes_required'=>$request->minutes_required,
             'price'=>$request->price,
-            'category_id'=>$request->category_id
+            'category_id'=>$request->category_id,
+            'description'=>$request->description,
 
              ]);
 
@@ -327,6 +329,7 @@ class ProductController extends Controller
         $product = Product::find($id);
         $category = $product->category;
 
+
         if($this->check_user_authority($category))
            return  redirect()->route('logout');
 
@@ -386,7 +389,8 @@ class ProductController extends Controller
             'isActive'=>$request->isActive,
             'minutes_required'=>$request->minutes_required,
             'price'=>$request->price,
-            'category_id'=>$request->category_id
+            'category_id'=>$request->category_id,
+            'description'=>$request->description,
 
              ]);
 
@@ -442,6 +446,44 @@ class ProductController extends Controller
             if(is_null($request->option_group_name[$i]))
                 continue;
 
+            if($request->option_group_copied && $i==(count($request->option_group_id)-1)){
+
+                // copy the option group
+                $selectedOptionGroup = ProductOptionGroup::where(['name'=>$request->option_group_copied])->first();
+
+                $optionGroup = ProductOptionGroup::create([
+                    'name' => $selectedOptionGroup->name,
+                    'isActive'=> 1,
+                    'product_id'=>$product->id,
+                    'minimum'=>$selectedOptionGroup->minimum,
+                    'maximum'=>$selectedOptionGroup->maximum
+                ]);
+
+                //copy translations
+                $this->new_translation($optionGroup->id,'ar','product_option_groups','name',$selectedOptionGroup->translate('name','ar'));
+                $this->new_translation($optionGroup->id,'tr','product_option_groups','name',$selectedOptionGroup->translate('name','ar'));
+
+
+                //copy options
+
+                foreach($selectedOptionGroup->options as $copy_option){
+                    $option = ProductOption::create([
+                        'name' => $copy_option->name,
+                        'isActive'=>1,
+                        'group_id'=>$optionGroup->id,
+                        'minutes_required'=>$copy_option->minutes_required,
+                        'price'=>$copy_option->price
+                    ]);
+
+
+                    $this->new_translation($option->id,'ar','product_options','name',$copy_option->translate('name','ar'));
+                    $this->new_translation($option->id,'tr','product_options','name',$copy_option->translate('name','tr'));
+                }
+
+                continue;
+            }
+
+
             $optionGroup = ProductOptionGroup::find($request->option_group_id[$i]);
 
             if($request->option_group_id[$i] == -1 || !$optionGroup)
@@ -463,7 +505,8 @@ class ProductController extends Controller
 
             $this->new_translation($optionGroup->id,'ar','product_option_groups','name',$request->option_group_name_ar[$i]);
             $this->new_translation($optionGroup->id,'tr','product_option_groups','name',$request->option_group_name_tr[$i]);
-             }
+
+            }
          }
 
 
@@ -502,7 +545,14 @@ class ProductController extends Controller
          }
 
 
-        return redirect()->route('products.edit',$product->id)->with('status', trans('main.success'));
+        if($request->option_group_copied)
+        return redirect()->route('products.edit',$product->id)
+            ->with('option_group_copied','true')
+            ->with('status', trans('main.success'));
+
+        else
+            return redirect()->route('products.edit',$product->id)
+                ->with('status', trans('main.success'));
     }
 
     /**

@@ -23,6 +23,7 @@ class OrderApiTest extends TestCase
         $this->product = factory('App\Models\Product')->create();
         $product_option_group = factory('App\Models\ProductOptionGroup')->create();
         $this->product_option = factory('App\Models\ProductOption')->create();
+         factory('App\Models\ProductIngredient',5)->create();
 
         $carts = factory('App\Models\Cart')->create();
         $cart_restaurant = factory('App\Models\CartRestaurant')->create();
@@ -35,6 +36,7 @@ class OrderApiTest extends TestCase
         $this->order_restaurant = factory('App\Models\OrderRestaurant')->create();
         $order_details = factory('App\Models\OrderDetail')->create();
         $order_details_options = factory('App\Models\OrderDetailOption')->create();
+        $order_details_ingredients = factory('App\Models\OrderDetailIngredient')->create();
     }
 
     /**

@@ -24,8 +24,6 @@ class CreateUsersTable extends Migration
             $table->string('mobile')->nullable();
             $table->string('language_id')->nullable()->default('en');
             $table->integer('restaurant_id')->unsigned()->nullable();
-            $table->text('latitude')->nullable();
-            $table->text('longitude')->nullable();
             $table->boolean('news_letter')->default(0);
             $table->rememberToken();
             $table->timestamps();

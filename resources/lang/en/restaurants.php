@@ -59,4 +59,5 @@ return array (
   'classifications' => 'Classifications',
   'payment_methods' => 'Payment Methods',
   'distance' => 'Distance Km',
+
 );

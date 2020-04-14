@@ -96,7 +96,7 @@
                         <tr>
 
                             <th>{{trans('orders.order_id')}}</th>
-                            @role('superadmin')
+                            @role(['superadmin','d'])
                             <th>{{trans('orders.restaurant')}}</th>
                             @endrole
                             <th>{{trans('orders.customer')}}</th>
@@ -114,15 +114,15 @@
                             @foreach($reportData as $data)
 
                                 <tr>
-                                    <td>{{$data->id}}</td>
-                                    @role('superadmin')
-                                    <td>{{$data->order_restaurant->restaurant->name}}</td>
+                                    <td>{{$data->order_id}}</td>
+                                    @role(['superadmin','d'])
+                                    <td>{{$data->restaurant->name}}</td>
                                     @endrole
-                                    <td>{{$data->order_restaurant->order->customer->name}}</td>
-                                    <td>{{$data->order_restaurant->order_id}}</td>
+                                    <td>{{$data->order->customer->name}}</td>
+                                    <td>{{$data->order_restaurant_id}}</td>
                                     <td>{{$data->order_restaurant->status->last()->status_text->translate('display_text')}}</td>
                                     <td>{{$data->order_restaurant->products->sum('qty')}}</td>
-                                    <td>${{$data->order_restaurant->sub_total}}</td>
+                                    <td>${{$data->sub_total}}</td>
                                     <td>{{date('d-m-Y', strtotime($data->created_at))}}</td>
                                 </tr>
 
@@ -132,7 +132,7 @@
 
                             <tfoot>
                             <tr>
-                                <th @role('superadmin') colspan="5" @endrole
+                                <th @role(['superadmin','d']) colspan="5" @endrole
                                 @role('admin') colspan="4" @endrole> </th>
                                 <th >
                                     {{trans('reports.total')}}
@@ -211,7 +211,7 @@
                 drawCallback: function () {
                     var api = this.api();
                     $( "#total" ).html(
-                        @role('superadmin')
+                        @role(['superadmin','d'])
                     api.column( 6, {page:'current'} ).data().sum()
                 @endrole
                 @role('admin')

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\CartDetailIngredient;
+use App\Models\OrderDetailIngredient;
 use App\Models\PaymentMethod;
 use App\Models\UserAddress;
 use Illuminate\Support\Facades\Validator;
@@ -73,15 +75,24 @@ class OrderController extends ApiController
                     'price' => $detail->price
                 ]);
 
-            //create order detail option for each item
-            $product_detail_options = CartDetailOption::where(['cart_details_id'=>$detail->id])->get();
+                //create order detail option for each item
+                $product_detail_options = CartDetailOption::where(['cart_details_id'=>$detail->id])->get();
                 foreach($product_detail_options as $option){
                     OrderDetailOption::create([
-                    'order_details_id' => $orderDetail->id,
-                    'product_option_id'   => $option->product_option_id,
-                    'qty'   => $option->qty,
-                    'price' => $option->price
-                ]);
+                        'order_details_id' => $orderDetail->id,
+                        'product_option_id'   => $option->product_option_id,
+                        'qty'   => $option->qty,
+                        'price' => $option->price
+                    ]);
+                }
+
+                //create order detail ingredient for each item
+                $product_detail_ingredients = CartDetailIngredient::where(['cart_details_id'=>$detail->id])->get();
+                foreach($product_detail_ingredients as $option){
+                    OrderDetailIngredient::create([
+                        'order_details_id' => $orderDetail->id,
+                        'product_ingredient_id'   => $option->product_ingredient_id
+                    ]);
                 }
 
                 }

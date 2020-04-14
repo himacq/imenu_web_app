@@ -81,18 +81,25 @@ class UserController extends ApiController
             'isActive' => 1,
             'phone' => $request->phone,
             'mobile' => $request->mobile,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-            'address_type' => $request->address_type,
-            'description' => $request->description,
-            'formated_address' => $request->formated_address
         ]);
+
+       if($user){
+           UserAddress::create([
+               'user_id' => $user->id,
+               'isDefault' => 1,
+               'address_type' => $request->address_type,
+               'description' => $request->description,
+               'formated_address' => $request->formated_address,
+               'latitude'=> $request->latitude,
+               'longitude'=> $request->longitude
+           ]);
+       }
 
        $user->attachRole(Role::where('name', 'user')->first());
 
        return $this->login($request);
 
-        return $this->response($user->toArray(), true,__('api.success'));
+       return $this->response($user->toArray(), true,__('api.success'));
     }
 
      /**
@@ -190,33 +197,6 @@ class UserController extends ApiController
         return $this->response($this->user->toArray(), true,__('api.success'));
     }
 
-    /**
-     *
-     * @param Request $request
-     * @return type
-     */
-     public function updateLocation(Request $request){
-        $rules = [
-            'latitude' => 'required',
-            'longitude' => 'required',
-
-        ];
-
-          $validate = Validator::make($request->all(), $rules);
-          if ($validate->fails()) {
-            return $this->response(null, false,$validate->errors()->first());
-
-        }
-        $input = [
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-        ];
-
-        $this->user->update($input);
-
-
-        return $this->response($this->user->toArray(), true,__('api.success'));
-    }
     /**
      *
      * @param Request $request

@@ -223,6 +223,7 @@
                                     <div class="portlet light bordered">
                                         <div class="portlet-body form">
                                             <div class="form-body">
+                                                @if($restaurant->branch_of==NULL)
                                                 <div class="form-group form-md-line-input">
                                                     @role(['a','superadmin'])
                                                     <input type="text" class="form-control" name="commision" value="{{ $restaurant->commision }}">
@@ -258,7 +259,7 @@
                                                     <label for="form_control_1">{{trans('restaurants.distance')}}</label>
                                                     <span class="help-block"></span>
                                                 </div>
-
+                                                @endif
                                                 <div class="form-group form-md-line-input">
                                                     <label for="form_control_1">{{trans('restaurants.logo')}}</label>
                                                     <span class="help-block"></span>

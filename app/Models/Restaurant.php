@@ -47,19 +47,9 @@ class Restaurant extends BaseModel
         return $this->hasMany('App\Models\RestaurantWorkingDetails','restaurant_id','id');
     }
 
-   /* public function ranks(){
-
-        $total = DB::table('restaurant_reviews')
-                ->where(['restaurant_id'=>$this->id])
-                ->sum('review_rank');
-        $count = DB::table('restaurant_reviews')
-                ->where(['restaurant_id'=>$this->id])->count();
-
-        $x = $total/$count;
-
-       return $x;
+    public function orders(){
+        return $this->hasMany('App\Models\OrderRestaurant','restaurant_id','id');
     }
-    * */
 
 
 

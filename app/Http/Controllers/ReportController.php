@@ -7,7 +7,11 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\OrderRestaurant;
 use App\Models\OrderRestaurantStatus;
+use App\Models\PaymentMethod;
 use App\Models\ProductReview;
+use App\Models\Restaurant;
+use App\Models\RestaurantBilling;
+use App\Models\User;
 use App\Models\UserMessage;
 use Illuminate\Http\Request;
 
@@ -16,7 +20,7 @@ class ReportController extends Controller
     public function __construct()
     {
         $this->change_language();
-        $this->middleware('role:admin||superadmin||b||c');
+        $this->middleware('role:admin||superadmin||b||c||d');
         $this->data['menu'] = 'reports';
 
 
@@ -51,6 +55,58 @@ class ReportController extends Controller
                 ->where(['restaurant_id'=>$this->user->restaurant_id])->get();
 
         return view('report.order',$this->data);
+
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function restaurants_statistics(Request $request){
+        $this->data['selected'] = 'restaurants';
+        $this->data['location'] = 'restaurants';
+        $this->data['location_title'] = __('main.restaurants');
+        $this->data['sub_menu'] = 'statistics';
+
+        $this->data['reportData'] = Restaurant::where(['branch_of'=>NULL])->get();
+
+        return view('report.restaurants',$this->data);
+
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function customers_statistics(Request $request){
+        $this->data['selected'] = 'customers';
+        $this->data['location'] = 'customers';
+        $this->data['location_title'] = __('main.customers');
+        $this->data['sub_menu'] = 'statistics';
+
+        $this->data['reportData'] = User::whereDoesntHave('roles', function ($query) {
+            $query->whereIn('name', ['superadmin','admin','a','b','c','c1','c2','d','e']);
+        })->get();
+
+        return view('report.customers',$this->data);
+
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function users_statistics(Request $request){
+        $this->data['selected'] = 'reports';
+        $this->data['location'] = 'users';
+        $this->data['location_title'] = __('main.users');
+        $this->data['sub_menu'] = 'statistics';
+
+        $this->data['reportData'] = User::whereHas('roles', function ($query) {
+            $query->whereIn('name', ['superadmin','admin','a','b','c','c1','c2','d','e']);
+        })->get();
+
+        return view('report.users',$this->data);
 
     }
 
@@ -162,16 +218,12 @@ class ReportController extends Controller
         $from = $this->data['from']." 00:00:00";
         $to = $this->data['to']." 23:59:59";
 
-        if($this->user->hasRole('superadmin'))
-            $this->data['reportData'] = OrderRestaurantStatus::where(['status'=>7])
-                ->whereBetween('created_at',[$from,$to ])->get();
+        if($this->user->hasRole(['superadmin','d']))
+            $this->data['reportData'] = RestaurantBilling::whereBetween('created_at',[$from,$to ])->get();
 
         else
-            $this->data['reportData'] = OrderRestaurantStatus::where(['status'=>7])
-                ->whereBetween('created_at',[$from,$to ])
-                ->whereHas('order_restaurant', function ($query)  {
-                    $query->where(['restaurant_id'=>$this->user->restaurant_id]);
-                })
+            $this->data['reportData'] = RestaurantBilling::whereBetween('created_at',[$from,$to ])
+                ->where(['restaurant_id'=>$this->user->restaurant_id])
                 ->get();
 
         return view('report.payment',$this->data);
@@ -200,7 +252,7 @@ class ReportController extends Controller
         $to = $this->data['to']." 23:59:59";
 
 
-        if($this->user->hasRole('superadmin'))
+        if($this->user->hasRole(['superadmin','d']))
             $this->data['reportData'] = OrderRestaurant::groupBy('payment_id')
                 ->selectRaw('payment_id, sum(sub_total) as sub_total')
                 ->whereBetween('created_at',[$from,$to ])
@@ -213,6 +265,303 @@ class ReportController extends Controller
                 ->get();
 
         return view('report.payments_methods',$this->data);
+
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function payments_geo(Request $request){
+        $this->data['selected'] = 'payments_geo';
+        $this->data['location'] = 'payments_geo';
+        $this->data['location_title'] = __('main.payments_geo');
+        $this->data['sub_menu'] = 'payments';
+
+        $this->data['from'] = date('Y-m-d ');
+        $this->data['to'] = date('Y-m-d');
+
+        if ($request->isMethod('post')){
+            $this->data['from'] = $request->from;
+            $this->data['to'] = $request->to;
+        }
+
+        $from = $this->data['from']." 00:00:00";
+        $to = $this->data['to']." 23:59:59";
+
+
+        if($this->user->hasRole(['superadmin','d']))
+            $this->data['reportData'] = RestaurantBilling::groupBy('distance_exceeded')
+                ->selectRaw('distance_exceeded, count(id) as counts')
+                ->whereBetween('created_at',[$from,$to ])
+                ->get();
+        else
+            $this->data['reportData'] = RestaurantBilling::groupBy('distance_exceeded')
+                ->selectRaw('distance_exceeded, count(id) as counts')
+                ->whereBetween('created_at',[$from,$to ])
+                ->where(['restaurant_id'=>$this->user->restaurant_id])
+                ->get();
+
+        return view('report.payments_geo',$this->data);
+
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function financial(Request $request){
+        $this->data['selected'] = 'financial';
+        $this->data['location'] = 'financial';
+        $this->data['location_title'] = __('main.financial');
+        $this->data['sub_menu'] = 'financial';
+
+        $this->data['from'] = date('Y-m-d ');
+        $this->data['to'] = date('Y-m-d');
+
+        $from = $this->data['from']." 00:00:00";
+        $to = $this->data['to']." 23:59:59";
+
+        $this->data['restaurants'] = Restaurant::where(['branch_of'=>NULL])->get();
+        return view('report.financial',$this->data);
+
+    }
+
+    public function financial_print(Request $request){
+
+        $this->data['from'] = $request->from;
+        $this->data['to'] = $request->to;
+
+        $from = $this->data['from']." 00:00:00";
+        $to = $this->data['to']." 23:59:59";
+
+
+        if($this->user->hasRole(['superadmin','d'])) {
+            $this->data['credit'] = RestaurantBilling::selectRaw('sum(credit) as credit')
+                ->whereBetween('created_at', [$from, $to]);
+            if($request->restaurant_id)
+                $this->data['credit'] =  $this->data['credit']->where(['restaurant_id' => $request->restaurant_id]);
+            $this->data['credit'] =  $this->data['credit']->pluck('credit')[0];
+
+            $this->data['debit'] = RestaurantBilling::selectRaw('sum(debit) as debit')
+                ->whereBetween('created_at', [$from, $to]);
+            if($request->restaurant_id)
+                $this->data['debit'] =  $this->data['debit']->where(['restaurant_id' => $request->restaurant_id]);
+            $this->data['debit'] =  $this->data['debit']->pluck('debit')[0];
+
+            $this->data['total'] = RestaurantBilling::selectRaw('sum(sub_total) as total')
+                ->whereBetween('created_at', [$from, $to]);
+            if($request->restaurant_id)
+                $this->data['total'] =  $this->data['total']->where(['restaurant_id' => $request->restaurant_id]);
+            $this->data['total'] =$this->data['total']->pluck('total')[0];
+
+            $this->data['counts'] = RestaurantBilling::selectRaw('count(id) as counts')
+                ->whereBetween('created_at', [$from, $to]);
+            if($request->restaurant_id)
+                $this->data['counts'] =  $this->data['counts']->where(['restaurant_id' => $request->restaurant_id]);
+            $this->data['counts'] =$this->data['counts']->pluck('counts')[0];
+
+
+            $this->data['reportData'] = RestaurantBilling::whereBetween('created_at', [$from, $to]);
+            if($request->restaurant_id)
+                $this->data['reportData'] =  $this->data['reportData']->where(['restaurant_id' => $request->restaurant_id]);
+            $this->data['reportData'] =  $this->data['reportData']->get();
+        }
+        else {
+
+            $this->data['credit'] = RestaurantBilling::selectRaw('sum(credit) as credit')
+                ->whereBetween('created_at', [$from, $to])
+                ->where(['restaurant_id' => $this->user->restaurant_id])
+                ->pluck('credit')[0];
+
+            $this->data['debit'] = RestaurantBilling::selectRaw('sum(debit) as debit')
+                ->whereBetween('created_at', [$from, $to])
+                ->where(['restaurant_id' => $this->user->restaurant_id])
+                ->pluck('debit')[0];
+
+            $this->data['total'] = RestaurantBilling::selectRaw('sum(sub_total) as total')
+                ->whereBetween('created_at', [$from, $to])
+                ->where(['restaurant_id' => $this->user->restaurant_id])
+                ->pluck('total')[0];
+
+            $this->data['counts'] = RestaurantBilling::selectRaw('count(id) as counts')
+                ->whereBetween('created_at', [$from, $to])
+                ->where(['restaurant_id' => $this->user->restaurant_id])
+                ->pluck('counts')[0];
+
+
+            $this->data['reportData'] = RestaurantBilling::whereBetween('created_at', [$from, $to])
+                ->where(['restaurant_id' => $this->user->restaurant_id])
+                ->get();
+        }
+
+        return view('report.financial_print',$this->data);
+
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function financial_bills(Request $request){
+        $this->data['selected'] = 'financial_bills';
+        $this->data['location'] = 'financial_bills';
+        $this->data['location_title'] = __('main.financial_bills');
+        $this->data['sub_menu'] = 'financial';
+
+        $this->data['from'] = date('Y-m-d ');
+        $this->data['to'] = date('Y-m-d');
+
+        $from = $this->data['from']." 00:00:00";
+        $to = $this->data['to']." 23:59:59";
+
+        $this->data['payment_methods'] = PaymentMethod::all();
+        $this->data['restaurants'] = Restaurant::where(['branch_of'=>NULL])->get();
+        return view('report.financial_bills',$this->data);
+
+    }
+
+    public function financial_bills_print(Request $request){
+
+        $this->data['from'] = $request->from;
+        $this->data['to'] = $request->to;
+
+        $from = $this->data['from']." 00:00:00";
+        $to = $this->data['to']." 23:59:59";
+
+
+        if($this->user->hasRole(['superadmin','d'])) {
+
+            $this->data['restaurant'] = Restaurant::find($request->restaurant_id);
+
+            $this->data['reportData'] = RestaurantBilling::whereBetween('created_at', [$from, $to])
+                ->where(['restaurant_id' => $request->restaurant_id])
+                ->where(['payment_id' => $request->payment_method]);
+            if($request->paid==0)
+                $this->data['reportData'] = $this->data['reportData']->where(['paid'=>0]);
+            elseif($request->paid==1)
+                $this->data['reportData'] = $this->data['reportData']->where(['paid'=>1]);
+
+            $this->data['reportData'] = $this->data['reportData']->get();
+
+        }
+        else {
+
+            $this->data['restaurant'] = $this->user->restaurant;
+
+            $this->data['reportData'] = RestaurantBilling::whereBetween('created_at', [$from, $to])
+                ->where(['restaurant_id' => $this->user->restaurant_id])
+                ->where(['payment_id' => $request->payment_method]);
+            if($request->paid==0)
+                $this->data['reportData'] = $this->data['reportData']->where(['paid'=>0]);
+            elseif($request->paid==1)
+                $this->data['reportData'] = $this->data['reportData']->where(['paid'=>1]);
+
+            $this->data['reportData'] = $this->data['reportData']->get();
+        }
+
+        $this->data['payment_method'] = PaymentMethod::find($request->payment_method);
+        return view('report.financial_bills_print',$this->data);
+
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function financial_paid(Request $request){
+        $this->data['selected'] = 'financial_paid';
+        $this->data['location'] = 'financial_paid';
+        $this->data['location_title'] = __('main.financial_paid');
+        $this->data['sub_menu'] = 'financial';
+
+        $this->data['from'] = date('Y-m-d ');
+        $this->data['to'] = date('Y-m-d');
+
+        $from = $this->data['from']." 00:00:00";
+        $to = $this->data['to']." 23:59:59";
+
+        $this->data['payment_methods'] = PaymentMethod::all();
+        return view('report.financial_paid',$this->data);
+
+    }
+
+    public function financial_paid_print(Request $request){
+
+        $this->data['from'] = $request->from;
+        $this->data['to'] = $request->to;
+
+        $from = $this->data['from']." 00:00:00";
+        $to = $this->data['to']." 23:59:59";
+
+
+
+        if($request->payment_method==1)
+            $this->data['reportData'] = RestaurantBilling::groupby('restaurant_id')
+                ->selectRaw('restaurant_id,sum(credit) as total,count(id) as counts')
+                ->where(['payment_id'=>$request->payment_method,'paid'=>1])
+                ->whereBetween('paid_at', [$from, $to])->get();
+        else
+            $this->data['reportData'] = RestaurantBilling::groupby('restaurant_id')
+                ->selectRaw('restaurant_id,sum(debit) as total,count(id) as counts')
+                ->where(['payment_id'=>$request->payment_method,'paid'=>1])
+                ->whereBetween('paid_at', [$from, $to])->get();
+
+
+
+        $this->data['payment_method'] = PaymentMethod::find($request->payment_method);
+
+        return view('report.financial_paid_print',$this->data);
+
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function financial_not_paid(Request $request){
+        $this->data['selected'] = 'financial_not_paid';
+        $this->data['location'] = 'financial_not_paid';
+        $this->data['location_title'] = __('main.financial_not_paid');
+        $this->data['sub_menu'] = 'financial';
+
+        $this->data['from'] = date('Y-m-d ');
+        $this->data['to'] = date('Y-m-d');
+
+        $from = $this->data['from']." 00:00:00";
+        $to = $this->data['to']." 23:59:59";
+
+        $this->data['payment_methods'] = PaymentMethod::all();
+        return view('report.financial_not_paid',$this->data);
+
+    }
+
+    public function financial_not_paid_print(Request $request){
+
+        $this->data['from'] = $request->from;
+        $this->data['to'] = $request->to;
+
+        $from = $this->data['from']." 00:00:00";
+        $to = $this->data['to']." 23:59:59";
+
+
+
+        if($request->payment_method==1)
+            $this->data['reportData'] = RestaurantBilling::groupby('restaurant_id')
+                ->selectRaw('restaurant_id,sum(credit) as total,count(id) as counts')
+                ->where(['payment_id'=>$request->payment_method,'paid'=>0])
+                ->whereBetween('created_at', [$from, $to])->get();
+        else
+            $this->data['reportData'] = RestaurantBilling::groupby('restaurant_id')
+                ->selectRaw('restaurant_id,sum(debit) as total,count(id) as counts')
+                ->where(['payment_id'=>$request->payment_method,'paid'=>0])
+                ->whereBetween('created_at', [$from, $to])->get();
+
+
+
+        $this->data['payment_method'] = PaymentMethod::find($request->payment_method);
+
+        return view('report.financial_not_paid_print',$this->data);
 
     }
 

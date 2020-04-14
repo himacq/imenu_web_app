@@ -9,7 +9,7 @@ class CartApiTest extends TestCase {
 
     use RefreshDatabase;
 
-    protected $product, $product_option, $cart_details;
+    protected $product, $product_option,$product_ingredient, $cart_details;
 
     /*     * ******************************************************************************** */
 
@@ -23,6 +23,7 @@ class CartApiTest extends TestCase {
         $this->product = factory('App\Models\Product')->create();
         $product_option_group = factory('App\Models\ProductOptionGroup')->create();
         $this->product_option = factory('App\Models\ProductOption')->create();
+        $this->product_ingredient = factory('App\Models\ProductIngredient')->create();
 
         $carts = factory('App\Models\Cart')->create();
         $cart_restaurant = factory('App\Models\CartRestaurant')->create();
@@ -41,7 +42,9 @@ class CartApiTest extends TestCase {
             'product_id' => $this->product->id, 'qty' => 1,
             'options' => [
                 'option_id' => $this->product_option->id,
-                'qty' => 2
+            ],
+            'ingredients' => [
+                'ingredient_id' => $this->product_ingredient->id,
             ]
                 ], ['api_token' => $this->user->api_token]);
 

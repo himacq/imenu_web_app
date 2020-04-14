@@ -30,8 +30,8 @@ class ApiController extends Controller
         $file_name = $name."." . $ext;
 
 
-        //$fullPath = base_path().'/../public_html' . $store_in . $file_name;
-        $fullPath = public_path() . $store_in . $file_name;
+        $fullPath = base_path().'/../public_html' . $store_in . $file_name;
+        //$fullPath = public_path() . $store_in . $file_name;
 
         $path = $store_in . $file_name;
 

@@ -27,8 +27,6 @@ $factory->define(User::class, function (Faker $faker) {
                     'language_id' => 'en',
                     'phone' => $faker->phoneNumber,
                     'mobile' => $faker->phoneNumber,
-                    'longitude' =>$faker->longitude,
-                    'latitude' =>$faker->latitude,
                     'created_at' => \Carbon\Carbon::now(),
                     'updated_at' => \Carbon\Carbon::now()
 	        ];
@@ -40,7 +38,7 @@ $factory->define(Lookup::class, function (Faker $faker) {
 
         'display_text' => $faker->name,
         'description' => $faker->text,
-        'parent_id' => 'factory:App\Models\Lookup'         
+        'parent_id' => 'factory:App\Models\Lookup'
              ];
 });
 

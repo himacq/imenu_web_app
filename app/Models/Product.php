@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends BaseModel
 {
-    protected $fillable = ['name','image','price','isActive','minutes_required','category_id'];
+    protected $fillable = ['name','image','price','isActive','minutes_required','category_id','description'];
 
     public function reviews(){
         return $this->hasMany('App\Models\ProductReview','product_id','id');

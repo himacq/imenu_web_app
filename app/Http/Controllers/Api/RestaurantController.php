@@ -109,7 +109,7 @@ class RestaurantController extends ApiController
                 .'(6371 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) '
                 .'+ sin( radians(?) ) * sin( radians( latitude ) ) ) ) as distance '
                 , [$request->latitude, $request->longitude, $request->latitude])
-                ->having('distance', '<', $request->distance)
+                //->having('distance', '<', $request->distance)
                 ->having('isActive','=',1);
 
              if($request->classification)
