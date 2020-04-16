@@ -28,7 +28,7 @@ class OrderRestaurantsCollection extends ResourceCollection
                             'address_id'=>$data->address_id,
                             'address'=>$data->address,
                             'status'=>new OrderStatusCollection($data->status),
-                            'products'=>$products
+                            'items'=>$products
 
                     ] ;
 

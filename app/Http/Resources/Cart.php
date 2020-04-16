@@ -25,12 +25,12 @@ class Cart extends JsonResource
             $restaurants = $this->cartRestaurants;
             foreach ($restaurants as $restaurant){
                 $products = $restaurant->products;
-                
+
                 $cart_items+=$products->sum('qty');
             }
-            
+
         }
-        
+
         //calcaulate grand_total
        /* $grand_total = 0;
         if($this->cartRestaurants){
@@ -38,7 +38,7 @@ class Cart extends JsonResource
             foreach ($restaurants as $restaurant){
                 $products = $restaurant->products;
                 foreach ($products as $product){
-                    
+
                     $grand_total+=($product->qty*$product->price);
                     $options = $product->options;
                     foreach($options as $option){
@@ -48,15 +48,15 @@ class Cart extends JsonResource
             }
         }
         */
-        
-        
+
+
         return [
             'id' =>$this->id,
             'grand_total' =>$this->grand_total,
             'created_at'=>$this->created_at->format('Y-m-d H:i:s'),
             'cart_items'=>$cart_items,
-            'items'=> $items
-            
+            'restaurants'=> $items
+
             ];
     }
 }

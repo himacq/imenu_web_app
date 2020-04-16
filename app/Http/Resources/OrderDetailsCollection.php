@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\OrderDetailsOptionCollection;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use App\Http\Resources\ProductFavourite as ProductFavouriteResource;
 
@@ -17,12 +16,21 @@ class OrderDetailsCollection extends ResourceCollection
     public function toArray($request)
     {
         return  $this->collection->transform(function ($data) {
+
+            $options = new OrderDetailsOptionCollection($data->options);
+            $price = ($data->price*$data->qty);
+            if($options){
+                foreach ($options as $option){
+                    $price+=$option['price']*$option['qty'];
+                }
+            }
+
                 return [
                         'item_id'=>$data->id,
-                        'price'=>$data->price,
+                        'price'=>$price,
                         'qty'=>$data->qty,
                         'product'=> new ProductFavouriteResource($data->product),
-                    'options'=>new OrderDetailsOptionCollection($data->options),
+                    'options'=>$options,
                     'ingredients'=>new OrderDetailsIngredientCollection($data->ingredients)
                     ] ;
 

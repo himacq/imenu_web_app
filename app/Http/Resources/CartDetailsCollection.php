@@ -21,9 +21,17 @@ class CartDetailsCollection extends ResourceCollection
         return  $this->collection->transform(function ($data) {
             $options = new CartDetailsOptionCollection($data->options);
             $ingredients = new CartDetailsIngredientCollection($data->ingredients);
+
+            $price = ($data->price*$data->qty);
+            if($options){
+                foreach ($options as $option){
+                    $price+=$option['price']*$option['qty'];
+                }
+            }
+
                 return [
                             'item_id'=>$data->id,
-                            'price'=>$data->price,
+                            'price'=>$price,
                             'qty'=>$data->qty,
                             'product'=> new ProductFavouriteResource($data->product),
                             'options'=>$options,

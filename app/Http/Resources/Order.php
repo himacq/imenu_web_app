@@ -18,7 +18,7 @@ class Order extends JsonResource
             'id' =>$this->id,
             'created_at'=>$this->created_at->format('Y-m-d H:i:s'),
             'grand_total' =>$this->grand_total,
-            'items'=> new OrderRestaurantsCollection($this->orderRestaurants)
+            'restaurants'=> new OrderRestaurantsCollection($this->orderRestaurants)
             ];
     }
 }

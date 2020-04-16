@@ -59,8 +59,7 @@ class CartController extends ApiController
         // get or create cart restaurant record
         $cart_restaurant = CartRestaurant::firstOrCreate([
             'cart_id'=>$this->user->getCart->id,
-            'restaurant_id'=>$product->category->restaurant->id,
-            'sub_total'=>0
+            'restaurant_id'=>$product->category->restaurant->id
                 ]);
 
         // add the product to the cart
@@ -81,7 +80,7 @@ class CartController extends ApiController
             if(is_array($request->options)){
                 foreach($request->options as $option){
                     //$option_qty = $option['qty'];
-                    $option_qty = 1;
+                    $option_qty = $request->qty;
                     $product_option = ProductOption::where(['isActive'=>1,'id'=>$option])->first();
 
                     if(!$product_option)
@@ -181,11 +180,28 @@ class CartController extends ApiController
             return $this->response(null, false,__('api.not_found'));
         }
 
-        if($this->removeItemCart($request->item_id)){
-        $request->request->add(['product_id' => $cartItem->product_id]);
-            return $this->addToCart($request);
+        $old_qty = $cartItem->qty;
+        $grand_total = $this->user->getCart->grand_total;
+        $cartItem->update(['qty'=>$request->qty]);
+
+        $this->user->getCart->update(['grand_total'=>$grand_total+($cartItem->price*($request->qty-$old_qty))]);
+
+        $cart_restaurant = CartRestaurant::find($cartItem->cart_restaurant_id);
+        $cart_restaurant->update(['sub_total'=>$cart_restaurant->sub_total+($cartItem->price*($request->qty-$old_qty))]);
+
+        //update options qty
+        $options = CartDetailOption::where(['cart_details_id'=>$request->item_id])->get();
+        foreach($options as $option){
+            $old_qty = $option->qty;
+            $grand_total = $this->user->getCart->grand_total;
+            $option->update(['qty'=>$request->qty]);
+            $this->user->getCart->update(['grand_total'=>$grand_total+($option->price*($request->qty-$old_qty))]);
+            $cart_restaurant = CartRestaurant::find($cartItem->cart_restaurant_id);
+            $cart_restaurant->update(['sub_total'=>$cart_restaurant->sub_total+($option->price*($request->qty-$old_qty))]);
+
         }
-        return $this->response(null, true,__('api.success'));
+
+        return $this->getCart();
 
     }
 

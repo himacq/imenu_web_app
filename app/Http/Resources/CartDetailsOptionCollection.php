@@ -18,11 +18,11 @@ class CartDetailsOptionCollection extends ResourceCollection
                 return [
                         'id'=>$data->id,
                         'price'=>$data->price,
-                        'qty'=>$data->qty,
+                        //'qty'=>$data->qty,
                         'product_option_id'=>$data->product_option_id,
                         'product_option_name'=>$data->option->translate('name'),
                     ] ;
-                        
+
             });
     }
 }
