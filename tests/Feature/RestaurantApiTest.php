@@ -25,7 +25,7 @@ class RestaurantApiTest extends TestCase
         $restaurants = factory('App\Models\Restaurant',10)->create();
 
         $response = $this->post('/api/restaurants',[
-            'category'=>5,'latitude'=>'-63365','longitude'=>'-5522','distance'=>5
+            'classification'=>5,'latitude'=>'-63365','longitude'=>'-5522','distance'=>5
             ]);
 
         $response->assertStatus(200);
@@ -55,7 +55,7 @@ class RestaurantApiTest extends TestCase
         $this->withoutExceptionHandling();
         $restaurants = factory('App\Models\Restaurant',10)->create();
 
-        $response = $this->get('/api/restaurant_categories');
+        $response = $this->get('/api/restaurant_classifications');
 
         $response->assertStatus(200);
         $response->assertJson(['status'=>true]);

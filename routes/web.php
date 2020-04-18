@@ -202,6 +202,14 @@ Route::group(['middleware' => 'role:superadmin'], function () {
     Route::post('payment_methods/contentListData', 'PaymentMethodController@contentListData');
     Route::resource('payment_methods', 'PaymentMethodController');
 
+    /**
+     * classifications
+     */
+    Route::post('classifications/contentListData', 'ClassificationController@contentListData');
+    Route::post('classifications/store_copy', 'ClassificationController@store_copy')->name('classifications.store_copy');
+    Route::get('classification_activate', 'ClassificationController@activeClassification');
+    Route::resource('classifications', 'ClassificationController');
+
 });
 
 });

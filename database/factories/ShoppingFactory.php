@@ -35,17 +35,18 @@
 
 
 
-    /**
-     * Fake Categories
-     */
-    $factory->define(Category::class, function (Faker $faker) {
-        return [
-            'name' => $faker->name,
-            'image' => $faker->colorName.".jpg",
-            'isActive' => $faker->boolean,
-            'restaurant_id' => random_int(\DB::table('restaurants')->min('id'), \DB::table('restaurants')->max('id')),
-        ];
-    });
+/**
+ * Fake Categories
+ */
+$factory->define(Category::class, function (Faker $faker) {
+    return [
+        'name' => $faker->name,
+        'image' => $faker->colorName.".jpg",
+        'isActive' => $faker->boolean,
+        'restaurant_id' => random_int(\DB::table('restaurants')->min('id'), \DB::table('restaurants')->max('id')),
+    ];
+});
+
 
     /**
      * Fake Products

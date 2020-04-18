@@ -11,6 +11,13 @@
 |
 */
 
+Route::get('test_map_api',function(){
+    $url = "https://maps.googleapis.com/maps/api/directions/json?&waypoints=via:-37.81223%2C144.96254%7Cvia:-34.92788%2C138.60008&key=AIzaSyCGdpn4f1QYHxrQCzInRbPTYhwdMICR_DU";
+    //$url = "https://maps.googleapis.com/maps/api/directions/json?origin=Toronto&destination=Montreal&key=AIzaSyCGdpn4f1QYHxrQCzInRbPTYhwdMICR_DU";
+    $result = file_get_contents($url);
+    echo ($result);
+
+});
     /**
      * CoreApi public services
      */
@@ -25,7 +32,7 @@
     Route::post('/restaurants','Api\RestaurantController@listRestaurants');
     Route::post('/withinMaxDistance','Api\RestaurantController@withinMaxDistance');
     Route::get('/restaurant/{id}','Api\RestaurantController@Restaurant');
-    Route::get('/restaurant_categories','Api\RestaurantController@restaurant_categories');
+    Route::get('/restaurant_classifications','Api\RestaurantController@restaurant_categories');
 
 
     Route::get('/categories/{restaurant_id?}','Api\CategoryController@listCategories');

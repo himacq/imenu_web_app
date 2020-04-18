@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AdminRestaurantReview;
 use App\Models\AppReview;
+use App\Models\Classification;
 use App\Models\PaymentMethod;
 use App\Models\RestaurantClassification;
 use App\Models\RestaurantPaymentMethod;
@@ -389,8 +390,8 @@ class RestaurantController extends Controller
             ->whereDoesntHave('roles', function ($query) {
                 $query->whereIn('name', ['superadmin','admin','a','b','c','c1','c2','d','e']);
             })->get();
-        $this->data['restaurant_classifications_lookup'] = Lookup::where(
-            ['parent_id'=>\Config::get('settings.restaurant_categories')])->get();
+        $this->data['restaurant_classifications_lookup'] = Classification::where(['isActive'=>1])->get();
+
         $this->data['working_days'] = Lookup::where(
             ['parent_id'=>\Config::get('settings.working_days')])->get();
 
@@ -556,13 +557,8 @@ class RestaurantController extends Controller
             return  redirect()->route('logout');
 
         $this->data['users'] = $this->get_all_users_restaurant($this->user->restaurant_id);
-        /*$this->data['users'] = User::where(['isActive'=>1,'restaurant_id'=>Null])
-            ->whereDoesntHave('roles', function ($query) {
-                $query->whereIn('name', ['superadmin','admin','a','b','c','c1','c2','d','e']);
-            })->get();*/
 
-        $this->data['restaurant_classifications_lookup'] = Lookup::where(
-                ['parent_id'=>\Config::get('settings.restaurant_categories')])->get();
+        $this->data['restaurant_classifications_lookup'] = Classification::where(['isActive'=>1])->get();
         $this->data['working_days'] = Lookup::where(
                 ['parent_id'=>\Config::get('settings.working_days')])->get();
         $this->data['payment_methods'] = PaymentMethod::where(['isActive'=>1])->get();
@@ -614,8 +610,8 @@ class RestaurantController extends Controller
 
         $this->data['payment_methods'] = PaymentMethod::where(['isActive'=>1])->get();
 
-        $this->data['restaurant_classifications_lookup'] = Lookup::where(
-            ['parent_id'=>\Config::get('settings.restaurant_categories')])->get();
+        $this->data['restaurant_classifications_lookup'] = Classification::where(['isActive'=>1])->get();
+
         $this->data['working_days'] = Lookup::where(
                 ['parent_id'=>\Config::get('settings.working_days')])->get();
 

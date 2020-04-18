@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Resources\ClassificationCollection;
+use App\Models\Classification;
 use App\Models\Restaurant;
 use App\Models\Lookup;
 use App\Models\RegistrationsQuestion;
@@ -65,8 +67,8 @@ class RestaurantController extends ApiController
      * categories of restaurants
      */
     public function restaurant_categories(){
-            $categories = new LookupCollection(Lookup::where(['parent_id' =>\Config::get('settings.restaurant_categories')])->get());
-        return $categories->additional(['status'=>true,'message'=>__('api.success')]);
+        $classifications = new  ClassificationCollection(Classification::where(['isActive'=>1])->get());
+        return $classifications->additional(['status'=>true,'message'=>__('api.success')]);
 
     }
     /**

@@ -29,7 +29,7 @@ class Restaurant extends JsonResource
             'name' => $this->translate('name'),
             'logo' => url('/uploads/restaurants/logos/'.($this->logo?$this->logo:'default.png')),
             'banner' => url('/uploads/restaurants/banners/'.($this->banner?$this->banner:'default.jpg')),
-            'classification' =>new ClassificationCollection($this->classifications),
+            'classification' =>new RestaurantClassificationCollection($this->classifications),
             'owner_id' => $this->owner_id,
             'owner' => new OwnerResource($this->owner),
             'latitude' => $this->latitude,

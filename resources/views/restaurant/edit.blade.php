@@ -324,7 +324,7 @@
                                                                 <label for="checkbox{{$category->id}}" >
                                                                     <span></span>
                                                                     <span class="check"></span>
-                                                                    <span class="box"></span> {{$category->translate('display_text')}}
+                                                                    <span class="box"></span> {{$category->translate('name')}}
                                                                 </label>
                                                             </div>
                                                         @endforeach

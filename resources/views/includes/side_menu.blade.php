@@ -59,6 +59,13 @@
                 <ul class="sub-menu">
 
 
+                    <li class="nav-item {{ (@$sub_menu == 'classification') ? 'open active' : '' }} ">
+                        <a href="{{ url('classifications') }}" class="nav-link">
+                            <i class="fa fa-eye"></i>
+                            <span class="title">{{trans('main.classifications')}}</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
 
                     <li class="nav-item {{ (@$sub_menu == 'lookup') ? 'open active' : '' }} ">
                         <a href="{{ url('lookup') }}" class="nav-link">

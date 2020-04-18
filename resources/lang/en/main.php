@@ -110,4 +110,6 @@ return array (
     'payments_geo'=>'Distance Exceeded',
     'online_payments'=>'Online Payments',
     'cash_payments'=>'Cash Payments',
+    'classifications'=>'Classifications',
+    'classification'=>'Classification',
 );
