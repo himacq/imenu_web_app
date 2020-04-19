@@ -24,7 +24,8 @@ return [
     'roles'=>'User`s Roles',
     'edit_user'=>'Edit User',
     'user_roles'=>'User`s roles',
-    'select_role'=>'select User`s Role'
+    'select_role'=>'select User`s Role',
+    'avatar'=>'Avatar'
 
 
 

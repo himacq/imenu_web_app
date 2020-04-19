@@ -558,7 +558,7 @@ function initMap() {
 
 
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGdpn4f1QYHxrQCzInRbPTYhwdMICR_DU&libraries=places&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{\Config::get('settings.google_map_key')}}&libraries=places&callback=initMap" async defer></script>
 <script src="{{url('')}}/assets/global/plugins/moment.min.js" type="text/javascript"></script>
 <script src="{{url('')}}/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
 <script src="{{url('')}}/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>

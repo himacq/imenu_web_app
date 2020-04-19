@@ -45,7 +45,7 @@ class Restaurant extends JsonResource
             'branch_of' =>new Restaurant($this->main_branch),
             'rank'=>$ranks,
             'reviews_count'=>$this->reviews->where('isActive',1)->count(),
-            'reviews'=>$this->reviews->where('isActive',1),
+            'reviews'=>new RestaurantReviewsCollection($this->reviews->where('isActive',1)),
             'categories'=> new CategoryCollection($this->categories->where('isActive',1)),
             'working_details'=> new WorkingDetailsCollection($this->working_details),
             'branches' =>new RestaurantBranchesCollection($this->branches)

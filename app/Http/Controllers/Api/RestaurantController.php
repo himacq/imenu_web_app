@@ -15,11 +15,13 @@ use App\Models\RegistrationsQuestionsAnswer;
 use App\Http\Resources\Restaurant as RestaurantResource;
 use App\Http\Resources\RestaurantCollection ;
 use App\Http\Resources\RegistrationsQuestionCollection ;
+use App\Http\Resources\RestaurantClassificationCollection;
+use App\Http\Resources\CategoryCollection;
 use App\Models\RestaurantReview;
 use Illuminate\Http\Request;
 use App\Http\Resources\LookupCollection;
 use DB;
-
+use App\Helpers\General\CollectionHelper;
 use Illuminate\Support\Facades\Validator;
 
 class RestaurantController extends ApiController
@@ -92,63 +94,169 @@ class RestaurantController extends ApiController
      * @param Request $request
      * @return RestaurantCollection
      */
-    public function listRestaurants(Request $request){
+    public function listRestaurants_try(Request $request){
 
 
         $order = ($request->order?$request->order:"ASC");
         $sort = ($request->sort?$request->sort:"name");
 
-        if($request->latitude && $request->longitude){
-            /* $restaurants = Restaurant::selectRaw('distinct restaurants.*, ( 111.045 * acos( cos( radians( ? ) ) * cos( radians( latitude ) )'
-                . ' * cos( radians( longitude ) - radians( ? ) ) + sin( radians( ? ) )'
-                . ' * sin( radians( latitude ) ) ) ) AS distance '
-                , [$request->latitude, $request->longitude, $request->latitude])
-                    ->having('distance', '<', $request->distance)
-                    ->having('isActive','=',1);*/
+        $filter = ['isActive'=>1];
 
-            $restaurants = Restaurant::selectRaw(
-                'distinct restaurants.*, '
-                .'(6371 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) '
-                .'+ sin( radians(?) ) * sin( radians( latitude ) ) ) ) as distance '
-                , [$request->latitude, $request->longitude, $request->latitude])
-                //->having('distance', '<', $request->distance)
-                ->having('isActive','=',1);
+        $restaurants = Restaurant::where($filter);
 
-             if($request->classification)
-                 $restaurants->join('restaurant_classifications', function ($join) use ($request){
-                     $join->on('restaurant_classifications.restaurant_id', '=', 'restaurants.id')
-                         ->whereIn('restaurant_classifications.classification_id',$request->classification);
-                 });
+        if($request->name)
+            $restaurants->where('name','like','%'.$request->name.'%');
+
+        if($request->classification)
+            $restaurants->whereHas('classifications', function ($query) use ($request) {
+                $query->whereIn('classification_id', $request->classification);
+            });
+
+        if($request->category)
+            $restaurants->whereHas('categories', function ($query) use ($request) {
+                $query->whereIn('id', $request->category);
+            });
 
 
-             $restaurants->orderBy($sort,$order);
-
-            $restaurants = $restaurants->simplePaginate(\Config::get('settings.per_page'));
-
-           $restaurants = new RestaurantCollection($restaurants);
-           //return $restaurants;
-            return $restaurants->additional(['status'=>true,'message'=>__('api.success')]);
-
-        }
-        else{
-            $filter = ['isActive'=>1];
-            $restaurants = Restaurant::where($filter);
-
-            if($request->classification)
-                $restaurants->whereHas('classifications', function ($query) use ($request) {
-                    $query->whereIn('classification_id', $request->classification);
-                });
-
-            $restaurants->orderBy($sort,$order);
-
-        }
+        $restaurants = $restaurants->get();
+        //calculate distance and duration
+        $restaurants->each(function($restaurant) use($request) {
+            $result = $this->calculate_distance_time($restaurant->latitude,$restaurant->longitude,$request->latitude,$request->longitude);
+            $restaurant->duration_value = $result['duration']->value;
+        });
 
 
+        $newCollection = $restaurants->sortByDesc('duration_value')->all();
+        dd(collect(array_values($newCollection)));
+
+        $newCollectionPaginated =  CollectionHelper::paginate($newCollection, count($restaurants), \Config::get('settings.per_page'));
+
+        return $newCollectionPaginated;
         $restaurants = $restaurants->paginate(\Config::get('settings.per_page'));
 
-        $restaurants = new RestaurantCollection($restaurants);
-        return $restaurants->additional(['status'=>true,'message'=>__('api.success')]);
 
+        $restaurants = new RestaurantCollection($restaurants,$request->latitude, $request->longitude);
+        return $restaurants->additional(['status'=>true,'message'=>__('api.success')]);
+    }
+
+    private function calculate_distance_time($lat1,$long1,$lat2,$long2){
+        $url = "https://maps.googleapis.com/maps/api/directions/json?origin=$lat1,$long1"
+            ."&destination=$lat2,$long2&key=".\Config::get('settings.google_map_key');
+        $request = json_decode(file_get_contents($url));
+
+        $result['distance'] = $request->routes[0]->legs[0]->distance;
+        $result['duration'] = $request->routes[0]->legs[0]->duration;
+
+        return $result;
+    }
+
+
+    public function listRestaurants(Request $request){
+
+
+        $order = ($request->order?$request->order:"asc");
+        $sort = ($request->sort?$request->sort:"name");
+
+        $filter = ['isActive'=>1];
+
+        $restaurants = Restaurant::where($filter);
+
+        if($request->name)
+            $restaurants->where('name','like','%'.$request->name.'%');
+
+        if($request->classification)
+            $restaurants->whereHas('classifications', function ($query) use ($request) {
+                $query->whereIn('classification_id', $request->classification);
+            });
+
+        if($request->category)
+            $restaurants->whereHas('categories', function ($query) use ($request) {
+                $query->whereIn('id', $request->category);
+            });
+
+
+
+        $restaurants = $restaurants->get();
+        ///
+        /// Transform
+        ///
+        $dataCollection = $restaurants->transform(function ($data) use ($request) {
+            $ranks = 0;
+            if($data->reviews){
+                if($data->reviews->count())
+                    $ranks = number_format($data->reviews->sum('review_rank')/$data->reviews->count(),2);
+            }
+
+            $result_distance_time = $this->calculate_distance_time($request->latitude,$request->longitude,$data->latitude ,$data->longitude);
+
+            return [
+                'id' => $data->id,
+                'name' => $data->translate('name'),
+                'logo' => url('/uploads/restaurants/logos/'.($data->logo?$data->logo:'default.png')),
+                'banner' => url('/uploads/restaurants/banners/'.($data->banner?$data->banner:'default.jpg')),
+                'classification' =>new RestaurantClassificationCollection($data->classifications),
+                'categories'=> new CategoryCollection($data->categories->where('isActive',1)),
+                'owner_id' => $data->owner_id,
+                'owner_name' => ($data->owner?$data->owner->name:null),
+                'latitude' => $data->latitude,
+                'longitude' => $data->longitude,
+                'extra_info' => $data->translate('extra_info'),
+                'phone1' => $data->phone1,
+                'phone2' => $data->phone2,
+                'phone3' => $data->phone3,
+                'mobile1' => $data->mobile1,
+                'mobile2' => $data->mobile2,
+                'email' => $data->email,
+                'branch_of' => $data->branch_of,
+                'branch_of_name' => ($data->main_branch?$data->main_branch->translate('name'):null),
+                'created_at'=>date('d-m-Y', strtotime($data->created_at)),
+                'reviews_count'=>$data->reviews->count(),
+                'rank' => $ranks,
+                'allowed_distance'=> number_format($data->distance,2),
+                'distance_text'=>$result_distance_time['distance']->text,
+                'distance'=>$result_distance_time['distance']->value,
+                'duration_text'=>$result_distance_time['duration']->text,
+                'duration'=>$result_distance_time['duration']->value
+            ];
+        });
+
+
+        if($order=="asc")
+            $newCollection = $dataCollection->sortBy($sort);
+        else
+            $newCollection = $dataCollection->sortByDesc($sort);
+
+        $newCollection = $newCollection->values();
+
+        $newCollectionPaginated =  CollectionHelper::paginate($newCollection, count($dataCollection), \Config::get('settings.per_page'));;
+
+
+        $all_data =  $newCollectionPaginated->toArray();
+        $data = $all_data['data'];
+        $links = [
+            'first'=>$all_data['first_page_url'],
+            'last'=>$all_data['last_page_url'],
+            'prev'=>$all_data['prev_page_url'],
+            'next'=>$all_data['next_page_url']
+        ];
+
+        $meta = [
+            "current_page"=>$all_data['current_page'],
+            "from"=>$all_data['from'],
+            "last_page"=>$all_data['last_page'],
+            "path"=>$all_data['path'],
+            "per_page"=>$all_data['per_page'],
+            "to"=>$all_data['to'],
+            "total"=>$all_data['total']
+        ];
+
+        return [
+            "data"=>$data,
+            "links"=>$links,
+            "meta"=>$meta,
+            'status'=>true,
+            'message'=>__('api.success')
+        ];
     }
 
 

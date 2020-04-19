@@ -376,7 +376,7 @@
 
 
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGdpn4f1QYHxrQCzInRbPTYhwdMICR_DU&libraries=places&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{\Config::get('settings.google_map_key')}}&libraries=places&callback=initMap" async defer></script>
 
 
     <script src="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js" type="text/javascript"></script>

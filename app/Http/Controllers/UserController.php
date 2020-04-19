@@ -33,7 +33,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['role:admin||superadmin||b||c||d'])->except(['profile', 'changePassword', 'updateInfo','logout']);
+        $this->middleware(['role:admin||superadmin||b||c||d'])->except(['profile', 'changePassword', 'updateUserInfo','logout']);
 
         $this->change_language();
         $this->data['menu'] = 'users';
@@ -74,6 +74,20 @@ class UserController extends Controller
         if ($request->password != '') $user->password = bcrypt($request->password);
 
         $user->update();
+
+        if($request->avatar){
+            $file = $request->file('avatar');
+            $filename = "avatar-".$user->id.".".$file->getClientOriginalExtension();
+
+            //Move Uploaded File
+            $destinationPath = 'uploads/avatars/';
+            $file->move($destinationPath,$filename);
+
+            $user->update([
+                'avatar' => $filename
+            ]);
+
+        }
 
         return redirect()->route('users.profile')->with('status', trans('main.success'));
     }
@@ -118,6 +132,20 @@ class UserController extends Controller
             'restaurant_id'=>$this->user->restaurant_id
 
         ]);
+
+        if($request->avatar){
+            $file = $request->file('avatar');
+            $filename = "avatar-".$user->id.".".$file->getClientOriginalExtension();
+
+            //Move Uploaded File
+            $destinationPath = 'uploads/avatars/';
+            $file->move($destinationPath,$filename);
+
+            $user->update([
+                'avatar' => $filename
+            ]);
+
+        }
 
         if(!empty($request->role)) {
             foreach ($request->role as $key => $value) {
@@ -216,6 +244,20 @@ class UserController extends Controller
        }
 
         $user->update();
+
+        if($request->avatar){
+            $file = $request->file('avatar');
+            $filename = "avatar-".$user->id.".".$file->getClientOriginalExtension();
+
+            //Move Uploaded File
+            $destinationPath = 'uploads/avatars/';
+            $file->move($destinationPath,$filename);
+
+            $user->update([
+                'avatar' => $filename
+            ]);
+
+        }
 
         return redirect()->route('users.index')->with('status', 'Update is done successfully');
     }

@@ -6,6 +6,15 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class RestaurantCollection extends ResourceCollection
 {
+    private  $lat,$long;
+
+    public function __construct($resource,$lat,$long)
+    {
+        parent::__construct($resource);
+
+        $this->lat = $lat;
+        $this->long = $long;
+    }
     /**
      * Transform the resource collection into an array.
      *
@@ -23,9 +32,10 @@ class RestaurantCollection extends ResourceCollection
                 }
 
                 return [
+
                     'id' => $data->id,
                     'name' => $data->translate('name'),
-                    'logo' => url('/uploads/restaurants/logos/'.($data->logo?$data->logo:'default.png')),
+                    /*'logo' => url('/uploads/restaurants/logos/'.($data->logo?$data->logo:'default.png')),
                     'banner' => url('/uploads/restaurants/banners/'.($data->banner?$data->banner:'default.jpg')),
                     'classification' =>new RestaurantClassificationCollection($data->classifications),
                     'categories'=> new CategoryCollection($data->categories->where('isActive',1)),
@@ -46,16 +56,26 @@ class RestaurantCollection extends ResourceCollection
                     //'ranks_sum'=>$data->reviews->sum('review_rank'),
                     'reviews_count'=>$data->reviews->count(),
                     'rank' => $ranks,
-                    'distance'=> number_format($data->distance,2),
+                    'allowed_distance'=> number_format($data->distance,2),*/
+                    'duration_value'=>$this->calculate_distance_time($data->latitude,$data->longitude)['duration']->value
 
 
                 ];
 
             }),
-            'links' => [
-                'self' => 'link-value',
-            ],
+
         ];
+    }
+
+    public function calculate_distance_time($lat,$long){
+        $url = "https://maps.googleapis.com/maps/api/directions/json?origin=$lat,$long"
+            ."&destination=$this->lat,$this->long&key=".\Config::get('settings.google_map_key');
+        $request = json_decode(file_get_contents($url));
+
+        $result['distance'] = $request->routes[0]->legs[0]->distance;
+        $result['duration'] = $request->routes[0]->legs[0]->duration;
+
+        return $result;
     }
 
 

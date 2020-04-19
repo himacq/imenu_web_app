@@ -31,9 +31,7 @@ class ProductCollection extends ResourceCollection
                     ] ;
 
             }),
-            'links' => [
-                'self' => 'link-value',
-            ],
+
         ];
     }
 }

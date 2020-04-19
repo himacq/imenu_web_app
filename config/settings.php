@@ -6,6 +6,7 @@
  * and open the template in the editor.
  */
 return [
+    'google_map_key'=>'AIzaSyCGdpn4f1QYHxrQCzInRbPTYhwdMICR_DU',
     'per_page'=>10,
     'order_status'=>5,
     'new_order_status'=>6,

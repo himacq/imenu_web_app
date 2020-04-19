@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
- <form id='form-user' action="{{ route('users.update', $user->id) }}" method="post" role="form">
+ <form id='form-user' action="{{ route('users.update', $user->id) }}" method="post" role="form" enctype="multipart/form-data">
                                         {{csrf_field()}}
                                         {{ method_field('PATCH') }}
                 <!-- Main Content -->
@@ -135,8 +135,45 @@
                     </div>
 
 
-                @role(['superadmin','c','d'])
                     <div class="col-md-6">
+                        <div class="portlet light bordered">
+
+                            <div class="portlet light bordered">
+                                <div class="portlet-title">
+                                    <div class="caption font-red-sunglo">
+                                        <i class="icon-settings font-red-sunglo"></i>
+                                        <span class="caption-subject bold uppercase">{{trans('users.avatar')}}</span>
+                                    </div>
+
+                                </div>
+                                <div class="portlet-body form">
+
+
+                                    <div class="form-body">
+                                        <div class="form-group form-md-line-input">
+
+                                            <div class="fileinput fileinput-exists" data-provides="fileinput">
+                                                <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px; line-height: 150px;">
+                                                    <img src="{{ url('/uploads/avatars/'.($user->avatar?$user->avatar:'default.png')) }}">
+                                                </div>
+                                                <div>
+                                                            <span class="btn red btn-outline btn-file">
+                                                                <span class="fileinput-exists"> {{trans('main.change')}} </span>
+                                                                <input type="file" name="avatar" aria-invalid="false" class="valid"> </span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        @role(['superadmin','c','d'])
                         <div class="portlet light bordered">
 
                             <div class="portlet light bordered">
@@ -183,11 +220,11 @@
                             </div>
 
                         </div>
-                    </div>
+
                     @endrole
 
 
-
+                    </div>
                 </div>
 
                 <!-- END SAMPLE FORM PORTLET-->
@@ -198,9 +235,11 @@
 @stop
 
 @push('css')
+    <link href="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css" rel="stylesheet" type="text/css" />
 
 @endpush
 @push('js')
+    <script src="{{url('')}}/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js" type="text/javascript"></script>
 
 		<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 <script>

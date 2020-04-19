@@ -12,10 +12,15 @@
 */
 
 Route::get('test_map_api',function(){
-    $url = "https://maps.googleapis.com/maps/api/directions/json?&waypoints=via:-37.81223%2C144.96254%7Cvia:-34.92788%2C138.60008&key=AIzaSyCGdpn4f1QYHxrQCzInRbPTYhwdMICR_DU";
-    //$url = "https://maps.googleapis.com/maps/api/directions/json?origin=Toronto&destination=Montreal&key=AIzaSyCGdpn4f1QYHxrQCzInRbPTYhwdMICR_DU";
-    $result = file_get_contents($url);
-    echo ($result);
+    $url = "https://maps.googleapis.com/maps/api/directions/json?
+origin=sydney,au&destination=perth,au
+&waypoints=via:41.03352815860612%2C128.788771629333496%7Cvia:41.08439749293053%2C129.0197706152685
+&key=AIzaSyCGdpn4f1QYHxrQCzInRbPTYhwdMICR_DU";
+
+    $url = "https://maps.googleapis.com/maps/api/directions/json?origin=41.03352815860612,28.788771629333496&destination=41.08439749293053,29.0197706152685&key=AIzaSyCGdpn4f1QYHxrQCzInRbPTYhwdMICR_DU";
+    $result = json_decode(file_get_contents($url));
+    //dd($result->routes[0]->legs[0]->distance->text);
+    dd($result->routes[0]->legs[0]->duration);
 
 });
     /**

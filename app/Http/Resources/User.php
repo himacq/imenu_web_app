@@ -42,6 +42,7 @@ class User extends JsonResource
             'api_token'=>$this->api_token,
             'cart_items'=>$cart_items,
             'favourites'=>$this->getFavourites->count(),
+            'avatar'=> url('/uploads/avatars/'.($this->avatar?$this->avatar:'default.png')),
         ];
     }
 }

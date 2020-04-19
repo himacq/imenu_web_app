@@ -84,6 +84,14 @@ class UserController extends ApiController
         ]);
 
        if($user){
+           if($request->avatar) {
+               $avatar = $this->storeImage($request->avatar, '/uploads/avatars/', 'avatar-' . $user->id);
+
+               $user->update([
+                   'avatar' => $avatar
+               ]);
+           }
+
            UserAddress::create([
                'user_id' => $user->id,
                'isDefault' => 1,
@@ -93,13 +101,15 @@ class UserController extends ApiController
                'latitude'=> $request->latitude,
                'longitude'=> $request->longitude
            ]);
+
+           $user->attachRole(Role::where('name', 'user')->first());
+
+           return $this->login($request);
        }
 
-       $user->attachRole(Role::where('name', 'user')->first());
 
-       return $this->login($request);
 
-       return $this->response($user->toArray(), true,__('api.success'));
+          return $this->response(null, false,$validate->errors()->first());
     }
 
      /**
@@ -190,11 +200,29 @@ class UserController extends ApiController
 
         }
 
-        $this->user->update($request->all());
+        $this->user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'username' => $request->username,
+            'isActive' => 1,
+            'phone' => $request->phone,
+            'mobile' => $request->mobile,
+        ]);
+
+         if($request->avatar) {
+             $avatar = $this->storeImage($request->avatar, '/uploads/avatars/', 'avatar-' . $this->user->id);
+
+             $this->user->update([
+                 'avatar' => $avatar
+             ]);
+         }
+
 
         App::setLocale($request->header('lang'));
 
-        return $this->response($this->user->toArray(), true,__('api.success'));
+         $user = new UserResource($this->user);
+         return $user->additional(['status'=>true,'message'=>__('api.success')]);
     }
 
     /**
