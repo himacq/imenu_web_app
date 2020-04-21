@@ -50,7 +50,7 @@ class HomeController extends Controller
         public function acting_as($child_restaurant_id){
         $child_restaurant = Restaurant::find($child_restaurant_id);
 
-        if( $this->user->hasRole(['admin','a','superadmin'])){
+        if( $this->user->hasRole(['admin','a','superadmin','e'])){
             if($this->user->hasRole('admin') && $this->user->restaurant_id!=$child_restaurant->branch_of)
                 return redirect()->route('home')->withErrors([trans('main.error_acting_as')]);
 
@@ -217,8 +217,6 @@ class HomeController extends Controller
             return view('home.role_d', $this->data);
         }
 
-
-
         if($this->user->hasRole('a')){
             $this->data['restaurants'] = Restaurant::where(['branch_of'=>NULL])->get()->count();
             $this->data['new_restaurants'] = RestaurantRegistration::where(['status'=>\Config::get('settings.restaurant_review_status')])->get()->count();
@@ -248,6 +246,39 @@ class HomeController extends Controller
 
             return view('home.role_a', $this->data);
         }
+
+        if($this->user->hasRole('e')){
+            $this->data['restaurants'] = Restaurant::where(['branch_of'=>NULL])->get()->count();
+            $this->data['customers_count'] = User::whereDoesntHave('roles', function ($query) {
+                $query->whereIn('name', ['superadmin','admin','a','b','c','c1','c2','d','e']);
+            })->get()->count();
+
+
+            //  per month charts
+            $restaurants_months = array();
+            $users_months = array();
+
+            for ($i = 0; $i < 6; $i++) {
+                $month = date('m/Y', strtotime("-$i month"));
+                $from = date('Y-m-01 00:00:00',strtotime("-$i month"));
+                $to = date('Y-m-t 23:59:59',strtotime("-$i month"));
+                $restaurants = Restaurant::where(['branch_of'=>NULL])->whereBetween('created_at', [$from, $to])->get()->count();
+                $users = User::whereDoesntHave('roles', function ($query) {
+                    $query->whereIn('name', ['superadmin','admin','a','b','c','c1','c2','d','e']);
+                })->whereBetween('created_at', [$from, $to])->get()->count();
+
+
+                $restaurants_months[$month] = $restaurants ;
+                $users_months[$month] = $users ;
+            }
+
+            $this->data['restaurants_per_month'] = array_reverse($restaurants_months);
+            $this->data['customers_per_month'] = array_reverse($users_months);
+
+
+            return view('home.role_e', $this->data);
+        }
+
 
         if($this->user->hasRole('b')){
             $this->data['customer_reviews_count'] = AppReview::all()->count();

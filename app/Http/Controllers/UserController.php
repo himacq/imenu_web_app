@@ -33,7 +33,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['role:admin||superadmin||b||c||d'])->except(['profile', 'changePassword', 'updateUserInfo','logout']);
+        $this->middleware(['role:admin||superadmin||b||c||d||e'])->except(['profile', 'changePassword', 'updateUserInfo','logout']);
 
         $this->change_language();
         $this->data['menu'] = 'users';
@@ -188,7 +188,7 @@ class UserController extends Controller
        if(!$user)
            return redirect()->route('users.index')->with('status', trans('main.not_found'));
 
-        if(!$this->user->hasRole(['c','d']) && $this->check_user_authority($user))
+        if(!$this->user->hasRole(['c','d','e']) && $this->check_user_authority($user))
            return  redirect()->route('logout');
 
         $this->data['sub_menu'] = 'users-edit';
@@ -222,7 +222,7 @@ class UserController extends Controller
 
         $user = User::find($id);
 
-        if(!$this->user->hasRole(['c','d']) && $this->check_user_authority($user))
+        if(!$this->user->hasRole(['c','d','e']) && $this->check_user_authority($user))
             return  redirect()->route('logout');
 
         $user->name = $request->name;
@@ -300,7 +300,7 @@ class UserController extends Controller
 
         if($this->user->hasRole('superadmin'))
             $users_data = $users->get();
-        else if($this->user->hasRole('b')){
+        else if($this->user->hasRole(['b','e'])){
             $users_data =User::whereDoesntHave('roles', function ($query) {
                 $query->whereIn('name', ['superadmin','admin','a','b','c','c1','c2','d','e']);
             })->get();

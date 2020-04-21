@@ -23,6 +23,7 @@ class OrderRestaurantsCollection extends ResourceCollection
                             'restaurant_id'=>$data->restaurant_id,
                             'sub_total'=>$data->sub_total,
                             'restaurant_name'=>$data->restaurant->translate('name'),
+                            'logo' => url('/uploads/restaurants/logos/'.($data->restaurant->logo?$data->restaurant->logo:'default.png')),
                             'payment_method_id'=>$data->payment_id,
                             'payment_method_name'=>($data->payment_id?$data->payment_method->translate('name'):trans('main.undefined')),
                             'address_id'=>$data->address_id,

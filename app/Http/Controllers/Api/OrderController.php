@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\General\CollectionHelper;
 use App\Models\CartDetailIngredient;
 use App\Models\OrderDetailIngredient;
 use App\Models\PaymentMethod;
@@ -136,11 +137,45 @@ class OrderController extends ApiController
      */
     public function listOrders(){
 
-        $orders = new OrderCollection(
-                Order::where(['user_id'=>$this->user->id])->paginate(\Config::get('settings.per_page'))
-                );
+        $from = date('Y-m-d')." 00:00:00";
+        $to = date('Y-m-d')." 23:59:59";
 
-        return $orders->additional(['status'=>true,'message'=>__('api.success')]);
+        $today_orders = Order::where(['user_id'=>$this->user->id])->whereBetween('created_at',[$from,$to ])->get();
+        $previous_orders = Order::where(['user_id'=>$this->user->id])
+            ->where('created_at', '<', date('Y-m-d').' 00:00:00')->get();
+
+
+        $data = [
+                'today'=>new OrderCollection($today_orders),
+                'previous'=>new OrderCollection($previous_orders),
+
+        ];
+
+
+        $links = [
+            'first'=>url('/api/orders?page=1'),
+            'last'=>url('/api/orders?page=1'),
+            'prev'=>null,
+            'next'=>null
+        ];
+
+        $meta = [
+            "current_page"=>1,
+            "from"=>1,
+            "last_page"=>1,
+            "path"=>url('/api/orders'),
+            "per_page"=>10,
+            "to"=>null,
+            "total"=>null
+        ];
+
+        return [
+            "data"=>$data,
+            "links"=>$links,
+            "meta"=>$meta,
+            'status'=>true,
+            'message'=>__('api.success')
+        ];
 
     }
 

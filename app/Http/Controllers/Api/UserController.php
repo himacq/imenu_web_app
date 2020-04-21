@@ -204,7 +204,6 @@ class UserController extends ApiController
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'username' => $request->username,
             'isActive' => 1,
             'phone' => $request->phone,
             'mobile' => $request->mobile,

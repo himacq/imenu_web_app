@@ -28,7 +28,7 @@
                     <span class="selected"></span>
                 </a>
             </li>
-            @role(['superadmin','b','admin','c','d'])
+            @role(['superadmin','b','admin','c','d','e'])
 
                     <li class="nav-item {{ (@$selected == 'users') ? 'active open' : '' }}">
                         <a href="javascript:;" class="nav-link nav-toggle">
@@ -115,7 +115,7 @@
 
             @endrole
 
-            @role(['a','superadmin'])
+            @role(['a','superadmin','e'])
             <li class="nav-item {{ (@$menu == 'restaurant') ? 'open active' : '' }}">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-layers"></i>
@@ -126,6 +126,15 @@
 
 
 
+                    <li class="nav-item {{ (@$sub_menu == 'Display-restaurants') ? 'open active' : '' }} ">
+                        <a href="{{ url('restaurants') }}" class="nav-link">
+                            <i class="fa fa-eye"></i>
+                            <span class="title">{{trans('main.restaurants')}}</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+
+                    @role(['a','superadmin'])
                     <li class="nav-item {{ (@$sub_menu == 'register-restaurants') ? 'open active' : '' }} ">
                         <a href="{{ url('registered-restaurants') }}" class="nav-link">
                             <i class="fa fa-eye"></i>
@@ -134,13 +143,7 @@
                         </a>
                     </li>
 
-                    <li class="nav-item {{ (@$sub_menu == 'Display-restaurants') ? 'open active' : '' }} ">
-                        <a href="{{ url('restaurants') }}" class="nav-link">
-                            <i class="fa fa-eye"></i>
-                            <span class="title">{{trans('main.restaurants')}}</span>
-                            <span class="selected"></span>
-                        </a>
-                    </li>
+
 
                     <li class="nav-item {{ (@$menu == 'reviews') ? 'open active' : '' }}">
                     <li class="nav-item {{ (@$sub_menu == 'app_review') ? 'open active' : '' }} ">
@@ -150,6 +153,7 @@
                             <span class="selected"></span>
                         </a>
                     </li>
+                    @endrole
 
                 </ul>
             </li>

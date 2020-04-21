@@ -27,6 +27,7 @@ class Restaurant extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->translate('name'),
+            'isFavourite'=>$this->isFavourite,
             'logo' => url('/uploads/restaurants/logos/'.($this->logo?$this->logo:'default.png')),
             'banner' => url('/uploads/restaurants/banners/'.($this->banner?$this->banner:'default.jpg')),
             'classification' =>new RestaurantClassificationCollection($this->classifications),

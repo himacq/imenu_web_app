@@ -26,7 +26,7 @@ class RestaurantController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['role:admin|a|superadmin']);
+        $this->middleware(['role:admin|a|superadmin||e']);
 
         $this->change_language();
         $this->data['menu'] = 'restaurant';
@@ -395,6 +395,8 @@ class RestaurantController extends Controller
         $this->data['working_days'] = Lookup::where(
             ['parent_id'=>\Config::get('settings.working_days')])->get();
 
+        $this->data['payment_methods'] = PaymentMethod::where(['isActive'=>1])->get();
+
         /*********************/
         // google map generation
             $this->data['center_lat'] = "38.9637";
@@ -424,6 +426,7 @@ class RestaurantController extends Controller
             'longitude'=>$request->longitude,
             'discount'=>$request->discount,
             'commision'=>$request->commision,
+            'distance'=>$request->distance,
             'isActive'=>1
         ]);
 
@@ -437,12 +440,14 @@ class RestaurantController extends Controller
         }
 
 
-
         if($request->owner_id){
             $restaurant->update(['owner_id'=>$request->owner_id]);
             $new_manager = User::find($request->owner_id);
             $new_manager->update(['restaurant_id'=>$restaurant->id]);
+            $new_manager->roles()->detach();
+            $new_manager->attachRole(2);
         }
+
 
         if($request->logo){
             $file = $request->file('logo');
@@ -496,6 +501,16 @@ class RestaurantController extends Controller
                 }
             }
         }
+
+        if($request->payment_methods){
+            for($i=0; $i<count($request->payment_methods); $i++){
+                RestaurantPaymentMethod::Create([
+                    'restaurant_id' => $restaurant->id,
+                    'payment_id'=>$request->payment_methods[$i],
+                ]);
+            }
+        }
+
 
         return redirect()->route('restaurants.edit',$restaurant->id)->with('status', trans('main.success'));
     }
@@ -553,7 +568,7 @@ class RestaurantController extends Controller
 
 
         if(!(($this->user->restaurant_id==$this->data['restaurant']->branch_of && $this->user->hasRole('admin'))
-                || $this->user->hasRole(['a','superadmin'])))
+                || $this->user->hasRole(['a','superadmin','e'])))
             return  redirect()->route('logout');
 
         $this->data['users'] = $this->get_all_users_restaurant($this->user->restaurant_id);
@@ -666,10 +681,11 @@ class RestaurantController extends Controller
             'longitude'=>$request->longitude,
              ]);
 
-        if($this->user->hasRole(['a','superadmin'])){
+        if($this->user->hasRole(['a','superadmin','e'])){
           $restaurant->update([
                  'discount'=>$request->discount,
-                 'commision'=>$request->commision
+              'commision'=>$request->commision,
+              'distance'=>$request->distance
              ]);
         }
 

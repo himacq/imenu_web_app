@@ -145,7 +145,7 @@ Route::group(['middleware' => 'role:admin||superadmin'], function () {
 });
 
 // manage users
-Route::group(['middleware' => 'role:admin||b||superadmin||c||d'], function () {
+Route::group(['middleware' => 'role:admin||b||superadmin||c||d||e'], function () {
     Route::post('user/contentListData{status?}', 'UserController@contentListData');
     Route::get('user_activate', 'UserController@activeUser');
 
@@ -162,22 +162,28 @@ Route::group(['middleware' => 'role:admin||b||superadmin||c||d'], function () {
 
 
 // restaurant managment
-Route::group(['middleware' => 'role:admin||a||superadmin'], function () {
+Route::group(['middleware' => 'role:admin||a||superadmin||e'], function () {
+
+    Route::group(['middleware' => 'role:admin||a||superadmin'], function () {
+
     Route::get('restaurants/reviews', 'RestaurantController@reviews');
     Route::post('restaurants/restaurantReviewsContentListData', 'RestaurantController@restaurantReviewsContentListData');
     Route::get('restaurants/profile/{branches?}', 'RestaurantController@profile')->name('restaurants.profile');
-    Route::post('restaurants/childContentListData', 'RestaurantController@childContentListData');
-    Route::post('restaurants/reviewsContentListData', 'RestaurantController@reviewsContentListData');
-    Route::post('restaurants/admin_review/{id}', 'RestaurantController@admin_review');
-    Route::post('restaurants/adminReviewsContentListData', 'RestaurantController@adminReviewsContentListData');
-    Route::get('restaurant_activate', 'RestaurantController@activeRestaurant');
-    Route::get('acting_as/{id}', 'HomeController@acting_as');
 
 
     Route::post('status-registered-restaurant/{id}', 'RestaurantController@registeredRestaurantStatus');
     Route::get('registered-restaurant/{id}', 'RestaurantController@registeredRestaurantView');
     Route::get('registered-restaurants', 'RestaurantController@registeredRestaurants')->name('restaurant.registered');
     Route::post('restaurants/registeredContentListData/{status?}', 'RestaurantController@registeredContentListData');
+    });
+
+    Route::post('restaurants/reviewsContentListData', 'RestaurantController@reviewsContentListData');
+    Route::post('restaurants/admin_review/{id}', 'RestaurantController@admin_review');
+    Route::post('restaurants/adminReviewsContentListData', 'RestaurantController@adminReviewsContentListData');
+    Route::get('restaurant_activate', 'RestaurantController@activeRestaurant');
+    Route::get('acting_as/{id}', 'HomeController@acting_as');
+
+    Route::post('restaurants/childContentListData', 'RestaurantController@childContentListData');
     Route::post('restaurants/contentListData/{status?}', 'RestaurantController@contentListData');
 
     Route::resource('restaurants', 'RestaurantController');

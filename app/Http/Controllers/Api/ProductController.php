@@ -95,6 +95,13 @@ class ProductController extends ApiController
         if(!$product)
             return $this->response(null, false,__('api.not_found'));
 
+        $product->isFavourite = 0;
+        if($this->user){
+            $fav = $this->user->getFavourites()->where(['product_id'=>$product->id])->first();
+            if($fav)
+                $product->isFavourite = 1;
+        }
+
             $product = new ProductResource($product);
 
         return $product->additional(['status'=>true,'message'=>__('api.success')]);

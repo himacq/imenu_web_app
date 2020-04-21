@@ -25,6 +25,7 @@ class Product extends JsonResource
         return [
             'product_id'=>$this->id,
             'name'=>$this->translate('name'),
+            'isFavourite'=>$this->isFavourite,
             'image'=> url('/uploads/products/'.($this->image?$this->image:'default.jpg')),
             'isActive'=>$this->isActive,
             'price'=>$this->price,

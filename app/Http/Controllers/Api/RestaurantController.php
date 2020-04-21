@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Resources\ClassificationCollection;
+use App\Http\Resources\RestaurantReviewsCollection;
 use App\Models\Classification;
 use App\Models\Restaurant;
 use App\Models\Lookup;
@@ -62,7 +63,8 @@ class RestaurantController extends ApiController
         ]);
 
 
-        return $this->response($review->toArray(), true,__('api.success'));
+        $reviewsCollection =  new RestaurantReviewsCollection($restaurant->reviews->where('isActive',1));
+        return $reviewsCollection->additional(['status'=>true,'message'=>__('api.success')]);
     }
 
     /**
@@ -265,8 +267,19 @@ class RestaurantController extends ApiController
      */
     public function Restaurant($id){
         $restaurant = Restaurant::where(['id'=>$id,'isActive'=>1])->first();
+
         if(!$restaurant)
             return $this->response(null, false,__('api.not_found'));
+
+        $restaurant->isFavourite = 0;
+        if($this->user){
+
+            $fav = $this->user->getFavouriteRestaurants()->where(['restaurant_id'=>$restaurant->id])->first();
+            if($fav)
+                $restaurant->isFavourite = 1;
+        }
+
+
             $restaurant = new RestaurantResource($restaurant);
             return $restaurant->additional(['status'=>true,'message'=>__('api.success')]);
 

@@ -145,7 +145,7 @@
                                                     <span class="help-block"></span>
                                                 </div>
 
-                                                @role(['admin','a','superadmin'])
+                                                @role(['admin','a','superadmin','e'])
                                                 <div class="form-group form-md-line-input">
                                                     <label for="form_control_1">{{trans('restaurants.owner')}}</label>
                                                     @if($restaurant->owner)
@@ -225,7 +225,7 @@
                                             <div class="form-body">
                                                 @if($restaurant->branch_of==NULL)
                                                 <div class="form-group form-md-line-input">
-                                                    @role(['a','superadmin'])
+                                                    @role(['a','superadmin','e'])
                                                     <input type="text" class="form-control" name="commision" value="{{ $restaurant->commision }}">
                                                     @endrole
 
@@ -237,7 +237,7 @@
                                                 </div>
 
                                                 <div class="form-group form-md-line-input">
-                                                    @role(['a','superadmin'])
+                                                    @role(['a','superadmin','e'])
                                                     <input type="text" class="form-control" name="discount" value="{{ $restaurant->discount }}">
                                                     @endrole
 
@@ -249,7 +249,7 @@
                                                 </div>
 
                                                 <div class="form-group form-md-line-input">
-                                                    @role(['a','superadmin'])
+                                                    @role(['a','superadmin','e'])
                                                     <input type="text" class="form-control" name="distance" value="{{ $restaurant->distance }}">
                                                     @endrole
 
@@ -352,10 +352,10 @@
                                                     <div class="md-checkbox-list">
                                                         @foreach($payment_methods as $method)
                                                             <div class="md-checkbox">
-                                                                <input type="checkbox" id="checkbox{{$method->id}}" {{in_array($method->id, $restaurant_payment_methods) ? "checked" : ""}}
+                                                                <input type="checkbox" id="payment-checkbox{{$method->id}}" {{in_array($method->id, $restaurant_payment_methods) ? "checked" : ""}}
                                                                 name="payment_methods[]"
                                                                        value="{{ $method->id }}" class="md-check">
-                                                                <label for="checkbox{{$method->id}}" >
+                                                                <label for="payment-checkbox{{$method->id}}" >
                                                                     <span></span>
                                                                     <span class="check"></span>
                                                                     <span class="box"></span> {{$method->translate('name')}}
