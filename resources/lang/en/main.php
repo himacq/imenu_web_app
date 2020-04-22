@@ -112,4 +112,5 @@ return array (
     'cash_payments'=>'Cash Payments',
     'classifications'=>'Classifications',
     'classification'=>'Classification',
+    'new_orders'=>'New Orders'
 );

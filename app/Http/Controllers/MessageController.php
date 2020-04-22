@@ -409,22 +409,6 @@ class MessageController extends Controller
             || $this->user->hasRole(['superadmin','c','c1'])))
             return redirect()->route('users_messages')->with('status', trans('main.not_found'));
 
-        if($message->sender_id != $this->user->id)
-            $message->update(['isSeen'=>1]);
-
-        $latest = $message->replies->last();
-        if($latest){
-            if($latest->sender_id != $this->user->id){
-                // it is a new message
-                DB::table('user_message_replies')->where('message_id', '=', $id)->update(array('isSeen' => 1));
-            }
-        }
-
-        /** fix number messages in top bar **/
-        $this->_fix_counter();
-        /************************************************/
-
-
 
         $this->data['message'] = $message;
 
@@ -468,22 +452,6 @@ class MessageController extends Controller
         if(!($message->sender_id == $this->user->id || $message->receiver_id == $this->user->id
             || $this->user->hasRole(['superadmin','c','admin','c2'])))
             return redirect()->route('customers_messages')->with('status', trans('main.not_found'));
-
-        if($message->sender_id != $this->user->id)
-            $message->update(['isSeen'=>1]);
-
-        $latest = $message->replies->last();
-        if($latest){
-            if($latest->sender_id != $this->user->id){
-                // it is a new message
-                DB::table('customer_message_replies')->where('message_id', '=', $id)->update(array('isSeen' => 1));
-            }
-        }
-
-        /** fix number messages in top bar **/
-        $this->_fix_counter();
-        /************************************************/
-
 
 
         $this->data['message'] = $message;

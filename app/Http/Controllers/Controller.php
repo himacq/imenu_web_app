@@ -31,6 +31,7 @@ class Controller extends BaseController {
      * to change the App local language based on the logged user's language
      */
     public function change_language() {
+
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
             App::setLocale($this->user->language_id);
@@ -38,99 +39,11 @@ class Controller extends BaseController {
             if(($this->user->restaurant_id && $this->user->hasRole('admin'))){
                 $this->user->isAdmin = true;
                 $this->data['user'] = $this->user;
-
             }
 
             if(!$this->user->isActive){
                 return redirect()->route('not_active_user');
             }
-
-            /*if(!($this->user->restaurant_id || $this->user->hasRole('superadmin'))){
-                return redirect()->route('logout');
-            }*/
-
-            /**
-             * count user's new messages
-             */
-            if($this->user->hasRole(['admin'])) {
-                $new_messages = DB::select('SELECT DISTINCT user_messages.id FROM user_messages '
-                    . 'left outer join `user_message_replies` '
-                    . 'on user_messages.id=user_message_replies.message_id '
-                    . ' where ((user_messages.sender_id=' . $this->user->id . ' or user_messages.receiver_id=' . $this->user->id . ' )'
-                    . 'and (user_message_replies.`sender_id` !=' . $this->user->id . ' '
-                    . 'AND user_message_replies.`isSeen` = 0))  '
-                    . 'or (user_messages.receiver_id=' . $this->user->id . ' and user_messages.isSeen=0)'
-                    . '');
-
-                $messages = array();
-                foreach($new_messages as $message){
-                    $messages[] = $message->id;
-                }
-
-                $this->data['new_messages'] = UserMessage::whereIn('id',$messages)->get();
-            }
-
-            if($this->user->hasRole(['superadmin','c','c1','c2'])){
-                $new_messages = DB::select('SELECT DISTINCT user_messages.id FROM user_messages '
-                    . 'left outer join `user_message_replies` '
-                    . 'on user_messages.id=user_message_replies.message_id '
-                    . ' where (user_messages.message_type=1 and user_messages.isSeen=0) '
-                    .' or ((user_messages.message_type=1 ) and '
-                    .'(user_message_replies.`sender_id` !='.$this->user->id.' AND user_message_replies.`isSeen` = 0))');
-
-
-
-                $messages = array();
-                foreach($new_messages as $message){
-                    $messages[] = $message->id;
-                }
-
-                $this->data['new_messages'] = UserMessage::whereIn('id',$messages)->get();
-            }
-
-
-
-            /**
-             * customers's new messages
-             */
-            if($this->user->hasRole(['superadmin','c','c1','c2'])){
-                $customer_new_messages = DB::select('SELECT DISTINCT customer_messages.id FROM customer_messages '
-                    . 'left outer join `customer_message_replies` '
-                    . 'on customer_messages.id=customer_message_replies.message_id '
-                    . ' where ((customer_messages.message_type=1 )'
-                    . 'and (customer_message_replies.`sender_id` !='.$this->user->id.' '
-                    . 'AND customer_message_replies.`isSeen` = 0))  '
-                    . 'or (customer_messages.message_type=1 and customer_messages.isSeen=0)'
-                    . '');
-
-                $messages = array();
-                foreach($customer_new_messages as $message){
-                    $messages[] = $message->id;
-                }
-
-                $this->data['customer_new_messages'] = CustomerMessage::whereIn('id',$messages)->get();
-
-            }
-
-            if($this->user->hasRole(['admin'])){
-                $customer_new_messages = DB::select('SELECT DISTINCT customer_messages.id FROM customer_messages '
-                    . 'left outer join `customer_message_replies` '
-                    . 'on customer_messages.id=customer_message_replies.message_id '
-                    . ' where ((customer_messages.message_type=2 and customer_messages.receiver_id='.$this->user->id.' )'
-                    . 'and (customer_message_replies.`sender_id` !='.$this->user->id.' '
-                    . 'AND customer_message_replies.`isSeen` = 0))  '
-                    . 'or (customer_messages.message_type=2 and customer_messages.receiver_id='.$this->user->id.' and customer_messages.isSeen=0)'
-                    . '');
-
-                $messages = array();
-                foreach($customer_new_messages as $message){
-                    $messages[] = $message->id;
-                }
-
-                $this->data['customer_new_messages'] = CustomerMessage::whereIn('id',$messages)->get();
-
-            }
-
 
 
             return $next($request);

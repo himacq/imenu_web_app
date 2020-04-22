@@ -30,6 +30,20 @@
                             </div>
                             <div class="portlet-body">
 
+                                <div class="table-toolbar">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <select id="statusFilter" class="form-control" style="margin-bottom: 13px;">
+                                                <option value="">{{trans('main.all_status')}}</option>
+                                                @foreach($order_status as $status)
+                                                <option value="{{$status->id}}">{{$status->translate('display_text')}}</option>
+                                                    @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-8"></div>
+                                    </div>
+                                </div>
+
                                 <table id="data-table"
                                        class="table table-striped table-bordered ">
                                     <thead>
@@ -97,6 +111,7 @@
         $(function () {
 
             var table = $('#data-table').DataTable({
+                order: [[ 0, "desc" ]],
                 processing: true,
                 serverSide: true,
                 searching: true,
@@ -127,6 +142,13 @@
                     {data: 'control', name: 'control','class': 'control' , orderable: false, "searchable": false}
 
                 ]
+            });
+
+
+            $('#statusFilter').on('change', function(){
+                var filter_value = $(this).val();
+                var new_url = '{{url("/")}}/orders/contentListData/'+filter_value;
+                table.ajax.url(new_url).load();
             });
 
 

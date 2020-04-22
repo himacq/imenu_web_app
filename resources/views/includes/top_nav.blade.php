@@ -19,12 +19,52 @@
         <div class="top-menu">
 
             <ul class="nav navbar-nav pull-right">
+                @role(['admin'])
+                <li class="dropdown dropdown-extended dropdown-notification" id="header_notification_bar">
+                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" aria-expanded="false">
+                        <i class="icon-bell"></i>
+                        @if(count($new_orders)>0)
+                        <span class="badge badge-danger"> {{count($new_orders)}} </span>
+                            @endif
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="external">
+                            <h3>
+                                <span class="bold">{{count($new_orders)}} </span> {{trans('orders.new_orders')}}</h3>
+                            <a href="{{ url('new_orders') }}">{{trans('main.show_all')}}</a>
+                        </li>
+                        <li>
+                            <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 250px;"><ul class="dropdown-menu-list scroller" style="height: 250px; overflow: hidden; width: auto;" data-handle-color="#637283" data-initialized="1">
+
+                                    @foreach($new_orders as $order)
+                                    <li>
+                                        <a href="{{url('orders/'.$order->id.'/edit')}}">
+                                            <span class="time">{{ date('H:i', strtotime($order->created_at)) }}</span>
+                                            <span class="details">
+                                                        <span class="label label-sm label-icon label-warning">
+                                                            <i class="fa fa-bell-o"></i>
+                                                        </span>
+                                                {{$order->products->count()}} {{trans('main.products')}}
+                                                                {{$order->sub_total}} {{trans('main.currency')}}
+                                                            </span>
+                                        </a>
+                                    </li>
+                                        @endforeach
+
+                                </ul><div class="slimScrollBar" style="background: rgb(99, 114, 131); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 121.359px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                        </li>
+                    </ul>
+                </li>
+
+                @endrole
                 @role(['superadmin','c','admin','c2'])
 
                   <li class="dropdown dropdown-extended dropdown-inbox" id="header_inbox_bar">
                                 <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" aria-expanded="true">
                                     <i class="icon-notebook"></i>
+                                    @if(count($customer_new_messages)>0)
                                     <span class="badge badge-default"> {{ count($customer_new_messages) }} </span>
+                                        @endif
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li class="external">
@@ -58,13 +98,15 @@
                 <li class="dropdown dropdown-extended dropdown-inbox" id="header_inbox_bar">
                                 <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" aria-expanded="true">
                                     <i class="icon-envelope-open"></i>
+                                    @if(count($new_messages)>0)
                                     <span class="badge badge-default"> {{ count($new_messages) }} </span>
+                                        @endif
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li class="external">
                                         <h3>
                                             <span class="bold">{{ count($new_messages) }}</span> {{ trans('main.messages') }}</h3>
-                                        @role(['c','cuperadmin','c1'])
+                                        @role(['c','superadmin','c1'])
                                         <a href="{{ url('users_messages') }}">{{ trans('main.show_all') }}</a>
                                         @endrole
                                         @role(['admin'])

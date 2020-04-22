@@ -223,9 +223,23 @@
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="fa fa-shopping-cart fw"></i>
                     <span class="title">{{trans('main.sales')}}</span>
-                    <span class="arrow"></span>
+                    @if(count($new_orders)>0)
+                        <span class="badge badge-danger"> {{count($new_orders)}} </span>
+                    @endif
                 </a>
+
                 <ul class="sub-menu">
+                    <li class="nav-item {{ (@$sub_menu == 'new_orders') ? 'open active' : '' }} ">
+                        <a href="{{ url('new_orders') }}" class="nav-link">
+                            <i class="fa fa-eye"></i>
+                            <span class="title">{{trans('main.new_orders')}}</span>
+                            @if(count($new_orders)>0)
+                                <span class="badge badge-danger"> {{count($new_orders)}} </span>
+                            @endif
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+
                     <li class="nav-item {{ (@$sub_menu == 'orders') ? 'open active' : '' }} ">
                         <a href="{{ url('orders') }}" class="nav-link">
                             <i class="fa fa-eye"></i>
@@ -235,6 +249,9 @@
                     </li>
 
                 </ul>
+
+
+
             </li>
 
             @endrole

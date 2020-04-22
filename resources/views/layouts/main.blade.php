@@ -66,6 +66,10 @@
             color: white;
         }
 
+        .label-rejected {
+            background-color: #484c3f;
+        }
+
     </style>
 
     @stack('css')

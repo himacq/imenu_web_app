@@ -47,9 +47,9 @@
                                     <th>{{trans('restaurants.discount')}}</th>
                                     <th>{{trans('orders.sub_total')}}</th>
                                     @if($payment_method->id==1)
-                                    <th>{{trans('reports.credit')}}</th>
+                                    <th class="alert alert-info">{{trans('reports.credit')}}</th>
                                     @else
-                                    <th>{{trans('reports.debit')}}</th>
+                                    <th class="alert alert-danger">{{trans('reports.debit')}}</th>
                                     @endif
                                     <th>{{trans('reports.paid')}}</th>
                                     <th>{{trans('reports.paid_at')}}</th>
@@ -75,9 +75,9 @@
                                             <td>%{{$data->discount}}</td>
                                             <td>{{trans('main.currency')}}{{$data->sub_total}}</td>
                                             @if($payment_method->id==1)
-                                                <td>{{trans('main.currency')}}{{$data->credit}}</td>
+                                                <td class="alert alert-info">{{trans('main.currency')}}{{$data->credit}}</td>
                                             @else
-                                                <td>{{trans('main.currency')}}{{$data->debit}}</td>
+                                                <td class="alert alert-danger">{{trans('main.currency')}}{{$data->debit}}</td>
                                             @endif
                                             <td>{{($data->paid?trans('main.yes'):trans('main.no'))}}</td>
                                             <td>{{($data->paid_at?date('d-m-Y', strtotime($data->paid_at)):'')}}</td>
@@ -100,9 +100,9 @@
                                         </th>
                                         <th>{{trans('main.currency')}}{{$total}}</th>
                                         @if($payment_method->id==1)
-                                            <td>{{trans('main.currency')}}{{$credits}}</td>
+                                            <td class="alert alert-info">{{trans('main.currency')}}{{$credits}}</td>
                                         @else
-                                            <td>{{trans('main.currency')}}{{$debits}}</td>
+                                            <td class="alert alert-danger">{{trans('main.currency')}}{{$debits}}</td>
                                         @endif
 
                                         <th></th>

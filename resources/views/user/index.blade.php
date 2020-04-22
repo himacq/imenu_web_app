@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
-    
+
             <!-- The Modal -->
 
                 <!-- END PAGE BAR --> <!-- BEGIN PAGE TITLE-->
@@ -42,13 +42,15 @@
 
                                             </div>
                                         </div>
+                                        @role(['superadmin','b','e','c'])
                                         <div class="col-md-2">
                                             <select id="statusFilter" class="form-control" style="margin-bottom: 13px;">
                                                 <option value="">{{trans('main.all_status')}}</option>
                                                 <option value="1">{{trans('main.active')}}</option>
-                                                <option value="0">{{trans('main.not_active')}}</option>
+                                                <option value="-1">{{trans('main.not_active')}}</option>
                                             </select>
                                         </div>
+                                        @endrole
                                         <div class="col-md-8"></div>
                                     </div>
                                 </div>
@@ -59,7 +61,7 @@
                                        class="table table-striped table-bordered ">
                                     <thead>
                                     <tr>
-                                       
+
                                         <th>#</th>
                                         <th>{{trans('users.name')}}</th>
                                         <th>{{trans('users.username')}}</th>
@@ -77,7 +79,7 @@
                         <!-- END EXAMPLE TABLE PORTLET-->
                     </div>
                 </div>
-            
+
 @stop
 
 @push('css')
@@ -109,7 +111,7 @@
     <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     -->
-    
+
 
     <script src="{{url('')}}/assets/pages/scripts/components-bootstrap-switch.min.js" type="text/javascript"></script>
     <script>
@@ -135,7 +137,7 @@
                 },
 
                 columns: [
-                    
+
                     {data: 'id' ,name: 'id', 'class': 'id'},
                     {data: 'name',width:"20%" ,name: 'name', 'class': 'name'},
                     {data: 'username', name: 'username', 'class': 'username'},

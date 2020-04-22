@@ -163,7 +163,7 @@ class UserController extends Controller
      * @return type
      */
         public function check_user_authority($user2){
-        if( $this->user->hasRole('superadmin'))
+        if( $this->user->hasRole(['superadmin','b','e','c']))
                 return false ;
 
         $users = $this->get_all_users_restaurant($this->user->restaurant_id);
@@ -301,19 +301,19 @@ class UserController extends Controller
         if($this->user->hasRole('superadmin'))
             $users_data = $users->get();
         else if($this->user->hasRole(['b','e'])){
-            $users_data =User::whereDoesntHave('roles', function ($query) {
+            $users_data =$users->whereDoesntHave('roles', function ($query) {
                 $query->whereIn('name', ['superadmin','admin','a','b','c','c1','c2','d','e']);
             })->get();
 
         }
         else if($this->user->hasRole('c')){
-            $users_data =User::whereHas('roles', function ($query) {
+            $users_data =$users->whereHas('roles', function ($query) {
                 $query->whereIn('name', ['c','c1','c2']);
             })->get();
 
         }
         else if($this->user->hasRole('d')){
-            $users_data =User::whereHas('roles', function ($query) {
+            $users_data =$users->whereHas('roles', function ($query) {
                 $query->whereIn('name', ['d']);
             })->get();
 

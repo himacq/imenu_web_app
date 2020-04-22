@@ -105,7 +105,7 @@ Route::group(['middleware' => 'role:superadmin||admin'], function () {
     Route::group(['middleware' => 'role:admin||superadmin||d'], function () {
         Route::group(['middleware' => 'role:admin||superadmin'], function () {
         Route::get('reports/orders', 'ReportController@orders');
-        Route::post('reports/orders', 'ReportController@orders');
+        Route::post('reports/orders_print', 'ReportController@orders_print');
 
         });
 
@@ -139,14 +139,16 @@ Route::group(['middleware' => 'role:superadmin||admin'], function () {
 // manage orders
 Route::group(['middleware' => 'role:admin||superadmin'], function () {
     Route::get('orders/print/{id}', 'OrderController@print');
-    Route::post('orders/contentListData', 'OrderController@contentListData');
+    Route::get('new_orders', 'OrderController@new_orders');
+    Route::post('orders/newOrdersListData', 'OrderController@newOrdersListData');
+    Route::post('orders/contentListData/{status?}', 'OrderController@contentListData');
     Route::post('orders/review_customer/{id}', 'OrderController@review_customer')->name('orders.review_customer');
     Route::resource('orders', 'OrderController');
 });
 
 // manage users
 Route::group(['middleware' => 'role:admin||b||superadmin||c||d||e'], function () {
-    Route::post('user/contentListData{status?}', 'UserController@contentListData');
+    Route::post('user/contentListData/{status?}', 'UserController@contentListData');
     Route::get('user_activate', 'UserController@activeUser');
 
     Route::group(['middleware' => 'role:b||superadmin'], function () {

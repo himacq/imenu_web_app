@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CustomerMessage;
+use App\Models\Lookup;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\OrderRestaurant;
@@ -30,7 +31,7 @@ class ReportController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function orders(Request $request){
+    public function orders_org(Request $request){
         $this->data['selected'] = 'orders';
         $this->data['location'] = 'orders';
         $this->data['location_title'] = __('main.orders');
@@ -55,6 +56,99 @@ class ReportController extends Controller
                 ->where(['restaurant_id'=>$this->user->restaurant_id])->get();
 
         return view('report.order',$this->data);
+
+    }
+
+    public function orders(Request $request){
+        $this->data['selected'] = 'orders';
+        $this->data['location'] = 'orders';
+        $this->data['location_title'] = __('main.orders');
+        $this->data['sub_menu'] = 'orders';
+
+        $this->data['from'] = date('Y-m-d ');
+        $this->data['to'] = date('Y-m-d');
+
+        $from = $this->data['from']." 00:00:00";
+        $to = $this->data['to']." 23:59:59";
+
+        if($this->user->hasRole(['superadmin']))
+            $this->data['restaurants'] = Restaurant::where(['branch_of'=>NULL])->get();
+
+        $this->data['order_status'] = Lookup::where(
+            ['parent_id'=>\Config::get('settings.order_status')])->get();
+
+        return view('report.order',$this->data);
+
+    }
+
+    public function orders_print(Request $request){
+        $this->data['from'] = $request->from;
+        $this->data['to'] = $request->to;
+
+        $from = $this->data['from']." 00:00:00";
+        $to = $this->data['to']." 23:59:59";
+
+        if ($request->status) {
+            $filter_array = [
+                \Config::get('settings.new_order_status'),
+                \Config::get('settings.payment_order_status'),
+                \Config::get('settings.progress_order_status'),
+                \Config::get('settings.complete_order_status'),
+                \Config::get('settings.cancled_order_status'),
+                \Config::get('settings.delivered_order_status'),
+                \Config::get('settings.rejected_order_status'),
+            ];
+
+            $filter_array = array_diff( $filter_array, [$request->status] );
+            $new_filter = array();
+
+            foreach ($filter_array as $filter){
+                if($filter>$request->status)
+                    $new_filter[] = $filter;
+            }
+
+
+            if($this->user->hasRole('superadmin')) {
+                $orders = OrderRestaurant::whereDoesntHave('status', function ($query) use ($new_filter) {
+                    $query->whereIn('status', $new_filter);
+                })
+                    ->whereHas('status', function ($query) use ($request) {
+                        $query->where('status', '=', $request->status);
+                    })
+                    ->whereBetween('created_at', [$from, $to]);
+                if($request->restaurant_id)
+                    $orders = $orders->where(['restaurant_id'=>$request->restaurant_id]);
+
+                $this->data['reportData'] = $orders->orderby('id', 'asc')->get();
+            }
+            else
+                $this->data['reportData'] = OrderRestaurant::where(['restaurant_id'=>$this->user->restaurant_id])
+                    ->whereDoesntHave('status',function($query) use ($new_filter){
+                        $query->whereIn('status',$new_filter);
+                    })
+                    ->whereHas('status',function($query)  use($request){
+                        $query->where('status','=',$request->status);
+                    })
+                    ->whereBetween('created_at', [$from, $to])
+                    ->orderby('id','asc')->get();
+
+
+        }
+
+        else {
+            if ($this->user->hasRole('superadmin')) {
+                $orders = OrderRestaurant::whereBetween('created_at', [$from, $to]);
+                if($request->restaurant_id)
+                    $orders = $orders->where(['restaurant_id'=>$request->restaurant_id]);
+
+                $this->data['reportData'] = $orders->orderby('id', 'asc')->get();
+            }
+            else
+                $this->data['reportData'] = OrderRestaurant::whereBetween('created_at', [$from, $to])
+                    ->where(['restaurant_id' => $this->user->restaurant_id])->orderby('id', 'asc')->get();
+
+        }
+        return view('report.order_print',$this->data);
 
     }
 

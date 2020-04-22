@@ -28,10 +28,10 @@
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
-                                    <td>{{trans('reports.credit')}}</td>
-                                    <td>{{$credit}}</td>
-                                    <td>{{trans('reports.debit')}}</td>
-                                    <td>{{$debit}}</td>
+                                    <td class="alert alert-info">{{trans('reports.credit')}}</td>
+                                    <td class="alert alert-info">{{$credit}}</td>
+                                    <td class="alert alert-danger">{{trans('reports.debit')}}</td>
+                                    <td class="alert alert-danger">{{$debit}}</td>
                                 </tr>
                                 <tr>
                                     <td>{{trans('reports.total')}}</td>
@@ -59,8 +59,8 @@
                                     <th>{{trans('restaurants.commision')}}</th>
                                     <th>{{trans('restaurants.discount')}}</th>
                                     <th>{{trans('orders.sub_total')}}</th>
-                                    <th>{{trans('reports.credit')}}</th>
-                                    <th>{{trans('reports.debit')}}</th>
+                                    <th class="alert alert-info">{{trans('reports.credit')}}</th>
+                                    <th class="alert alert-danger">{{trans('reports.debit')}}</th>
                                     <th>{{trans('main.created_at')}}</th>
 
                                 </tr>
@@ -86,8 +86,8 @@
                                             <td>%{{$data->commision}}</td>
                                             <td>%{{$data->discount}}</td>
                                             <td>{{trans('main.currency')}}{{$data->sub_total}}</td>
-                                            <td>{{trans('main.currency')}}{{$data->credit}}</td>
-                                            <td>{{trans('main.currency')}}{{$data->debit}}</td>
+                                            <td class="alert alert-info">{{trans('main.currency')}}{{$data->credit}}</td>
+                                            <td class="alert alert-danger">{{trans('main.currency')}}{{$data->debit}}</td>
                                             <td>{{date('d-m-Y', strtotime($data->created_at))}}</td>
                                         </tr>
 
@@ -108,8 +108,8 @@
                                             {{trans('reports.total')}}
                                         </th>
                                         <th>{{trans('main.currency')}}{{$total}}</th>
-                                        <th>{{trans('main.currency')}}{{$credits}}</th>
-                                        <th>{{trans('main.currency')}}{{$debits}}</th>
+                                        <th class="alert alert-info">{{trans('main.currency')}}{{$credits}}</th>
+                                        <th class="alert alert-danger">{{trans('main.currency')}}{{$debits}}</th>
                                         <th></th>
 
                                     </tr>

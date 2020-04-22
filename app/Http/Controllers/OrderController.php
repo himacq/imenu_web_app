@@ -28,6 +28,17 @@ class OrderController extends Controller
     }
 
     /**
+     * Display a listing of the new_orders.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function new_orders()
+    {
+        $this->data['sub_menu'] = 'new_orders';
+        return view('order.new_orders', $this->data);
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -35,6 +46,10 @@ class OrderController extends Controller
     public function index()
     {
         $this->data['sub_menu'] = 'orders';
+
+        $this->data['order_status'] = Lookup::where(
+            ['parent_id'=>\Config::get('settings.order_status')])->get();
+
         return view('order.index', $this->data);
     }
 
@@ -46,12 +61,57 @@ class OrderController extends Controller
 
     public function contentListData(Request $request)
     {
-       if($this->user->hasRole('superadmin'))
-           $orders = OrderRestaurant::all();
-       else
-        $orders = OrderRestaurant::where(['restaurant_id'=>$this->user->restaurant_id])->orderby('id','desc')->get();
 
-          return DataTables::of($orders)
+        if ($request->status) {
+            $filter_array = [
+                \Config::get('settings.new_order_status'),
+                \Config::get('settings.payment_order_status'),
+                \Config::get('settings.progress_order_status'),
+                \Config::get('settings.complete_order_status'),
+                \Config::get('settings.cancled_order_status'),
+                \Config::get('settings.delivered_order_status'),
+                \Config::get('settings.rejected_order_status'),
+            ];
+
+             $filter_array = array_diff( $filter_array, [$request->status] );
+             $new_filter = array();
+
+             foreach ($filter_array as $filter){
+                if($filter>$request->status)
+                    $new_filter[] = $filter;
+             }
+
+
+            if($this->user->hasRole('superadmin'))
+                $orders = OrderRestaurant::whereDoesntHave('status',function($query) use ($new_filter){
+                    $query->whereIn('status',$new_filter);
+                })
+                    ->whereHas('status',function($query)  use($request){
+                        $query->where('status','=',$request->status);
+                    })
+                    ->orderby('id','asc')->get();
+            else
+                $orders = OrderRestaurant::where(['restaurant_id'=>$this->user->restaurant_id])
+                    ->whereDoesntHave('status',function($query) use ($new_filter){
+                        $query->whereIn('status',$new_filter);
+                    })
+                    ->whereHas('status',function($query)  use($request){
+                        $query->where('status','=',$request->status);
+                    })
+                    ->orderby('id','asc')->get();
+
+
+        } else {
+            if($this->user->hasRole('superadmin'))
+                $orders = OrderRestaurant::all();
+            else
+                $orders = OrderRestaurant::where(['restaurant_id'=>$this->user->restaurant_id])
+                    ->orderby('id','asc')->get();
+        }
+
+
+
+        return DataTables::of($orders)
             ->setRowId(function ($model) {
                 return "row-" . $model->id;
             })
@@ -62,20 +122,136 @@ class OrderController extends Controller
 
             })
 
-              ->addColumn('customer', function ($model) {
-                  return $model->order->customer->name;
+            ->addColumn('customer', function ($model) {
+                return $model->order->customer->name;
 
-              })
-              ->addColumn('restaurant', function ($model) {
-                  return $model->restaurant->name;
+            })
+            ->addColumn('restaurant', function ($model) {
+                return $model->restaurant->name;
 
-              })
+            })
             ->addColumn('status', function ($model) {
                 if($model->status->count() > 0){
-                if($model->status->last()->status_text->translate('display_text'))
-                    return $model->status->last()->status_text->translate('display_text');
+                    if($model->status->last()->status_text->translate('display_text')){
+                        switch ($model->status->last()->status){
+
+                            case \Config::get('settings.new_order_status'):
+                                return '<span class="label label-sm label-danger">'
+                                    .$model->status->last()->status_text->translate('display_text')
+                                    .'</span>';
+                                break;
+
+                            case \Config::get('settings.payment_order_status'):
+                                return '<span class="label label-sm label-info">'
+                                    .$model->status->last()->status_text->translate('display_text')
+                                    .'</span>';
+                                break;
+
+                            case \Config::get('settings.progress_order_status'):
+                                return '<span class="label label-sm label-warning">'
+                                    .$model->status->last()->status_text->translate('display_text')
+                                    .'</span>';
+                                break;
+
+                            case \Config::get('settings.complete_order_status'):
+                                return '<span class="label label-sm label-success">'
+                                    .$model->status->last()->status_text->translate('display_text')
+                                    .'</span>';
+                                break;
+
+                            case \Config::get('settings.cancled_order_status'):
+                                return '<span class="label label-sm label-default">'
+                                    .$model->status->last()->status_text->translate('display_text')
+                                    .'</span>';
+                                break;
+
+                            case \Config::get('settings.delivered_order_status'):
+                                return '<span class="label label-sm label-primary">'
+                                    .$model->status->last()->status_text->translate('display_text')
+                                    .'</span>';
+                                break;
+
+                            case \Config::get('settings.rejected_order_status'):
+                                return '<span class="label label-sm label-rejected">'
+                                    .$model->status->last()->status_text->translate('display_text')
+                                    .'</span>';
+                                break;
+
+                            default:
+                                return '<span class="label label-sm label-default">'
+                                    .$model->status->last()->status_text->translate('display_text')
+                                    .'</span>';
+                        }
+                    }
+
                 }
-                return __('main.undefine');
+                return '<span class="label label-sm label-default">'
+                    .__('main.undefine')
+                    .'</span>';
+
+            })
+            ->addColumn('qty', function ($model) {
+                return $model->products->sum('qty');
+
+            })
+
+            ->addColumn('control', function ($model) {
+                $id = $model->id;
+                return '<a href="' . url("orders/" . $id . "/edit") . '" class="btn btn-sm btn-circle btn-default btn-editable"><i class="fa fa-search"></i> '.__('main.view').'</a>';
+
+            })
+            ->rawColumns(['customer','control','status','qty','restaurant'])
+            ->make(true);
+
+    }
+
+    /**
+     * return dataTable
+     * @param Request $request
+     * @return type
+     */
+
+    public function newOrdersListData(Request $request)
+    {
+            $orders = OrderRestaurant::where(['restaurant_id'=>$this->user->restaurant_id])
+                ->whereDoesntHave('status',function($query){
+                    $query->whereIn('status',[
+                        \Config::get('settings.payment_order_status'),
+                        \Config::get('settings.progress_order_status'),
+                        \Config::get('settings.complete_order_status'),
+                        \Config::get('settings.cancled_order_status'),
+                        \Config::get('settings.delivered_order_status'),
+                        \Config::get('settings.rejected_order_status'),
+                    ]);
+                })->orderby('id','asc')->get();
+
+        return DataTables::of($orders)
+            ->setRowId(function ($model) {
+                return "row-" . $model->id;
+            })
+            ->EditColumn('created_at', function ($model) {
+                $date = date('d-m-Y', strtotime($model->created_at));
+                return $date;
+
+
+            })
+
+            ->addColumn('customer', function ($model) {
+                return $model->order->customer->name;
+
+            })
+            ->addColumn('restaurant', function ($model) {
+                return $model->restaurant->name;
+
+            })
+            ->addColumn('status', function ($model) {
+                if($model->status->count() > 0){
+                    if($model->status->last()->status_text->translate('display_text'))
+                        return '<span class="label label-sm label-danger">'
+                            .$model->status->last()->status_text->translate('display_text')
+                            .'</span>';
+                }
+                return __('main.undefined');
 
             })
             ->addColumn('qty', function ($model) {
