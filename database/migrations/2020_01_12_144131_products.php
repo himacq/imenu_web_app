@@ -21,7 +21,7 @@ class Products extends Migration
             $table->text('description')->nullable();
             $table->boolean('isActive');
             $table->integer('minutes_required');
-            $table->integer('category_id')->unsigned();
+            $table->bigInteger('category_id')->unsigned();
             $table->timestamps();
 
              $table->foreign('category_id')->references('id')->on('categories')

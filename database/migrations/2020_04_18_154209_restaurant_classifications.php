@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class RestaurantCategories extends Migration
+class RestaurantClassifications extends Migration
 {
     /**
      * Run the migrations.
@@ -22,7 +22,7 @@ class RestaurantCategories extends Migration
             $table->foreign('restaurant_id')->references('id')->on('restaurants')
                 ->onUpdate('cascade')->onDelete('cascade');
 
-            $table->foreign('classification_id')->references('id')->on('lookup')
+            $table->foreign('classification_id')->references('id')->on('classifications')
                 ->onUpdate('cascade')->onDelete('cascade');
         });
     }

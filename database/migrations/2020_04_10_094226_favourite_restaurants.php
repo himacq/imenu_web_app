@@ -14,8 +14,8 @@ class FavouriteRestaurants extends Migration
     public function up()
     {
         schema::create('favourite_restaurants',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('user_id')->unsigned();
             $table->integer('restaurant_id')->unsigned();;
 
             $table->timestamps();

@@ -14,8 +14,8 @@ class Carts extends Migration
     public function up()
     {
         schema::create('favourites',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('user_id')->unsigned();
             $table->integer('product_id')->unsigned();;
 
             $table->timestamps();
@@ -28,9 +28,9 @@ class Carts extends Migration
         });
 
         schema::create('carts',function(Blueprint $table){
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->integer('grand_total')->double()->default(0);
-            $table->integer('user_id')->unsigned();;
+            $table->bigInteger('user_id')->unsigned();;
             $table->timestamps();
 
              $table->foreign('user_id')->references('id')->on('users')
@@ -39,8 +39,8 @@ class Carts extends Migration
         });
 
         schema::create('cart_restaurants',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('cart_id')->unsigned();;
+            $table->bigIncrements('id');
+            $table->bigInteger('cart_id')->unsigned();;
             $table->integer('restaurant_id')->unsigned();;
             $table->double('sub_total')->nullable();
             $table->timestamps();
@@ -54,8 +54,8 @@ class Carts extends Migration
 
 
         schema::create('cart_details',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('cart_restaurant_id')->unsigned();;
+            $table->bigIncrements('id');
+            $table->bigInteger('cart_restaurant_id')->unsigned();;
             $table->integer('product_id')->unsigned();;
             $table->integer('qty');
             $table->double('price');
@@ -69,8 +69,8 @@ class Carts extends Migration
         });
 
         schema::create('cart_detail_options',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('cart_details_id')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('cart_details_id')->unsigned();
             $table->integer('product_option_id')->unsigned();
             $table->double('price');
             $table->integer('qty');

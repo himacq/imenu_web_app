@@ -14,8 +14,8 @@ class AdminRestaurantReviews extends Migration
     public function up()
     {
         schema::create('admin_restaurant_reviews',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('user_id')->unsigned();
             $table->integer('restaurant_id')->unsigned();
             $table->text('review_text');
             $table->integer('review_rank');
