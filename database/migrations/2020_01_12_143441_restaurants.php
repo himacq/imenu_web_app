@@ -20,7 +20,7 @@ class Restaurants extends Migration
             $table->string('banner')->nullable();
             $table->integer('isActive')->unsigned();
             $table->string('verification_code', 4)->unique();
-            $table->integer('owner_id')->nullable()->unsigned();
+            $table->bigInteger('owner_id')->nullable()->unsigned();
             $table->integer('branch_of')->nullable()->unsigned();
             $table->text('latitude')->nullable();
             $table->text('longitude')->nullable();
@@ -56,7 +56,7 @@ class Restaurants extends Migration
 
          schema::create('restaurant_reviews',function(Blueprint $table){
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->integer('restaurant_id')->unsigned();
             $table->text('review_text');
             $table->integer('review_rank');

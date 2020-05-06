@@ -15,7 +15,7 @@ class Translations extends Migration
     {
         //
         Schema::create('translations', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('model');
             $table->string('field');
             $table->integer('record_id');

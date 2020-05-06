@@ -14,8 +14,8 @@ class ProductReview extends Migration
     public function up()
     {
         schema::create('product_reviews',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('user_id')->unsigned();
             $table->integer('product_id')->unsigned();
             $table->text('review_text');
             $table->integer('review_rank');

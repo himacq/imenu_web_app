@@ -14,8 +14,8 @@ class CartDetailIngredients extends Migration
     public function up()
     {
         schema::create('cart_detail_ingredients',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('cart_details_id')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('cart_details_id')->unsigned();
             $table->integer('product_ingredient_id')->unsigned();
             $table->timestamps();
 

@@ -14,8 +14,8 @@ class Orders extends Migration
     public function up()
     {
         schema::create('user_addresses',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('user_id')->unsigned();
             $table->string('address_type')->nullable();
             $table->string('street')->nullable();
             $table->string('city')->nullable();
@@ -47,9 +47,9 @@ class Orders extends Migration
         });
 
         schema::create('orders',function(Blueprint $table){
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->integer('grand_total')->double()->default(0);
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
 
             $table->timestamps();
 
@@ -60,11 +60,11 @@ class Orders extends Migration
         });
 
         schema::create('order_restaurants',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('order_id')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('order_id')->unsigned();
             $table->integer('restaurant_id')->unsigned();
             $table->double('sub_total');
-            $table->integer('address_id')->nullable()->unsigned();
+            $table->bigInteger('address_id')->nullable()->unsigned();
             $table->integer('payment_id')->nullable()->unsigned();
 
             $table->timestamps();
@@ -85,9 +85,9 @@ class Orders extends Migration
         });
 
         schema::create('order_restaurant_statuses',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('order_restaurant_id')->unsigned();
-            $table->integer('status')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('order_restaurant_id')->unsigned();
+            $table->bigInteger('status')->unsigned();
             $table->timestamps();
 
              $table->foreign('order_restaurant_id')->references('id')->on('order_restaurants')
@@ -98,8 +98,8 @@ class Orders extends Migration
         });
 
         schema::create('order_details',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('order_restaurant_id')->unsigned();;
+            $table->bigIncrements('id');
+            $table->bigInteger('order_restaurant_id')->unsigned();;
             $table->integer('product_id')->unsigned();;
             $table->integer('qty');
             $table->double('price');
@@ -113,8 +113,8 @@ class Orders extends Migration
         });
 
         schema::create('order_detail_options',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('order_details_id')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('order_details_id')->unsigned();
             $table->integer('product_option_id')->unsigned();
             $table->double('price');
             $table->integer('qty');

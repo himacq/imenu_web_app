@@ -14,7 +14,7 @@ class CreateLookupTable extends Migration
     public function up()
     {
         Schema::create('lookup', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('display_text');
             $table->string('description');
             $table->integer('parent_id')->nullable();

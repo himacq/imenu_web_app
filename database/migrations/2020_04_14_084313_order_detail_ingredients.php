@@ -14,8 +14,8 @@ class OrderDetailIngredients extends Migration
     public function up()
     {
         schema::create('order_detail_ingredients',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('order_details_id')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('order_details_id')->unsigned();
             $table->integer('product_ingredient_id')->unsigned();
             $table->timestamps();
 

@@ -14,9 +14,9 @@ class CustomerMessages extends Migration
     public function up()
     {
         schema::create('customer_messages',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('sender_id')->unsigned();
-            $table->integer('receiver_id')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('sender_id')->unsigned();
+            $table->bigInteger('receiver_id')->unsigned();
             $table->integer('message_type');
             $table->string('title');
             $table->text('message');
@@ -31,9 +31,9 @@ class CustomerMessages extends Migration
         });
 
         schema::create('customer_message_replies',function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('message_id')->unsigned();;
-            $table->integer('sender_id')->unsigned();;
+            $table->bigIncrements('id');
+            $table->bigInteger('message_id')->unsigned();;
+            $table->bigInteger('sender_id')->unsigned();;
             $table->text('message');
             $table->boolean('isSeen');
 

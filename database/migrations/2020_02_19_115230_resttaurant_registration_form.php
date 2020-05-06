@@ -15,7 +15,7 @@ class ResttaurantRegistrationForm extends Migration
     {
         schema::create('restaurant_registrations',function(Blueprint $table){
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->string('name');
             $table->string('id_img')->nullable();
             $table->string('license_img')->nullable();
@@ -31,22 +31,22 @@ class ResttaurantRegistrationForm extends Migration
             $table->string('business_title')->nullable();
             $table->integer('branches_count');
             $table->json('branches');
-            
-            $table->integer('status')->unsigned();
-            
-            
+
+            $table->bigInteger('status')->unsigned();
+
+
             $table->timestamps();
-            
-            
-            
-            
+
+
+
+
         });
-        
+
         Schema::table('restaurant_registrations', function($table) {
                 $table->foreign('status')->references('id')->on('lookup')
                         ->onUpdate('cascade')->onDelete('cascade');
                 });
-                
+
        Schema::table('restaurant_registrations', function($table) {
                 $table->foreign('user_id')->references('id')->on('users')
                         ->onUpdate('cascade')->onDelete('cascade');

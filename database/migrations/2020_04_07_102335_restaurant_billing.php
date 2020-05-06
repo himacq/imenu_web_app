@@ -14,12 +14,12 @@ class RestaurantBilling extends Migration
     public function up()
     {
         schema::create('restaurant_billings',function(Blueprint $table){
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->integer('restaurant_id')->unsigned();
             $table->integer('payment_id')->unsigned();
             $table->double('sub_total');
-            $table->integer('order_id')->unsigned();
-            $table->integer('order_restaurant_id')->unsigned();
+            $table->bigInteger('order_id')->unsigned();
+            $table->bigInteger('order_restaurant_id')->unsigned();
             $table->double('commision');
             $table->double('discount');
             $table->double('restaurant_distance');
